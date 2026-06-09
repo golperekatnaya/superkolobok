@@ -62,23 +62,85 @@ const SeriesSelect = (function() {
     
     function startFriendship() {
         GameState.setCurrentSeries('friendship');
+        
+        // Получаем данные о серии из конфига
+        var series = GameConfig.getSeriesById('friendship');
+        if (!series) {
+            console.error('Серия friendship не найдена в конфиге');
+            return;
+        }
+        
+        // Проверяем тип серии
+        if (series.type === 'h5p' && series.h5pPath) {
+            // Загружаем H5P
+            loadH5PSeries(series.h5pPath);
+        } else if (series.type === 'video' && series.videoPath) {
+            // Загружаем обычное видео (fallback)
+            loadVideoSeries(series.videoPath);
+        } else {
+            console.error('Неизвестный тип серии или отсутствует путь:', series);
+        }
+    }
+    
+    function loadH5PSeries(h5pPath) {
         var c = document.getElementById('sceneContent');
         UI.clearContainer(c);
-        c.innerHTML = '<div class="video-scene"><video id="s1v" preload="auto" playsinline controls><source src="media/videos/series1.mp4" type="video/mp4"></video></div>';
-        var v = document.getElementById('s1v');
-        v.addEventListener('ended', function() {
-            GameState.completeSeries('friendship');
-            GameState.addStar();
-            Popup.openConfirmPopup({
-                title: 'Отлично!',
-                message: 'Вы посмотрели серию "Сила дружбы"!',
-                confirmText: 'К выбору',
-                cancelText: 'Ещё раз',
-                onConfirm: function() { GameState.setCurrentSeries(null); Navigation.goTo(SeriesSelect.render, 1); },
-                onCancel: function() { v.currentTime = 0; v.play().catch(function() {}); }
+        
+        // Создаём iframe для H5P
+        c.innerHTML = 
+            '<div class="h5p-container" style="width:100%; height:100%; min-height:400px;">' +
+                '<iframe src="' + h5pPath + '" ' +
+                    'style="width:100%; height:500px; border:none;" ' +
+                    'allowfullscreen ' +
+                    'allow="autoplay; fullscreen">' +
+                '</iframe>' +
+                '<div style="text-align:center; margin-top:16px;">' +
+                    '<button class="scene-btn" id="h5pCompleteBtn" style="background:#F5B342; border-radius:50px; padding:10px 24px; width:auto; color:white; font-weight:700;">Завершить просмотр</button>' +
+                '</div>' +
+            '</div>';
+        
+        var completeBtn = document.getElementById('h5pCompleteBtn');
+        if (completeBtn) {
+            completeBtn.addEventListener('click', function() {
+                completeFriendshipSeries();
             });
+        }
+    }
+    
+    function loadVideoSeries(videoPath) {
+        var c = document.getElementById('sceneContent');
+        UI.clearContainer(c);
+        
+        c.innerHTML = '<div class="video-scene"><video id="friendshipVideo" preload="auto" playsinline controls><source src="' + videoPath + '" type="video/mp4"></video></div>';
+        
+        var v = document.getElementById('friendshipVideo');
+        v.addEventListener('ended', function() {
+            completeFriendshipSeries();
         });
-        v.play().catch(function() { v.controls = true; });
+        
+        v.play().catch(function() { 
+            v.controls = true; 
+        });
+    }
+    
+    function completeFriendshipSeries() {
+        GameState.completeSeries('friendship');
+        GameState.addStar();
+        
+        Popup.openConfirmPopup({
+            title: 'Отлично!',
+            message: 'Вы прошли серию "Сила дружбы"!\nПолучена звезда!',
+            confirmText: 'К выбору серий',
+            cancelText: 'Закрыть',
+            onConfirm: function() { 
+                GameState.setCurrentSeries(null); 
+                Navigation.goTo(SeriesSelect.render, 1); 
+            },
+            onCancel: function() { 
+                GameState.setCurrentSeries(null); 
+                Navigation.goTo(SeriesSelect.render, 1); 
+            }
+        });
     }
     
     function startTeamwork() {
