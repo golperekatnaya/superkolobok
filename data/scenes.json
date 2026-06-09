@@ -1,0 +1,364 @@
+{
+  "app": {
+    "name": "Суперколобок",
+    "totalScenes": 23,
+    "series": [
+      {
+        "id": "friendship",
+        "name": "Сила дружбы",
+        "icon": "🌾",
+        "type": "h5p",
+        "h5pPath": "https://drive.google.com/uc?export=download&id=16IyCkK4hXpmP2viL5Y6LI3Nulf5CYJTT",
+        "order": 1,
+        "unlockCondition": null
+      },
+      {
+        "id": "teamwork",
+        "name": "Сила команды",
+        "icon": "⭐",
+        "type": "interactive",
+        "order": 2,
+        "unlockCondition": null
+      }
+    ]
+  },
+  
+  "scenes": [
+    {
+      "id": 0,
+      "type": "name-screen",
+      "progress": 0,
+      "description": "Экран ввода имени",
+      "nextScene": 1
+    },
+    {
+      "id": 1,
+      "type": "series-select",
+      "progress": 1,
+      "description": "Экран выбора серии",
+      "nextScene": 2
+    },
+    {
+      "id": 2,
+      "type": "video-auto",
+      "progress": 2,
+      "description": "Интро",
+      "nextScene": 3
+    },
+    {
+      "id": 3,
+      "type": "video-auto",
+      "progress": 3,
+      "description": "Приветствие",
+      "nextScene": 4
+    },
+    {
+      "id": 4,
+      "type": "video-auto",
+      "progress": 4,
+      "description": "Инструкция",
+      "nextScene": 5
+    },
+    {
+      "id": 5,
+      "type": "video-auto",
+      "progress": 5,
+      "description": "Детский сад",
+      "nextScene": 6
+    },
+    {
+      "id": 6,
+      "type": "hint",
+      "progress": 6,
+      "description": "Подсказка 1",
+      "nextScene": 7
+    },
+    {
+      "id": 7,
+      "type": "video-manual",
+      "progress": 7,
+      "description": "Песочница",
+      "nextScene": 8
+    },
+    {
+      "id": 8,
+      "type": "game-intro",
+      "progress": 8,
+      "description": "Светлячок — игра 1",
+      "nextScene": 9
+    },
+    {
+      "id": 9,
+      "type": "game-1",
+      "progress": 9,
+      "description": "Игра 1: Песочница",
+      "nextScene": 10
+    },
+    {
+      "id": 10,
+      "type": "video-manual",
+      "progress": 10,
+      "description": "Звезда 1",
+      "nextScene": 11
+    },
+    {
+      "id": 11,
+      "type": "test",
+      "progress": 11,
+      "description": "Тест",
+      "nextScene": 12
+    },
+    {
+      "id": 12,
+      "type": "hint",
+      "progress": 12,
+      "description": "Подсказка 2",
+      "nextScene": 13
+    },
+    {
+      "id": 13,
+      "type": "game-intro",
+      "progress": 13,
+      "description": "Светлячок — игра 2",
+      "nextScene": 14
+    },
+    {
+      "id": 14,
+      "type": "game-2",
+      "progress": 14,
+      "description": "Игра 2: Таланты",
+      "nextScene": 15
+    },
+    {
+      "id": 15,
+      "type": "video-manual",
+      "progress": 15,
+      "description": "Звезда 2",
+      "nextScene": 16
+    },
+    {
+      "id": 16,
+      "type": "video-manual",
+      "progress": 16,
+      "description": "Медведица возвращается",
+      "nextScene": 17
+    },
+    {
+      "id": 17,
+      "type": "hint",
+      "progress": 17,
+      "description": "Подсказка 3",
+      "nextScene": 18
+    },
+    {
+      "id": 18,
+      "type": "game-intro",
+      "progress": 18,
+      "description": "Светлячок — игра 3",
+      "nextScene": 19
+    },
+    {
+      "id": 19,
+      "type": "game-3",
+      "progress": 19,
+      "description": "Игра 3: Обед",
+      "nextScene": 20
+    },
+    {
+      "id": 20,
+      "type": "video-manual",
+      "progress": 20,
+      "description": "Звезда 3",
+      "nextScene": 21
+    },
+    {
+      "id": 21,
+      "type": "video-manual",
+      "progress": 21,
+      "description": "Дорога домой",
+      "nextScene": 22
+    },
+    {
+      "id": 22,
+      "type": "video-manual",
+      "progress": 22,
+      "description": "Финал 1",
+      "nextScene": 23
+    },
+    {
+      "id": 23,
+      "type": "video-auto",
+      "progress": 23,
+      "description": "Финал 2",
+      "nextScene": null
+    }
+  ],
+  
+  "assets": {
+    "videos": {
+      "intro": "media/videos/intro.mp4",
+      "greeting": "media/videos/greeting.mp4",
+      "instruction": "media/videos/instruction.mp4",
+      "kindergarten": "media/videos/kindergarten.mp4",
+      "sandbox": "media/videos/sandbox.mp4",
+      "sandboxOverview": "media/videos/sandbox-overview.mp4",
+      "starReward": "media/videos/star-reward.mp4",
+      "starReward2": "media/videos/star-reward2.mp4",
+      "somethingWrong": "media/videos/something-wrong.mp4",
+      "together": "media/videos/together.mp4",
+      "mamaBearReturns": "media/videos/mama-bear-returns.mp4",
+      "dinnerFail": "media/videos/dinner-fail.mp4",
+      "dinnerSuccess": "media/videos/dinner-success.mp4",
+      "mamaBearPraise": "media/videos/mama-bear-praise.mp4",
+      "starReward3": "media/videos/star-reward3.mp4",
+      "wayHome": "media/videos/way-home.mp4",
+      "finale1": "media/videos/finale1.mp4",
+      "finale2": "media/videos/finale2.mp4",
+      "series1": "media/videos/series1.mp4"
+    },
+    "audio": {
+      "nameGreeting": "media/audio/name-greeting.m4a",
+      "seriesSelect": "media/audio/series-select.m4a",
+      "game1Intro": "media/audio/game1-intro.m4a",
+      "game1Popup": "media/audio/game1-popup.m4a",
+      "game2Intro": "media/audio/game2-intro.m4a",
+      "game2Popup": "media/audio/game2-popup.m4a",
+      "game2Result": "media/audio/game2-result.m4a",
+      "testQuestion": "media/audio/testQuestion.m4a",
+      "testOption1": "media/audio/testOption1.wav",
+      "testOption2": "media/audio/testOption2.wav",
+      "testOption3": "media/audio/testOption3.wav",
+      "fireflyDinnerSpeech": "media/audio/firefly-dinner-speech.m4a",
+      "game3Popup": "media/audio/game3-popup.m4a",
+      "letter-a": "media/audio/letters/letter-a.m4a",
+      "letter-be": "media/audio/letters/letter-be.m4a",
+      "letter-ve": "media/audio/letters/letter-ve.m4a",
+      "letter-ge": "media/audio/letters/letter-ge.m4a",
+      "letter-de": "media/audio/letters/letter-de.m4a",
+      "letter-ye": "media/audio/letters/letter-ye.m4a",
+      "letter-yo": "media/audio/letters/letter-yo.m4a",
+      "letter-zhe": "media/audio/letters/letter-zhe.m4a",
+      "letter-ze": "media/audio/letters/letter-ze.m4a",
+      "letter-i": "media/audio/letters/letter-i.m4a",
+      "letter-i-kratkoe": "media/audio/letters/letter-i-kratkoe.m4a",
+      "letter-ka": "media/audio/letters/letter-ka.m4a",
+      "letter-el": "media/audio/letters/letter-el.m4a",
+      "letter-em": "media/audio/letters/letter-em.m4a",
+      "letter-en": "media/audio/letters/letter-en.m4a",
+      "letter-o": "media/audio/letters/letter-o.m4a",
+      "letter-pe": "media/audio/letters/letter-pe.m4a",
+      "letter-er": "media/audio/letters/letter-er.m4a",
+      "letter-es": "media/audio/letters/letter-es.m4a",
+      "letter-te": "media/audio/letters/letter-te.m4a",
+      "letter-u": "media/audio/letters/letter-u.m4a",
+      "letter-ef": "media/audio/letters/letter-ef.m4a",
+      "letter-ha": "media/audio/letters/letter-ha.m4a",
+      "letter-tse": "media/audio/letters/letter-tse.m4a",
+      "letter-che": "media/audio/letters/letter-che.m4a",
+      "letter-sha": "media/audio/letters/letter-sha.m4a",
+      "letter-scha": "media/audio/letters/letter-scha.m4a",
+      "letter-tvyordiy-znak": "media/audio/letters/letter-tvyordiy-znak.m4a",
+      "letter-yery": "media/audio/letters/letter-yery.m4a",
+      "letter-myagkiy-znak": "media/audio/letters/letter-myagkiy-znak.m4a",
+      "letter-e": "media/audio/letters/letter-e.m4a",
+      "letter-yu": "media/audio/letters/letter-yu.m4a",
+      "letter-ya": "media/audio/letters/letter-ya.m4a"
+    },
+    "sfx": {
+      "cubeClick": "media/audio/click.mp3",
+      "cubeClear": "media/audio/clear.mp3",
+      "cubeConfirm": "media/audio/confirm.mp3",
+      "fireflyAppear": "media/audio/firefly-appear.mp3",
+      "correct1": "media/audio/correct1.m4a",
+      "correct2": "media/audio/correct2.m4a",
+      "correct3": "media/audio/correct3.m4a",
+      "wrong1": "media/audio/wrong1.m4a",
+      "wrong2": "media/audio/wrong2.m4a",
+      "wrong3": "media/audio/wrong3.m4a",
+      "letter-a": "media/audio/letters/letter-a.m4a",
+      "letter-be": "media/audio/letters/letter-be.m4a",
+      "letter-ve": "media/audio/letters/letter-ve.m4a",
+      "letter-ge": "media/audio/letters/letter-ge.m4a",
+      "letter-de": "media/audio/letters/letter-de.m4a",
+      "letter-ye": "media/audio/letters/letter-ye.m4a",
+      "letter-yo": "media/audio/letters/letter-yo.m4a",
+      "letter-zhe": "media/audio/letters/letter-zhe.m4a",
+      "letter-ze": "media/audio/letters/letter-ze.m4a",
+      "letter-i": "media/audio/letters/letter-i.m4a",
+      "letter-i-kratkoe": "media/audio/letters/letter-i-kratkoe.m4a",
+      "letter-ka": "media/audio/letters/letter-ka.m4a",
+      "letter-el": "media/audio/letters/letter-el.m4a",
+      "letter-em": "media/audio/letters/letter-em.m4a",
+      "letter-en": "media/audio/letters/letter-en.m4a",
+      "letter-o": "media/audio/letters/letter-o.m4a",
+      "letter-pe": "media/audio/letters/letter-pe.m4a",
+      "letter-er": "media/audio/letters/letter-er.m4a",
+      "letter-es": "media/audio/letters/letter-es.m4a",
+      "letter-te": "media/audio/letters/letter-te.m4a",
+      "letter-u": "media/audio/letters/letter-u.m4a",
+      "letter-ef": "media/audio/letters/letter-ef.m4a",
+      "letter-ha": "media/audio/letters/letter-ha.m4a",
+      "letter-tse": "media/audio/letters/letter-tse.m4a",
+      "letter-che": "media/audio/letters/letter-che.m4a",
+      "letter-sha": "media/audio/letters/letter-sha.m4a",
+      "letter-scha": "media/audio/letters/letter-scha.m4a",
+      "letter-tvyordiy-znak": "media/audio/letters/letter-tvyordiy-znak.m4a",
+      "letter-yery": "media/audio/letters/letter-yery.m4a",
+      "letter-myagkiy-znak": "media/audio/letters/letter-myagkiy-znak.m4a",
+      "letter-e": "media/audio/letters/letter-e.m4a",
+      "letter-yu": "media/audio/letters/letter-yu.m4a",
+      "letter-ya": "media/audio/letters/letter-ya.m4a"
+    },
+    "images": { 
+      "lamp": "media/images/lamp.svg",
+      "mapBtn": "media/images/map-btn.svg",
+      "footprintsBtn": "media/images/footprints-btn.svg",
+      "shovelBtn": "media/images/shovel-btn.svg",
+      "questionBtn": "media/images/question-btn.svg",
+      "playBtn": "media/images/play-btn.svg",
+      "arrowBtn": "media/images/arrow.png",
+      "firefly": "media/images/firefly.png",
+      "fireflySmall": "media/images/firefly-small.png",
+      "kolobokProgress": "media/images/kolobok-progress.png",
+      "kolobok": "media/images/kolobok.svg",
+      "zaychonok": "media/images/zaychonok.svg",
+      "sonya": "media/images/sonya.svg",
+      "tonya": "media/images/tonya.svg",
+      "medvezhonok": "media/images/medvezhonok.svg",
+      "cardWater": "media/images/card-water.svg",
+      "cardSpace": "media/images/card-space.svg",
+      "cardPlan": "media/images/card-plan.svg",
+      "cardDecor": "media/images/card-decor.svg",
+      "cardHelp": "media/images/card-help.svg",
+      "angryZaychonok": "media/images/angry-zaychonok.svg",
+      "sadKolobok": "media/images/sad-kolobok.svg",
+      "talentSonya": "media/images/talent-sonya.svg",
+      "talentTonya": "media/images/talent-tonya.svg",
+      "talentZaychonok": "media/images/talent-zaychonok.svg",
+      "talentMedvezhonok": "media/images/talent-medvezhonok.svg",
+      "talentKolobok": "media/images/talent-kolobok.svg",
+      "roleDecor": "media/images/role-decor.svg",
+      "rolePlan": "media/images/role-plan.svg",
+      "roleBuild": "media/images/role-build.svg",
+      "roleTools": "media/images/role-tools.svg",
+      "roleLead": "media/images/role-lead.svg",
+      "strawberryBtn": "media/images/strawberry-btn.svg",
+      "dinnerBtn": "media/images/dinner-btn.svg",
+      "castleBtn": "media/images/castle-btn.svg",
+      "dinnerTalentZaychonok": "media/images/dinner-talent-zaychonok.svg",
+      "dinnerTalentSonya": "media/images/dinner-talent-sonya.svg",
+      "dinnerTalentTonya": "media/images/dinner-talent-tonya.svg",
+      "dinnerTalentMedvezhonok": "media/images/dinner-talent-medvezhonok.svg",
+      "dinnerTalentKolobok": "media/images/dinner-talent-kolobok.svg",
+      "dinnerRoleCake": "media/images/dinner-role-cake.svg",
+      "dinnerRoleDecorate": "media/images/dinner-role-decorate.svg",
+      "dinnerRoleRecipe": "media/images/dinner-role-recipe.svg",
+      "dinnerRoleIngredients": "media/images/dinner-role-ingredients.svg",
+      "dinnerRoleHelp": "media/images/dinner-role-help.svg",
+      "series1-thumb": "media/images/series1-thumb.png",
+      "series2-thumb": "media/images/series2-thumb.png",
+      "key-friendship": "media/images/key-friendship.png",
+      "key-team": "media/images/key-team.png"
+    }
+  }
+}

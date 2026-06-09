@@ -1,0 +1,40 @@
+{
+  "name": "Суперколобок — Сила команды",
+  "short_name": "Суперколобок",
+  "description": "Интерактивная игра-мультфильм для детей о дружбе и работе в команде",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#E8D9B0",
+  "theme_color": "#FFFCF5",
+  "lang": "ru",
+  "categories": ["education", "entertainment", "kids"],
+  
+  "icons": [
+    {
+      "src": "media/images/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "media/images/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "media/images/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "media/images/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
