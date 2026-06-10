@@ -32,14 +32,10 @@ const App = (function() {
                 _isInitialized = true;
                 _isLoading = false;
                 
-                console.log('[App] -> Выбор режима или имени');
+                console.log('[App] -> Экран имени');
                 
-                // === ИЗМЕНЕНИЕ ЗДЕСЬ ===
-                if (typeof ModeSelect !== 'undefined' && ModeSelect.shouldShow()) {
-                    Navigation.goTo(ModeSelect.render, 0);
-                } else {
-                    Navigation.goTo(NameScreen.render, 0);
-                }
+                // Прямой вызов экрана имени (без выбора режима)
+                Navigation.goTo(NameScreen.render, 0);
             })
             .catch(function(error) {
                 console.error('[App] Ошибка:', error);
