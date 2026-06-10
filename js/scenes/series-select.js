@@ -24,7 +24,7 @@ const SeriesSelect = (function() {
                 '<div class="series-card ' + cls + '" data-series-id="' + s.id + '">' +
                     '<div class="series-card-thumb">' +
                         '<img src="' + thumb + '" alt="' + s.name + '" loading="lazy" onerror="this.style.opacity=\'0\'">' +
-                        (done ? '<div class="series-card-check">\u2713</div>' : '') +
+                        (done ? '<div class="series-card-check">✓</div>' : '') +
                     '</div>' +
                     '<div class="series-card-info">' +
                         '<div class="series-card-name">' + s.name + '</div>' +
@@ -63,63 +63,36 @@ const SeriesSelect = (function() {
     function startFriendship() {
         GameState.setCurrentSeries('friendship');
         
-        // Получаем данные о серии из конфига
         var series = GameConfig.getSeriesById('friendship');
-        if (!series) {
-            console.error('Серия friendship не найдена в конфиге');
+        if (!series || !series.videoPath) {
+            console.error('Video path not found for friendship series');
             return;
         }
         
-        // Проверяем тип серии
-        if (series.type === 'h5p' && series.h5pPath) {
-            // Загружаем H5P
-            loadH5PSeries(series.h5pPath);
-        } else if (series.type === 'video' && series.videoPath) {
-            // Загружаем обычное видео (fallback)
-            loadVideoSeries(series.videoPath);
-        } else {
-            console.error('Неизвестный тип серии или отсутствует путь:', series);
-        }
-    }
-    
-    function loadH5PSeries(h5pPath) {
-        var c = document.getElementById('sceneContent');
-        UI.clearContainer(c);
-        
-        // Создаём iframe для H5P
-        c.innerHTML = 
-            '<div class="h5p-container" style="width:100%; height:100%; min-height:400px;">' +
-                '<iframe src="' + h5pPath + '" ' +
-                    'style="width:100%; height:500px; border:none;" ' +
-                    'allowfullscreen ' +
-                    'allow="autoplay; fullscreen">' +
-                '</iframe>' +
-                '<div style="text-align:center; margin-top:16px;">' +
-                    '<button class="scene-btn" id="h5pCompleteBtn" style="background:#F5B342; border-radius:50px; padding:10px 24px; width:auto; color:white; font-weight:700;">Завершить просмотр</button>' +
-                '</div>' +
-            '</div>';
-        
-        var completeBtn = document.getElementById('h5pCompleteBtn');
-        if (completeBtn) {
-            completeBtn.addEventListener('click', function() {
-                completeFriendshipSeries();
-            });
-        }
+        loadVideoSeries(series.videoPath);
     }
     
     function loadVideoSeries(videoPath) {
         var c = document.getElementById('sceneContent');
         UI.clearContainer(c);
         
-        c.innerHTML = '<div class="video-scene"><video id="friendshipVideo" preload="auto" playsinline controls><source src="' + videoPath + '" type="video/mp4"></video></div>';
+        c.innerHTML = 
+            '<div class="video-scene">' +
+                '<video id="friendshipVideo" preload="auto" playsinline controls autoplay>' +
+                    '<source src="' + videoPath + '" type="video/mp4">' +
+                '</video>' +
+            '</div>';
         
-        var v = document.getElementById('friendshipVideo');
-        v.addEventListener('ended', function() {
+        var video = document.getElementById('friendshipVideo');
+        
+        video.addEventListener('ended', function() {
             completeFriendshipSeries();
         });
         
-        v.play().catch(function() { 
-            v.controls = true; 
+        // Автовоспроизведение с обработкой ошибки
+        video.play().catch(function(error) {
+            console.log('Autoplay blocked, showing controls:', error);
+            video.controls = true;
         });
     }
     

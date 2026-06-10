@@ -7,8 +7,8 @@
         "id": "friendship",
         "name": "Сила дружбы",
         "icon": "🌾",
-        "type": "h5p",
-        "h5pPath": "https://drive.google.com/uc?export=download&id=16IyCkK4hXpmP2viL5Y6LI3Nulf5CYJTT",
+        "type": "video",
+        "videoPath": "media/videos/series1.mp4",
         "order": 1,
         "unlockCondition": null
       },
