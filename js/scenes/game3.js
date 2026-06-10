@@ -57,7 +57,7 @@ const Game3 = (function() {
                 }
                 
                 overviewVideo.addEventListener('loadedmetadata', function() {
-                    var showTime = overviewVideo.duration - 3;
+                    var showTime = overviewVideo.duration - 1.5;
                     if (showTime < 0) showTime = 0;
                     
                     overviewVideo.addEventListener('timeupdate', function handler() {
