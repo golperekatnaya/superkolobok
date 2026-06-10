@@ -100,6 +100,53 @@ const Navigation = (function() {
         processQueue();
     }
     
+    function goToScene(sceneId) {
+        var scene = GameConfig.getScene(sceneId);
+        if (!scene) return;
+        
+        var renderer = getRendererBySceneType(scene.type);
+        if (renderer) {
+            goTo(renderer, sceneId, scene.seriesId);
+        }
+    }
+    
+    function getRendererBySceneType(type) {
+        switch(type) {
+            case 'name-screen':
+                return NameScreen.render;
+            case 'series-select':
+                return SeriesSelect.render;
+            case 'video-auto':
+                return VideoScene.renderIntro;
+            case 'video-manual':
+                return function() { VideoScene.renderVideoSceneManualWithNext(type); };
+            case 'sandbox-interactive':
+                return VideoScene.renderSandboxInteractive;
+            case 'hint':
+                return function() { HintScreen.renderBySceneId(); };
+            case 'game-intro':
+                return Game1.renderIntro;
+            case 'game-1':
+                return Game1.openGame;
+            case 'game-2':
+                return Game2.openGame;
+            case 'game-3':
+                return Game3.openGame;
+            case 'test':
+                return Test.render;
+            default:
+                return null;
+        }
+    }
+    
+    function renderVideoSceneManualWithNext(videoKey) {
+        var scene = GameConfig.getScene(GameState.getCurrentScene());
+        var nextId = scene ? scene.nextScene : null;
+        VideoScene.renderVideoSceneManual(videoKey, 'arrowBtn', 'glow', 3, function() {
+            if (nextId !== null) goToScene(nextId);
+        }, GameState.getCurrentScene(), true);
+    }
+    
     function goBack() {
         if (!_isInitialized || _isTransitioning) return;
         
@@ -163,7 +210,7 @@ const Navigation = (function() {
         medalsHtml += 
             '<div class="medal-item' + (friendshipDone ? ' earned' : '') + '">' +
                 '<div class="medal-icon">' +
-                    '<img src="media/images/key-friendship.png" alt="" onerror="this.parentElement.innerHTML=\'' + (friendshipDone ? '\u2605' : '\u2606') + '\';this.parentElement.style.fontSize=\'28px\';this.parentElement.style.color=\'#F5B342\';">' +
+                    '<img src="media/images/key-friendship.png" alt="" onerror="this.parentElement.innerHTML=\'' + (friendshipDone ? '★' : '☆') + '\';this.parentElement.style.fontSize=\'28px\';this.parentElement.style.color=\'#F5B342\';">' +
                 '</div>' +
                 '<div class="medal-name">Сила дружбы</div>' +
             '</div>';
@@ -171,7 +218,7 @@ const Navigation = (function() {
         medalsHtml += 
             '<div class="medal-item' + (teamworkDone ? ' earned' : '') + '">' +
                 '<div class="medal-icon">' +
-                    '<img src="media/images/key-team.png" alt="" onerror="this.parentElement.innerHTML=\'' + (teamworkDone ? '\u2605' : '\u2606') + '\';this.parentElement.style.fontSize=\'28px\';this.parentElement.style.color=\'#F5B342\';">' +
+                    '<img src="media/images/key-team.png" alt="" onerror="this.parentElement.innerHTML=\'' + (teamworkDone ? '★' : '☆') + '\';this.parentElement.style.fontSize=\'28px\';this.parentElement.style.color=\'#F5B342\';">' +
                 '</div>' +
                 '<div class="medal-name">Сила команды</div>' +
             '</div>';
@@ -180,7 +227,7 @@ const Navigation = (function() {
             medalsHtml += 
                 '<div class="medal-item' + (stars >= i ? ' earned' : '') + '">' +
                     '<div class="medal-icon">' +
-                        '<img src="media/images/key-icon.png" alt="" onerror="this.parentElement.innerHTML=\'' + (stars >= i ? '\u2605' : '\u2606') + '\';this.parentElement.style.fontSize=\'28px\';this.parentElement.style.color=\'#F5B342\';">' +
+                        '<img src="media/images/key-icon.png" alt="" onerror="this.parentElement.innerHTML=\'' + (stars >= i ? '★' : '☆') + '\';this.parentElement.style.fontSize=\'28px\';this.parentElement.style.color=\'#F5B342\';">' +
                     '</div>' +
                     '<div class="medal-name">Звезда ' + i + '</div>' +
                 '</div>';
@@ -189,15 +236,15 @@ const Navigation = (function() {
         _sceneContent.innerHTML = 
             '<div class="profile-screen">' +
                 '<div class="profile-card">' +
-                    '<button class="popup-close-btn profile-close-btn" id="profileCloseBtn">\u2715</button>' +
+                    '<button class="popup-close-btn profile-close-btn" id="profileCloseBtn">✕</button>' +
                     '<div class="profile-avatar">' +
                         '<img src="media/images/kolobok.svg" alt="" onerror="this.src=\'media/images/firefly.png\'">' +
                     '</div>' +
                     '<div class="profile-name">' + (name || 'Гость') + '</div>' +
                     '<div class="profile-stars">' +
-                        '<span>' + (stars >= 1 ? '\u2605' : '\u2606') + '</span>' +
-                        '<span>' + (stars >= 2 ? '\u2605' : '\u2606') + '</span>' +
-                        '<span>' + (stars >= 3 ? '\u2605' : '\u2606') + '</span>' +
+                        '<span>' + (stars >= 1 ? '★' : '☆') + '</span>' +
+                        '<span>' + (stars >= 2 ? '★' : '☆') + '</span>' +
+                        '<span>' + (stars >= 3 ? '★' : '☆') + '</span>' +
                     '</div>' +
                     '<div class="profile-keys-count">' +
                         '<img src="media/images/key-icon.png" alt="" style="width:24px;height:24px;">' +
@@ -206,7 +253,7 @@ const Navigation = (function() {
                     '<div class="profile-section-title">Награды</div>' +
                     '<div class="medals-grid">' + medalsHtml + '</div>' +
                     '<div class="profile-chest" id="profileChest">' +
-                        '<div class="profile-chest-icon">\uD83D\uDDE4</div>' +
+                        '<div class="profile-chest-icon">🗄</div>' +
                         '<div>Сундук с материалами</div>' +
                     '</div>' +
                     '<button class="profile-back-btn" id="profileBackBtn">Назад</button>' +
@@ -265,7 +312,6 @@ const Navigation = (function() {
         if (_resetBtn) _resetBtn.style.display = onMain ? 'none' : 'flex';
         if (_profileBtn) _profileBtn.style.display = onMain && GameState.hasChildName() ? 'flex' : 'none';
         
-        // Обновляем ключик в хедере
         var keysBadge = document.getElementById('headerKeysBadge');
         var keysCount = document.getElementById('headerKeysCount');
         if (keysBadge && keysCount) {
@@ -289,11 +335,13 @@ const Navigation = (function() {
     return {
         init: init,
         goTo: goTo,
+        goToScene: goToScene,
         goBack: goBack,
         goHome: goHome,
         showProfile: showProfile,
         closeAllPopups: closeAllPopups,
         clearQueue: function() { _transitionQueue = []; },
-        updateButtons: updateButtons
+        updateButtons: updateButtons,
+        getRendererBySceneType: getRendererBySceneType
     };
 })();

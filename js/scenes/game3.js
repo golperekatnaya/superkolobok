@@ -57,6 +57,7 @@ const Game3 = (function() {
                 }
                 
                 overviewVideo.addEventListener('loadedmetadata', function() {
+                    // ИСПРАВЛЕНО: 3 → 1.5 секунды
                     var showTime = overviewVideo.duration - 1.5;
                     if (showTime < 0) showTime = 0;
                     
