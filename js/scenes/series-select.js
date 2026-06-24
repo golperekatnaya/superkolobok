@@ -78,20 +78,45 @@ const SeriesSelect = (function() {
         
         c.innerHTML = 
             '<div class="video-scene">' +
-                '<video id="friendshipVideo" preload="auto" playsinline controls autoplay>' +
+                '<video id="friendshipVideo" preload="auto" playsinline autoplay controls style="width:100%;display:block;">' +
                     '<source src="' + videoPath + '" type="video/mp4">' +
                 '</video>' +
             '</div>';
         
         var video = document.getElementById('friendshipVideo');
         
+        // Обработка окончания видео
         video.addEventListener('ended', function() {
             completeFriendshipSeries();
         });
         
+        // Обработка ошибки загрузки видео
+        video.addEventListener('error', function(e) {
+            console.error('Video error:', e);
+            console.log('Video path:', videoPath);
+            var errorMsg = '';
+            switch (video.error ? video.error.code : 0) {
+                case 1:
+                    errorMsg = 'Загрузка видео прервана.';
+                    break;
+                case 2:
+                    errorMsg = 'Сеть недоступна. Проверьте соединение.';
+                    break;
+                case 3:
+                    errorMsg = 'Видео повреждено или не поддерживается.';
+                    break;
+                case 4:
+                    errorMsg = 'Формат видео не поддерживается браузером.';
+                    break;
+                default:
+                    errorMsg = 'Не удалось загрузить видео.';
+            }
+            c.innerHTML = '<div style="text-align:center;padding:40px;"><p>' + errorMsg + '</p><button onclick="location.reload()" style="background:#F5B342;color:white;border:none;padding:10px 20px;border-radius:50px;cursor:pointer;">Обновить</button></div>';
+        });
+        
         // Автовоспроизведение с обработкой ошибки
         video.play().catch(function(error) {
-            console.log('Autoplay blocked, showing controls:', error);
+            console.log('Autoplay blocked:', error);
             video.controls = true;
         });
     }
