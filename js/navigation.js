@@ -122,6 +122,8 @@ const Navigation = (function() {
                 return function() { VideoScene.renderVideoSceneManualWithNext(type); };
             case 'sandbox-interactive':
                 return VideoScene.renderSandboxInteractive;
+            case 'sandbox-series':
+                return SandboxSeries.render;
             case 'hint':
                 return function() { HintScreen.renderBySceneId(); };
             case 'game-intro':

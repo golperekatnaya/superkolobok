@@ -75,9 +75,9 @@
     },
     {
       "id": 7,
-      "type": "sandbox-interactive",
+      "type": "sandbox-series",
       "progress": 7,
-      "description": "Песочница (интерактивное видео)",
+      "description": "Песочница (8 мини-роликов)",
       "nextScene": 8
     },
     {
@@ -214,7 +214,15 @@
       "wayHome": "media/videos/way-home.mp4",
       "finale1": "media/videos/finale1.mp4",
       "finale2": "media/videos/finale2.mp4",
-      "series1": "media/videos/series1.mp4"
+      "series1": "media/videos/series1.mp4",
+      "series-1": "media/videos/series-1.mp4",
+      "series-2": "media/videos/series-2.mp4",
+      "series-3": "media/videos/series-3.mp4",
+      "series-4": "media/videos/series-4.mp4",
+      "series-5": "media/videos/series-5.mp4",
+      "series-6": "media/videos/series-6.mp4",
+      "series-7": "media/videos/series-7.mp4",
+      "series-8": "media/videos/series-8.mp4"
     },
     "audio": {
       "nameGreeting": "media/audio/name-greeting.m4a",
