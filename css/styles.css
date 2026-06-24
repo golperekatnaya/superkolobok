@@ -388,6 +388,16 @@ body {
     100% { transform: translate(-50%,-50%) scale(1); opacity: 0; }
 }
 
+/* ===== ПУЛЬСАЦИЯ ДЛЯ КНОПОК В СЕРИИ ===== */
+.pulse-btn {
+    animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
 /* ===== КНОПКИ СЦЕН ===== */
 .scene-btn {
     cursor: pointer;
@@ -560,7 +570,6 @@ body {
     color: #4A6A30;
 }
 
-/* ИСПРАВЛЕНА СТРЕЛКА — ТЕПЕРЬ НЕ ЗЕРКАЛЬНАЯ */
 .hint-arrow-btn {
     position: absolute;
     left: 50%;
@@ -856,7 +865,6 @@ body {
     transform: translateY(-3px);
 }
 
-/* УМЕНЬШЕНА ПОДСВЕТКА КАРТОЧЕК */
 .char-card.selected .char-card-img img {
     box-shadow: 0 0 0 3px rgba(245,180,70,0.8);
     border-radius: 8px;
@@ -888,7 +896,6 @@ body {
     transition: all 0.4s ease;
 }
 
-/* УВЕЛИЧЕНЫ КАРТОЧКИ ДЛЯ ЛУЧШЕЙ ЧИТАЕМОСТИ */
 .char-card-img,
 .item-card-img {
     width: 150px;

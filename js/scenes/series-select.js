@@ -54,69 +54,105 @@ const SeriesSelect = (function() {
                     setTimeout(function() { card.style.animation = ''; }, 500);
                     return;
                 }
-                if (id === 'friendship') startFriendship();
+                if (id === 'friendship') startFriendshipSequence();
                 else if (id === 'teamwork') startTeamwork();
             });
         });
     }
     
-    function startFriendship() {
+    // ============================================================
+    // НОВАЯ ЛОГИКА ДЛЯ СЕРИИ «СИЛА ДРУЖБЫ» (8 РОЛИКОВ)
+    // ============================================================
+    
+    function startFriendshipSequence() {
         GameState.setCurrentSeries('friendship');
         
-        var series = GameConfig.getSeriesById('friendship');
-        if (!series || !series.videoPath) {
-            console.error('Video path not found for friendship series');
+        var sequence = [
+            { video: 'series-1', button: 'lamp' },
+            { video: 'series-2', button: 'nota-btn' },
+            { video: 'series-3', button: null },
+            { video: 'series-4', button: null },
+            { video: 'series-5', button: null },
+            { video: 'series-6', button: null },
+            { video: 'series-7', button: null },
+            { video: 'series-8', button: null }
+        ];
+        
+        playSequenceStep(sequence, 0);
+    }
+    
+    function playSequenceStep(sequence, index) {
+        if (index >= sequence.length) {
+            // Все ролики закончились → завершаем серию
+            completeFriendshipSeries();
             return;
         }
         
-        loadVideoSeries(series.videoPath);
-    }
-    
-    function loadVideoSeries(videoPath) {
+        var step = sequence[index];
+        var videoKey = step.video;
+        var buttonKey = step.button;
+        
         var c = document.getElementById('sceneContent');
         UI.clearContainer(c);
         
+        var src = GameConfig.getVideo(videoKey);
+        if (!src) {
+            console.error('Video not found:', videoKey);
+            playSequenceStep(sequence, index + 1);
+            return;
+        }
+        
+        // Рендерим видео
         c.innerHTML = 
-            '<div class="video-scene">' +
-                '<video id="friendshipVideo" preload="auto" playsinline autoplay controls style="width:100%;display:block;">' +
-                    '<source src="' + videoPath + '" type="video/mp4">' +
+            '<div class="video-scene" style="position:relative;width:100%;background:#000;">' +
+                '<video id="seqVideo" preload="auto" playsinline autoplay style="width:100%;display:block;">' +
+                    '<source src="' + src + '" type="video/mp4">' +
                 '</video>' +
+                '<div id="seqBtnOverlay" style="position:absolute;bottom:60px;left:0;right:0;display:flex;justify-content:center;z-index:10;pointer-events:none;">' +
+                '</div>' +
             '</div>';
         
-        var video = document.getElementById('friendshipVideo');
+        var video = document.getElementById('seqVideo');
+        var overlay = document.getElementById('seqBtnOverlay');
         
-        // Обработка окончания видео
+        var btnShown = false;
+        var btn = null;
+        
+        // Если есть кнопка — создаём её, но пока скрываем
+        if (buttonKey) {
+            btn = UI.createSceneButton(buttonKey, 'pulse-btn', function() {
+                // При нажатии — переходим к следующему ролику
+                playSequenceStep(sequence, index + 1);
+            });
+            btn.style.display = 'none';
+            btn.style.pointerEvents = 'auto';
+            overlay.appendChild(btn);
+        }
+        
+        // Следим за временем: за 1 секунду до конца показываем кнопку
+        video.addEventListener('timeupdate', function() {
+            if (!btnShown && btn && video.duration - video.currentTime <= 1.0) {
+                btnShown = true;
+                btn.style.display = 'block';
+                // Анимация пульсации добавляется через CSS-класс .pulse-btn
+            }
+        });
+        
+        // Если кнопки нет — переходим к следующему сразу после окончания
         video.addEventListener('ended', function() {
-            completeFriendshipSeries();
+            if (!btn) {
+                playSequenceStep(sequence, index + 1);
+            }
         });
         
         // Обработка ошибки загрузки видео
-        video.addEventListener('error', function(e) {
-            console.error('Video error:', e);
-            console.log('Video path:', videoPath);
-            var errorMsg = '';
-            switch (video.error ? video.error.code : 0) {
-                case 1:
-                    errorMsg = 'Загрузка видео прервана.';
-                    break;
-                case 2:
-                    errorMsg = 'Сеть недоступна. Проверьте соединение.';
-                    break;
-                case 3:
-                    errorMsg = 'Видео повреждено или не поддерживается.';
-                    break;
-                case 4:
-                    errorMsg = 'Формат видео не поддерживается браузером.';
-                    break;
-                default:
-                    errorMsg = 'Не удалось загрузить видео.';
-            }
-            c.innerHTML = '<div style="text-align:center;padding:40px;"><p>' + errorMsg + '</p><button onclick="location.reload()" style="background:#F5B342;color:white;border:none;padding:10px 20px;border-radius:50px;cursor:pointer;">Обновить</button></div>';
+        video.addEventListener('error', function() {
+            console.error('Video error:', videoKey);
+            playSequenceStep(sequence, index + 1);
         });
         
-        // Автовоспроизведение с обработкой ошибки
-        video.play().catch(function(error) {
-            console.log('Autoplay blocked:', error);
+        // Автовоспроизведение
+        video.play().catch(function() {
             video.controls = true;
         });
     }
