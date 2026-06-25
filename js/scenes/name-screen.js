@@ -129,32 +129,42 @@ const NameScreen = (function() {
             setTimeout(function() { Navigation.goTo(SeriesSelect.render, 1); }, 300);
         });
         
-        // Приветственный текст
+        // === ПРИВЕТСТВЕННЫЙ ТЕКСТ И ЗВУК ПАРАЛЛЕЛЬНО ===
         var name = GameState.getChildName() || '';
         var helloText = name ? 'С возвращением, ' + name + '!' : 'Привет! Я Светлячок! Давай познакомимся?';
-        UI.typeText(greetingText, helloText, 60);
         
-        // Показать кубики через 2.5 секунды (или после звука)
-        function showBottom() {
-            top.style.transform = 'translateY(-10px)';
-            top.style.transition = 'all 0.5s ease';
-            bottom.style.opacity = '1';
-            bottom.style.transform = 'translateY(0)';
-        }
-        
+        // Запускаем звук приветствия (если есть)
         var audioSrc = null;
         if (typeof GameConfig !== 'undefined' && GameConfig.isLoaded()) {
             audioSrc = GameConfig.getAudio('nameGreeting');
         }
         
+        // Запускаем звук параллельно с текстом
         if (audioSrc) {
             var audio = new Audio(audioSrc);
             audio.volume = 1.0;
-            audio.onended = function() { setTimeout(showBottom, 300); };
-            audio.onerror = function() { setTimeout(showBottom, 2500); };
-            audio.play().catch(function() { setTimeout(showBottom, 2500); });
-        } else {
-            setTimeout(showBottom, 2500);
+            audio.play().catch(function() {
+                console.log('Autoplay blocked for greeting');
+            });
+        }
+        
+        // Запускаем печать текста
+        UI.typeText(greetingText, helloText, 60, function() {
+            // После окончания текста показываем кубики
+            showBottom();
+        });
+        
+        // Если звук долго не грузится — всё равно показываем кубики через 2.5 секунды
+        var showTimeout = setTimeout(function() {
+            showBottom();
+        }, 2500);
+        
+        function showBottom() {
+            clearTimeout(showTimeout);
+            top.style.transform = 'translateY(-10px)';
+            top.style.transition = 'all 0.5s ease';
+            bottom.style.opacity = '1';
+            bottom.style.transform = 'translateY(0)';
         }
     }
     

@@ -61,11 +61,12 @@ const SeriesSelect = (function() {
     }
     
     // ============================================================
-    // НОВАЯ ЛОГИКА ДЛЯ СЕРИИ «СИЛА ДРУЖБЫ» (8 РОЛИКОВ)
+    // ЛОГИКА ДЛЯ СЕРИИ «СИЛА ДРУЖБЫ» (8 РОЛИКОВ)
     // ============================================================
     
     function startFriendshipSequence() {
         GameState.setCurrentSeries('friendship');
+        GameState.pushHistory(1);
         
         var sequence = [
             { video: 'series-1', button: 'lamp' },
@@ -78,15 +79,21 @@ const SeriesSelect = (function() {
             { video: 'series-8', button: null }
         ];
         
+        window._friendshipSequence = sequence;
+        window._friendshipIndex = 0;
+        
         playSequenceStep(sequence, 0);
     }
     
     function playSequenceStep(sequence, index) {
         if (index >= sequence.length) {
-            // Все ролики закончились → завершаем серию
+            window._friendshipSequence = null;
+            window._friendshipIndex = 0;
             completeFriendshipSeries();
             return;
         }
+        
+        window._friendshipIndex = index;
         
         var step = sequence[index];
         var videoKey = step.video;
@@ -97,12 +104,17 @@ const SeriesSelect = (function() {
         
         var src = GameConfig.getVideo(videoKey);
         if (!src) {
-            console.error('Video not found:', videoKey);
-            playSequenceStep(sequence, index + 1);
+            console.error('[SeriesSelect] Видео не найдено:', videoKey);
+            // Показываем сообщение, НЕ ПЕРЕХОДИМ ДАЛЬШЕ!
+            c.innerHTML = 
+                '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:400px;background:#000;color:white;text-align:center;padding:20px;">' +
+                    '<p style="color:#F5B342;font-size:1.3rem;font-weight:700;margin-bottom:12px;">⚠️ Видео не найдено</p>' +
+                    '<p style="color:#aaa;font-size:0.9rem;margin-bottom:16px;">' + videoKey + '</p>' +
+                    '<button onclick="location.reload()" style="background:#F5B342;border:none;padding:10px 28px;border-radius:50px;color:white;font-weight:700;font-size:1rem;cursor:pointer;">Обновить</button>' +
+                '</div>';
             return;
         }
         
-        // Рендерим видео
         c.innerHTML = 
             '<div class="video-scene" style="position:relative;width:100%;background:#000;">' +
                 '<video id="seqVideo" preload="auto" playsinline autoplay style="width:100%;display:block;">' +
@@ -118,43 +130,53 @@ const SeriesSelect = (function() {
         var btnShown = false;
         var btn = null;
         
-        // Если есть кнопка — создаём её, но пока скрываем
         if (buttonKey) {
             btn = UI.createSceneButton(buttonKey, 'pulse-btn', function() {
-                // При нажатии — переходим к следующему ролику
                 playSequenceStep(sequence, index + 1);
             });
             btn.style.display = 'none';
             btn.style.pointerEvents = 'auto';
+            btn.style.width = '60px';
+            btn.style.height = '60px';
             overlay.appendChild(btn);
         }
         
-        // Следим за временем: за 1 секунду до конца показываем кнопку
         video.addEventListener('timeupdate', function() {
             if (!btnShown && btn && video.duration - video.currentTime <= 1.0) {
                 btnShown = true;
                 btn.style.display = 'block';
-                // Анимация пульсации добавляется через CSS-класс .pulse-btn
             }
         });
         
-        // Если кнопки нет — переходим к следующему сразу после окончания
         video.addEventListener('ended', function() {
             if (!btn) {
                 playSequenceStep(sequence, index + 1);
             }
         });
         
-        // Обработка ошибки загрузки видео
-        video.addEventListener('error', function() {
-            console.error('Video error:', videoKey);
-            playSequenceStep(sequence, index + 1);
+        // ===== ИСПРАВЛЕННАЯ ОБРАБОТКА ОШИБОК (БЕЗ АВТО-ПЕРЕХОДА И RELOAD) =====
+        video.addEventListener('error', function(e) {
+            console.error('[SeriesSelect] Ошибка видео:', videoKey);
+            console.error('  - error code:', video.error ? video.error.code : 'unknown');
+            
+            // НЕ ПЕРЕХОДИМ К СЛЕДУЮЩЕМУ РОЛИКУ!
+            // НЕ ПЕРЕЗАГРУЖАЕМ СТРАНИЦУ!
+            // Просто показываем сообщение
+            c.innerHTML = 
+                '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:400px;background:#000;color:white;text-align:center;padding:20px;">' +
+                    '<p style="color:#F5B342;font-size:1.3rem;font-weight:700;margin-bottom:12px;">⚠️ Видео не загрузилось</p>' +
+                    '<p style="color:#aaa;font-size:0.9rem;margin-bottom:16px;">' + videoKey + '</p>' +
+                    '<button onclick="location.reload()" style="background:#F5B342;border:none;padding:10px 28px;border-radius:50px;color:white;font-weight:700;font-size:1rem;cursor:pointer;">Попробовать снова</button>' +
+                '</div>';
         });
         
-        // Автовоспроизведение
         video.play().catch(function() {
             video.controls = true;
         });
+        
+        if (typeof Navigation !== 'undefined' && Navigation.updateButtons) {
+            Navigation.updateButtons();
+        }
     }
     
     function completeFriendshipSeries() {
@@ -168,10 +190,14 @@ const SeriesSelect = (function() {
             cancelText: 'Закрыть',
             onConfirm: function() { 
                 GameState.setCurrentSeries(null); 
+                window._friendshipSequence = null;
+                window._friendshipIndex = 0;
                 Navigation.goTo(SeriesSelect.render, 1); 
             },
             onCancel: function() { 
                 GameState.setCurrentSeries(null); 
+                window._friendshipSequence = null;
+                window._friendshipIndex = 0;
                 Navigation.goTo(SeriesSelect.render, 1); 
             }
         });
@@ -182,5 +208,13 @@ const SeriesSelect = (function() {
         Navigation.goTo(VideoScene.renderIntro, 2, 'teamwork');
     }
     
-    return { render: render };
+    return { 
+        render: render,
+        _playSequenceStep: playSequenceStep,
+        _restartSequence: function() {
+            window._friendshipSequence = null;
+            window._friendshipIndex = 0;
+            startFriendshipSequence();
+        }
+    };
 })();

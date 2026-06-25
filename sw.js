@@ -1,6 +1,6 @@
 // ========== Service Worker "Суперколобок" ==========
 
-const CACHE_NAME = 'superkolobok-v1.1.0';  // ← ВЕРСИЯ УВЕЛИЧЕНА
+const CACHE_NAME = 'superkolobok-v1.2.0';  // ← ОБНОВИ ВЕРСИЮ!
 const DYNAMIC_CACHE = 'superkolobok-dynamic-v1';
 
 // Файлы, которые кешируются сразу при установке
@@ -18,7 +18,6 @@ const STATIC_ASSETS = [
   '/js/ui/components.js',
   '/js/ui/popup.js',
   '/js/ui/pwa.js',
-  '/js/scenes/mode-select.js',        // ← НОВЫЙ
   '/js/scenes/name-screen.js',
   '/js/scenes/series-select.js',
   '/js/scenes/video-scene.js',
@@ -39,9 +38,7 @@ const STATIC_ASSETS = [
   '/media/images/kolobok.svg',
   '/media/images/play-btn.svg',
   '/media/images/kolobok-progress.png',
-  '/media/images/key-icon.png',
-  '/media/images/mode-solo.png',       // ← НОВЫЙ (ваша картинка)
-  '/media/images/mode-adult.png'       // ← НОВЫЙ (ваша картинка)
+  '/media/images/key-icon.png'
 ];
 
 // ========== УСТАНОВКА ==========

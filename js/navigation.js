@@ -51,9 +51,7 @@ const Navigation = (function() {
         if (_soundBtn) {
             _soundBtn.addEventListener('click', function() {
                 if (typeof AudioManager !== 'undefined') {
-                    var isOn = AudioManager.toggleMute();
-                    var icon = document.getElementById('soundIcon');
-                    if (icon) icon.style.opacity = isOn ? '1' : '0.5';
+                    AudioManager.toggleMute();
                 }
             });
         }
@@ -123,7 +121,8 @@ const Navigation = (function() {
             case 'sandbox-interactive':
                 return VideoScene.renderSandboxInteractive;
             case 'sandbox-series':
-                return SandboxSeries.render;
+                if (typeof SandboxSeries !== 'undefined') return SandboxSeries.render;
+                return null;
             case 'hint':
                 return function() { HintScreen.renderBySceneId(); };
             case 'game-intro':
@@ -152,6 +151,32 @@ const Navigation = (function() {
     function goBack() {
         if (!_isInitialized || _isTransitioning) return;
         
+        // === ПРОВЕРКА: мы в последовательности роликов (серия "Сила дружбы") ===
+        if (window._friendshipSequence && window._friendshipIndex !== undefined) {
+            // Если мы не на первом ролике — возвращаемся к предыдущему
+            if (window._friendshipIndex > 0) {
+                var prevIndex = window._friendshipIndex - 1;
+                // Вызываем playSequenceStep из SeriesSelect
+                if (typeof SeriesSelect !== 'undefined' && SeriesSelect._playSequenceStep) {
+                    SeriesSelect._playSequenceStep(window._friendshipSequence, prevIndex);
+                } else {
+                    // Fallback: перезапускаем последовательность с начала
+                    window._friendshipIndex = 0;
+                    if (typeof SeriesSelect !== 'undefined' && SeriesSelect._restartSequence) {
+                        SeriesSelect._restartSequence();
+                    }
+                }
+                return;
+            } else {
+                // На первом ролике — выходим на выбор серий
+                window._friendshipSequence = null;
+                window._friendshipIndex = 0;
+                goTo(SeriesSelect.render, 1);
+                return;
+            }
+        }
+        
+        // === ПРОФИЛЬ ===
         if (_profileRenderer) {
             _isTransitioning = true;
             clearCurrentScene();
@@ -162,6 +187,7 @@ const Navigation = (function() {
             return;
         }
         
+        // === ОБЫЧНАЯ НАВИГАЦИЯ ===
         if (!GameState.canGoBack()) return;
         
         var prev = GameState.popHistory();
@@ -180,8 +206,12 @@ const Navigation = (function() {
     function goHome() {
         if (_isTransitioning) return;
         
+        // Очищаем последовательность роликов
+        window._friendshipSequence = null;
+        window._friendshipIndex = 0;
+        
         closeAllPopups();
-        AudioManager.stopAll();
+        if (typeof AudioManager !== 'undefined') AudioManager.stopAll();
         _profileRenderer = null;
         _currentRenderer = null;
         GameState.setCurrentSeries(null);
@@ -201,7 +231,7 @@ const Navigation = (function() {
         _profileRenderer = _currentRenderer;
         clearCurrentScene();
         
-        var name = GameState.getChildName();
+        var name = GameState.getChildName() || 'Гость';
         var friendshipDone = GameState.isSeriesCompleted('friendship');
         var teamworkDone = GameState.isSeriesCompleted('teamwork');
         var stars = GameState.getStars();
@@ -235,14 +265,18 @@ const Navigation = (function() {
                 '</div>';
         }
         
+        var savedAvatar = localStorage.getItem('avatar') || 'media/images/kolobok.svg';
+        
         _sceneContent.innerHTML = 
             '<div class="profile-screen">' +
                 '<div class="profile-card">' +
-                    '<button class="popup-close-btn profile-close-btn" id="profileCloseBtn">✕</button>' +
-                    '<div class="profile-avatar">' +
-                        '<img src="media/images/kolobok.svg" alt="" onerror="this.src=\'media/images/firefly.png\'">' +
+                    '<button class="popup-close-btn profile-close-btn" id="profileCloseBtn">&times;</button>' +
+                    '<div class="profile-avatar" id="profileAvatar">' +
+                        '<img src="' + savedAvatar + '" alt="Аватар" id="avatarImg">' +
                     '</div>' +
-                    '<div class="profile-name">' + (name || 'Гость') + '</div>' +
+                    '<button class="profile-avatar-btn" id="changeAvatarBtn">Сменить аватар</button>' +
+                    '<input type="file" id="avatarInput" accept="image/*" style="display:none;">' +
+                    '<div class="profile-name">' + name + '</div>' +
                     '<div class="profile-stars">' +
                         '<span>' + (stars >= 1 ? '★' : '☆') + '</span>' +
                         '<span>' + (stars >= 2 ? '★' : '☆') + '</span>' +
@@ -255,13 +289,32 @@ const Navigation = (function() {
                     '<div class="profile-section-title">Награды</div>' +
                     '<div class="medals-grid">' + medalsHtml + '</div>' +
                     '<div class="profile-chest" id="profileChest">' +
-                        '<div class="profile-chest-icon">🗄</div>' +
+                        '<div class="profile-chest-icon">&#128451;</div>' +
                         '<div>Сундук с материалами</div>' +
                     '</div>' +
                     '<button class="profile-back-btn" id="profileBackBtn">Назад</button>' +
                 '</div>' +
             '</div>';
         
+        // === АВАТАРКА: загрузка ===
+        document.getElementById('changeAvatarBtn').addEventListener('click', function() {
+            document.getElementById('avatarInput').click();
+        });
+        
+        document.getElementById('avatarInput').addEventListener('change', function(e) {
+            var file = e.target.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function(event) {
+                    var imageData = event.target.result;
+                    localStorage.setItem('avatar', imageData);
+                    document.getElementById('avatarImg').src = imageData;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // === ЗАКРЫТИЕ ПРОФИЛЯ ===
         function closeProfile() {
             if (_profileRenderer) {
                 clearCurrentScene();
@@ -305,23 +358,26 @@ const Navigation = (function() {
     }
     
     function updateButtons() {
-        if (_backBtn) _backBtn.style.display = (GameState.canGoBack() || _profileRenderer) ? 'flex' : 'none';
+        if (_backBtn) _backBtn.style.display = (GameState.canGoBack() || _profileRenderer || (window._friendshipSequence && window._friendshipIndex !== undefined)) ? 'flex' : 'none';
         
-        var onMain = !GameState.getCurrentSeries();
+        var onMain = !GameState.getCurrentSeries() && !window._friendshipSequence;
         
         if (_homeBtn) _homeBtn.style.display = onMain ? 'none' : 'flex';
         if (_soundBtn) _soundBtn.style.display = 'flex';
         if (_resetBtn) _resetBtn.style.display = onMain ? 'none' : 'flex';
         if (_profileBtn) _profileBtn.style.display = onMain && GameState.hasChildName() ? 'flex' : 'none';
         
+        // ===== КЛЮЧИК В ХЕДЕРЕ — ПОКАЗЫВАЕМ ТОЛЬКО ЕСЛИ ЕСТЬ КЛЮЧИ =====
         var keysBadge = document.getElementById('headerKeysBadge');
         var keysCount = document.getElementById('headerKeysCount');
+        
         if (keysBadge && keysCount) {
-            if (onMain && GameState.hasChildName()) {
+            var friendshipDone = GameState.isSeriesCompleted('friendship');
+            var teamworkDone = GameState.isSeriesCompleted('teamwork');
+            var totalKeys = (friendshipDone ? 1 : 0) + (teamworkDone ? 1 : 0);
+            
+            if (onMain && GameState.hasChildName() && totalKeys > 0) {
                 keysBadge.style.display = 'flex';
-                var friendshipDone = GameState.isSeriesCompleted('friendship');
-                var teamworkDone = GameState.isSeriesCompleted('teamwork');
-                var totalKeys = (friendshipDone ? 1 : 0) + (teamworkDone ? 1 : 0);
                 keysCount.textContent = totalKeys;
             } else {
                 keysBadge.style.display = 'none';

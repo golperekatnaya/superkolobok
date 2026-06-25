@@ -38,6 +38,11 @@ const AudioManager = (function() {
         
         _isInitialized = true;
         console.log('[Audio] OK');
+        
+        // Восстанавливаем состояние иконки звука
+        var isMuted = (_sfxVolume <= 0 && _voiceVolume <= 0);
+        updateSoundIcon(!isMuted);
+        
         return true;
     }
     
@@ -274,16 +279,47 @@ const AudioManager = (function() {
     function muteAll() {
         setSfxVolume(0); setVoiceVolume(0); setMusicVolume(0);
         if (typeof GameState !== 'undefined') { GameState.setSetting('soundEnabled', false); GameState.setSetting('musicEnabled', false); }
+        updateSoundIcon(false);
     }
     
     function unmuteAll() {
         setSfxVolume(1); setVoiceVolume(1); setMusicVolume(0.5);
         if (typeof GameState !== 'undefined') { GameState.setSetting('soundEnabled', true); GameState.setSetting('musicEnabled', true); }
+        updateSoundIcon(true);
     }
     
     function toggleMute() {
-        if (_sfxVolume <= 0 && _voiceVolume <= 0) { unmuteAll(); return true; }
-        else { muteAll(); return false; }
+        var isMuted = (_sfxVolume <= 0 && _voiceVolume <= 0);
+        
+        if (isMuted) {
+            unmuteAll();
+            return false; // звук включён
+        } else {
+            muteAll();
+            return true; // звук выключен
+        }
+    }
+    
+    function updateSoundIcon(isOn) {
+        var icon = document.getElementById('soundIcon');
+        if (!icon) return;
+        
+        if (isOn) {
+            // Звук включён — динамик
+            icon.innerHTML = 
+                '<path d="M6 12V20H10L18 28V4L10 12H6Z" fill="#B87A3A"/>' +
+                '<path d="M22 10C24 12 24 20 22 22" stroke="#B87A3A" stroke-width="2" stroke-linecap="round"/>' +
+                '<path d="M26 6C30 10 30 22 26 26" stroke="#B87A3A" stroke-width="2" stroke-linecap="round"/>';
+            icon.style.opacity = '1';
+        } else {
+            // Звук выключен — динамик с крестиком
+            icon.innerHTML = 
+                '<path d="M6 12V20H10L18 28V4L10 12H6Z" fill="#B87A3A" opacity="0.4"/>' +
+                '<line x1="4" y1="4" x2="28" y2="28" stroke="#B87A3A" stroke-width="3" stroke-linecap="round"/>' +
+                '<path d="M22 10C24 12 24 20 22 22" stroke="#B87A3A" stroke-width="2" stroke-linecap="round" opacity="0.4"/>' +
+                '<path d="M26 6C30 10 30 22 26 26" stroke="#B87A3A" stroke-width="2" stroke-linecap="round" opacity="0.4"/>';
+            icon.style.opacity = '0.5';
+        }
     }
     
     function isPlaying() { return _isPlaying || _isQueuePlaying || _isMusicPlaying; }
@@ -316,6 +352,7 @@ const AudioManager = (function() {
         muteAll: muteAll,
         unmuteAll: unmuteAll,
         toggleMute: toggleMute,
+        updateSoundIcon: updateSoundIcon,
         isPlaying: isPlaying,
         isMuted: isMuted,
         stopAll: stopAll,
