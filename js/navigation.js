@@ -5,90 +5,46 @@ const Navigation = (function() {
     
     var _sceneContent = null;
     var _backBtn = null;
-        // РЕНДЕРИМ ПРОФИЛЬ В ОВЕРЛЕЕ (клик вне карточки — закрывает)
-        var overlay = document.createElement('div');
-        overlay.id = 'profileOverlay';
-        overlay.className = 'game-popup-overlay';
-        overlay.innerHTML = 
-            '<div class="profile-card">' +
-                '<button class="popup-close-btn profile-close-btn" id="profileCloseBtn">&times;</button>' +
-                '<div class="profile-avatar" id="profileAvatar">' +
-                    '<img src="' + savedAvatar + '" alt="Аватар" id="avatarImg">' +
-                '</div>' +
-                '<button class="profile-avatar-btn" id="changeAvatarBtn">Сменить аватар</button>' +
-                '<input type="file" id="avatarInput" accept="image/*" style="display:none;">' +
-                '<div class="profile-name">' + name + '</div>' +
-                '<div class="profile-stars">' +
-                    '<span>' + (stars >= 1 ? '★' : '☆') + '</span>' +
-                    '<span>' + (stars >= 2 ? '★' : '☆') + '</span>' +
-                    '<span>' + (stars >= 3 ? '★' : '☆') + '</span>' +
-                '</div>' +
-                '<div class="profile-keys-count">' +
-                    '<img src="media/images/key-icon.png" alt="" style="width:24px;height:24px;">' +
-                    '<span>' + totalKeys + ' / 3</span>' +
-                '</div>' +
-                '<div class="profile-section-title">Награды</div>' +
-                '<div class="medals-grid">' + medalsHtml + '</div>' +
-                '<div class="profile-chest" id="profileChest">' +
-                    '<div class="profile-chest-icon">&#128451;</div>' +
-                    '<div>Сундук с материалами</div>' +
-                '</div>' +
-                '<button class="profile-back-btn" id="profileBackBtn">Назад</button>' +
-            '</div>';
+    var _homeBtn = null;
+    var _profileBtn = null;
+    var _soundBtn = null;
+    var _resetBtn = null;
+    var _isInitialized = false;
+    var _currentRenderer = null;
+    var _isTransitioning = false;
+    var _transitionQueue = [];
+    var _profileRenderer = null;
 
-        document.body.appendChild(overlay);
-
-        // Закрытие при клике вне карточки
-        overlay.addEventListener('click', function(e) {
-            if (e.target === overlay) {
-                closeProfile();
-            }
-        });
-
-        // === АВАТАРКА: загрузка ===
-        var changeBtn = overlay.querySelector('#changeAvatarBtn');
-        var avatarInput = overlay.querySelector('#avatarInput');
-        var avatarImg = overlay.querySelector('#avatarImg');
-
-        if (changeBtn && avatarInput) {
-            changeBtn.addEventListener('click', function() { avatarInput.click(); });
+    function init() {
+        _sceneContent = document.getElementById('sceneContent');
+        _backBtn = document.getElementById('backBtn');
+        _homeBtn = document.getElementById('homeBtn');
+        _profileBtn = document.getElementById('profileBtn');
+        _soundBtn = document.getElementById('soundToggleBtn');
+        _resetBtn = document.getElementById('resetBtn');
+        
+        if (!_sceneContent) return false;
+        
+        if (_backBtn) {
+            _backBtn.addEventListener('click', function(e) { e.preventDefault(); goBack(); });
+            _backBtn.style.display = 'none';
         }
-
-        if (avatarInput) {
-            avatarInput.addEventListener('change', function(e) {
-                var file = e.target.files[0];
-                if (file) {
-                    var reader = new FileReader();
-                    reader.onload = function(event) {
-                        var imageData = event.target.result;
-                        localStorage.setItem('avatar', imageData);
-                        if (avatarImg) avatarImg.src = imageData;
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
+        
+        if (_homeBtn) {
+            _homeBtn.addEventListener('click', function(e) { e.preventDefault(); goHome(); });
         }
-
-        // === ЗАКРЫТИЕ ПРОФИЛЯ ===
-        function closeProfile() {
-            if (overlay && overlay.parentElement) overlay.parentElement.removeChild(overlay);
-            if (_profileRenderer) {
-                clearCurrentScene();
-                _profileRenderer();
-                _profileRenderer = null;
-                updateButtons();
-            }
-            _isTransitioning = false;
+        
+        if (_profileBtn) {
+            _profileBtn.addEventListener('click', function(e) { e.preventDefault(); if (!_isTransitioning) showProfile(); });
+            _profileBtn.style.display = 'none';
         }
-
-        var backBtnEl = overlay.querySelector('#profileBackBtn');
-        var closeBtnEl = overlay.querySelector('#profileCloseBtn');
-        var chestEl = overlay.querySelector('#profileChest');
-
-        if (backBtnEl) backBtnEl.addEventListener('click', closeProfile);
-        if (closeBtnEl) closeBtnEl.addEventListener('click', closeProfile);
-        if (chestEl) chestEl.addEventListener('click', function() { alert('Здесь будут храниться PDF-файлы с дополнительными материалами.\nСкоро появится!'); });
-            });
+        
+        if (_soundBtn) {
+            _soundBtn.addEventListener('click', function() { if (typeof AudioManager !== 'undefined') AudioManager.toggleMute(); });
+        }
+        
+        if (_resetBtn) {
+            _resetBtn.addEventListener('click', function(e) { e.preventDefault(); goHome(); });
         }
         
         _isInitialized = true;
@@ -129,42 +85,25 @@ const Navigation = (function() {
     function goToScene(sceneId) {
         var scene = GameConfig.getScene(sceneId);
         if (!scene) return;
-        
         var renderer = getRendererBySceneType(scene.type);
-        if (renderer) {
-            goTo(renderer, sceneId, scene.seriesId);
-        }
+        if (renderer) goTo(renderer, sceneId, scene.seriesId);
     }
     
     function getRendererBySceneType(type) {
         switch(type) {
-            case 'name-screen':
-                return NameScreen.render;
-            case 'series-select':
-                return SeriesSelect.render;
-            case 'video-auto':
-                return VideoScene.renderIntro;
-            case 'video-manual':
-                return function() { VideoScene.renderVideoSceneManualWithNext(type); };
-            case 'sandbox-interactive':
-                return VideoScene.renderSandboxInteractive;
-            case 'sandbox-series':
-                if (typeof SandboxSeries !== 'undefined') return SandboxSeries.render;
-                return null;
-            case 'hint':
-                return function() { HintScreen.renderBySceneId(); };
-            case 'game-intro':
-                return Game1.renderIntro;
-            case 'game-1':
-                return Game1.openGame;
-            case 'game-2':
-                return Game2.openGame;
-            case 'game-3':
-                return Game3.openGame;
-            case 'test':
-                return Test.render;
-            default:
-                return null;
+            case 'name-screen': return NameScreen.render;
+            case 'series-select': return SeriesSelect.render;
+            case 'video-auto': return VideoScene.renderIntro;
+            case 'video-manual': return function() { VideoScene.renderVideoSceneManualWithNext(type); };
+            case 'sandbox-interactive': return VideoScene.renderSandboxInteractive;
+            case 'sandbox-series': if (typeof SandboxSeries !== 'undefined') return SandboxSeries.render; return null;
+            case 'hint': return function() { HintScreen.renderBySceneId(); };
+            case 'game-intro': return Game1.renderIntro;
+            case 'game-1': return Game1.openGame;
+            case 'game-2': return Game2.openGame;
+            case 'game-3': return Game3.openGame;
+            case 'test': return Test.render;
+            default: return null;
         }
     }
     
@@ -178,33 +117,25 @@ const Navigation = (function() {
     
     function goBack() {
         if (!_isInitialized || _isTransitioning) return;
-        
-        // === ПРОВЕРКА: мы в последовательности роликов (серия "Сила дружбы") ===
+
         if (window._friendshipSequence && window._friendshipIndex !== undefined) {
-            // Если мы не на первом ролике — возвращаемся к предыдущему
             if (window._friendshipIndex > 0) {
                 var prevIndex = window._friendshipIndex - 1;
-                // Вызываем playSequenceStep из SeriesSelect
                 if (typeof SeriesSelect !== 'undefined' && SeriesSelect._playSequenceStep) {
                     SeriesSelect._playSequenceStep(window._friendshipSequence, prevIndex);
                 } else {
-                    // Fallback: перезапускаем последовательность с начала
                     window._friendshipIndex = 0;
-                    if (typeof SeriesSelect !== 'undefined' && SeriesSelect._restartSequence) {
-                        SeriesSelect._restartSequence();
-                    }
+                    if (typeof SeriesSelect !== 'undefined' && SeriesSelect._restartSequence) SeriesSelect._restartSequence();
                 }
                 return;
             } else {
-                // На первом ролике — выходим на выбор серий
                 window._friendshipSequence = null;
                 window._friendshipIndex = 0;
                 goTo(SeriesSelect.render, 1);
                 return;
             }
         }
-        
-        // === ПРОФИЛЬ ===
+
         if (_profileRenderer) {
             _isTransitioning = true;
             clearCurrentScene();
@@ -214,17 +145,15 @@ const Navigation = (function() {
             _isTransitioning = false;
             return;
         }
-        
-        // === ОБЫЧНАЯ НАВИГАЦИЯ ===
+
         if (!GameState.canGoBack()) return;
-        
         var prev = GameState.popHistory();
         if (!prev) return;
-        
+
         _isTransitioning = true;
         Progress.update(prev.sceneId);
         if (prev.seriesId) GameState.setCurrentSeries(prev.seriesId);
-        
+
         clearCurrentScene();
         if (typeof _currentRenderer === 'function') _currentRenderer();
         updateButtons();
@@ -233,17 +162,13 @@ const Navigation = (function() {
     
     function goHome() {
         if (_isTransitioning) return;
-        
-        // Очищаем последовательность роликов
         window._friendshipSequence = null;
         window._friendshipIndex = 0;
-        
         closeAllPopups();
         if (typeof AudioManager !== 'undefined') AudioManager.stopAll();
         _profileRenderer = null;
         _currentRenderer = null;
         GameState.setCurrentSeries(null);
-        
         _isTransitioning = true;
         clearCurrentScene();
         SeriesSelect.render();
@@ -253,97 +178,79 @@ const Navigation = (function() {
     
     function showProfile() {
         if (_isTransitioning) return;
-        
         _isTransitioning = true;
         closeAllPopups();
         _profileRenderer = _currentRenderer;
         clearCurrentScene();
-        
+
         var name = GameState.getChildName() || 'Гость';
         var friendshipDone = GameState.isSeriesCompleted('friendship');
+        var careDone = GameState.isSeriesCompleted('care');
         var teamworkDone = GameState.isSeriesCompleted('teamwork');
         var stars = GameState.getStars();
-        var totalKeys = (friendshipDone ? 1 : 0) + (teamworkDone ? 1 : 0);
-        
+        var totalKeys = (friendshipDone ? 1 : 0) + (careDone ? 1 : 0) + (teamworkDone ? 1 : 0);
+
         var medalsHtml = '';
-        
-        medalsHtml += 
-            '<div class="medal-item' + (friendshipDone ? ' earned' : '') + '">' +
-                '<div class="medal-icon">' +
-                    '<img src="media/images/key-friendship.png" alt="" onerror="this.parentElement.innerHTML=\'' + (friendshipDone ? '★' : '☆') + '\';this.parentElement.style.fontSize=\'28px\';this.parentElement.style.color=\'#F5B342\';">' +
-                '</div>' +
-                '<div class="medal-name">Сила дружбы</div>' +
-            '</div>';
-        
-        medalsHtml += 
-            '<div class="medal-item' + (teamworkDone ? ' earned' : '') + '">' +
-                '<div class="medal-icon">' +
-                    '<img src="media/images/key-team.png" alt="" onerror="this.parentElement.innerHTML=\'' + (teamworkDone ? '★' : '☆') + '\';this.parentElement.style.fontSize=\'28px\';this.parentElement.style.color=\'#F5B342\';">' +
-                '</div>' +
-                '<div class="medal-name">Сила команды</div>' +
-            '</div>';
-        
-        for (var i = 1; i <= 3; i++) {
-            medalsHtml += 
-                '<div class="medal-item' + (stars >= i ? ' earned' : '') + '">' +
-                    '<div class="medal-icon">' +
-                        '<img src="media/images/key-icon.png" alt="" onerror="this.parentElement.innerHTML=\'' + (stars >= i ? '★' : '☆') + '\';this.parentElement.style.fontSize=\'28px\';this.parentElement.style.color=\'#F5B342\';">' +
-                    '</div>' +
-                    '<div class="medal-name">Звезда ' + i + '</div>' +
-                '</div>';
-        }
-        
+        medalsHtml += '<div class="medal-item' + (friendshipDone ? ' earned' : '') + '">'
+            + '<div class="medal-icon"><img src="media/images/key-friendship.png" alt="" onerror="this.parentElement.innerHTML=\'' + (friendshipDone ? '★' : '☆') + '\';this.parentElement.style.fontSize=\\'28px\\';this.parentElement.style.color=\\'#F5B342\\';"></div>'
+            + '<div class="medal-name">Сила дружбы</div></div>';
+
+        medalsHtml += '<div class="medal-item' + (careDone ? ' earned' : '') + '">'
+            + '<div class="medal-icon"><img src="media/images/key-care.png" alt="" onerror="this.parentElement.innerHTML=\'' + (careDone ? '★' : '☆') + '\';this.parentElement.style.fontSize=\\'28px\\';this.parentElement.style.color=\\'#F5B342\\';"></div>'
+            + '<div class="medal-name">Сила заботы</div></div>';
+
+        medalsHtml += '<div class="medal-item' + (teamworkDone ? ' earned' : '') + '">'
+            + '<div class="medal-icon"><img src="media/images/key-team.png" alt="" onerror="this.parentElement.innerHTML=\'' + (teamworkDone ? '★' : '☆') + '\';this.parentElement.style.fontSize=\\'28px\\';this.parentElement.style.color=\\'#F5B342\\';"></div>'
+            + '<div class="medal-name">Сила команды</div></div>';
+
         var savedAvatar = localStorage.getItem('avatar') || 'media/images/kolobok.svg';
-        
-        _sceneContent.innerHTML = 
-            '<div class="profile-screen">' +
-                '<div class="profile-card">' +
-                    '<button class="popup-close-btn profile-close-btn" id="profileCloseBtn">&times;</button>' +
-                    '<div class="profile-avatar" id="profileAvatar">' +
-                        '<img src="' + savedAvatar + '" alt="Аватар" id="avatarImg">' +
-                    '</div>' +
-                    '<button class="profile-avatar-btn" id="changeAvatarBtn">Сменить аватар</button>' +
-                    '<input type="file" id="avatarInput" accept="image/*" style="display:none;">' +
-                    '<div class="profile-name">' + name + '</div>' +
-                    '<div class="profile-stars">' +
-                        '<span>' + (stars >= 1 ? '★' : '☆') + '</span>' +
-                        '<span>' + (stars >= 2 ? '★' : '☆') + '</span>' +
-                        '<span>' + (stars >= 3 ? '★' : '☆') + '</span>' +
-                    '</div>' +
-                    '<div class="profile-keys-count">' +
-                        '<img src="media/images/key-icon.png" alt="" style="width:24px;height:24px;">' +
-                        '<span>' + totalKeys + ' / 2</span>' +
-                    '</div>' +
-                    '<div class="profile-section-title">Награды</div>' +
-                    '<div class="medals-grid">' + medalsHtml + '</div>' +
-                    '<div class="profile-chest" id="profileChest">' +
-                        '<div class="profile-chest-icon">&#128451;</div>' +
-                        '<div>Сундук с материалами</div>' +
-                    '</div>' +
-                    '<button class="profile-back-btn" id="profileBackBtn">Назад</button>' +
-                '</div>' +
-            '</div>';
-        
-        // === АВАТАРКА: загрузка ===
-        document.getElementById('changeAvatarBtn').addEventListener('click', function() {
-            document.getElementById('avatarInput').click();
+
+        // Создаём overlay
+        var overlay = document.createElement('div');
+        overlay.id = 'profileOverlay';
+        overlay.className = 'game-popup-overlay';
+        overlay.innerHTML = '<div class="profile-card">'
+            + '<button class="popup-close-btn profile-close-btn" id="profileCloseBtn">&times;</button>'
+            + '<div class="profile-avatar" id="profileAvatar"><img src="' + savedAvatar + '" alt="Аватар" id="avatarImg"></div>'
+            + '<button class="profile-avatar-btn" id="changeAvatarBtn">Сменить аватар</button>'
+            + '<input type="file" id="avatarInput" accept="image/*" style="display:none;">'
+            + '<div class="profile-name">' + name + '</div>'
+            + '<div class="profile-stars"><span>' + (stars >= 1 ? '★' : '☆') + '</span><span>' + (stars >= 2 ? '★' : '☆') + '</span><span>' + (stars >= 3 ? '★' : '☆') + '</span></div>'
+            + '<div class="profile-keys-count"><img src="media/images/key-icon.png" alt="" style="width:24px;height:24px;"><span>' + totalKeys + ' / 3</span></div>'
+            + '<div class="profile-section-title">Награды</div><div class="medals-grid">' + medalsHtml + '</div>'
+            + '<div class="profile-chest" id="profileChest"><div class="profile-chest-icon">&#128451;</div><div>Сундук с материалами</div></div>'
+            + '<button class="profile-back-btn" id="profileBackBtn">Назад</button>'
+            + '</div>';
+
+        document.body.appendChild(overlay);
+
+        // Закрытие при клике вне карточки
+        overlay.addEventListener('click', function(e) {
+            if (e.target === overlay) closeProfile();
         });
-        
-        document.getElementById('avatarInput').addEventListener('change', function(e) {
-            var file = e.target.files[0];
-            if (file) {
-                var reader = new FileReader();
-                reader.onload = function(event) {
-                    var imageData = event.target.result;
-                    localStorage.setItem('avatar', imageData);
-                    document.getElementById('avatarImg').src = imageData;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-        
-        // === ЗАКРЫТИЕ ПРОФИЛЯ ===
+
+        var changeBtn = overlay.querySelector('#changeAvatarBtn');
+        var avatarInput = overlay.querySelector('#avatarInput');
+        var avatarImg = overlay.querySelector('#avatarImg');
+
+        if (changeBtn && avatarInput) changeBtn.addEventListener('click', function() { avatarInput.click(); });
+        if (avatarInput) {
+            avatarInput.addEventListener('change', function(e) {
+                var file = e.target.files[0];
+                if (file) {
+                    var reader = new FileReader();
+                    reader.onload = function(event) {
+                        var imageData = event.target.result;
+                        localStorage.setItem('avatar', imageData);
+                        if (avatarImg) avatarImg.src = imageData;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
         function closeProfile() {
+            if (overlay && overlay.parentElement) overlay.parentElement.removeChild(overlay);
             if (_profileRenderer) {
                 clearCurrentScene();
                 _profileRenderer();
@@ -352,62 +259,51 @@ const Navigation = (function() {
             }
             _isTransitioning = false;
         }
-        
-        document.getElementById('profileBackBtn').addEventListener('click', closeProfile);
-        document.getElementById('profileCloseBtn').addEventListener('click', closeProfile);
-        document.getElementById('profileChest').addEventListener('click', function() {
-            alert('Здесь будут храниться PDF-файлы с дополнительными материалами.\nСкоро появится!');
-        });
-        
-        _backBtn.style.display = 'flex';
+
+        var backBtnEl = overlay.querySelector('#profileBackBtn');
+        var closeBtnEl = overlay.querySelector('#profileCloseBtn');
+        var chestEl = overlay.querySelector('#profileChest');
+
+        if (backBtnEl) backBtnEl.addEventListener('click', closeProfile);
+        if (closeBtnEl) closeBtnEl.addEventListener('click', closeProfile);
+        if (chestEl) chestEl.addEventListener('click', function() { alert('Здесь будут храниться PDF-файлы с дополнительными материалами.\nСкоро появится!'); });
+
+        // Показываем кнопку назад/скрываем профиль кнопку
+        if (_backBtn) _backBtn.style.display = 'flex';
         if (_profileBtn) _profileBtn.style.display = 'none';
     }
     
     function clearCurrentScene() {
         if (!_sceneContent) return;
         var videos = _sceneContent.querySelectorAll('video');
-        videos.forEach(function(v) {
-            v.pause();
-            v.src = '';
-            v.load();
-        });
+        videos.forEach(function(v) { v.pause(); v.src = ''; try { v.load(); } catch(e){} });
         _sceneContent.innerHTML = '';
-        if (typeof AudioManager !== 'undefined' && AudioManager.isPlaying()) {
-            AudioManager.stopAll();
-        }
+        if (typeof AudioManager !== 'undefined' && AudioManager.isPlaying()) AudioManager.stopAll();
     }
     
     function processQueue() {
         if (_transitionQueue.length === 0) return;
         var next = _transitionQueue.shift();
-        setTimeout(function() {
-            goTo(next.renderer, next.index, next.series);
-        }, 50);
+        setTimeout(function() { goTo(next.renderer, next.index, next.series); }, 50);
     }
     
     function updateButtons() {
         if (_backBtn) _backBtn.style.display = (GameState.canGoBack() || _profileRenderer || (window._friendshipSequence && window._friendshipIndex !== undefined)) ? 'flex' : 'none';
-        
         var onMain = !GameState.getCurrentSeries() && !window._friendshipSequence;
-        
         if (_homeBtn) _homeBtn.style.display = onMain ? 'none' : 'flex';
         if (_soundBtn) _soundBtn.style.display = 'flex';
         if (_resetBtn) _resetBtn.style.display = onMain ? 'none' : 'flex';
         if (_profileBtn) _profileBtn.style.display = onMain && GameState.hasChildName() ? 'flex' : 'none';
-        
-        // ===== КЛЮЧИК В ХЕДЕРЕ — ПОКАЗЫВАЕМ ТОЛЬКО ЕСЛИ ЕСТЬ КЛЮЧИ =====
+
         var keysBadge = document.getElementById('headerKeysBadge');
         var keysCount = document.getElementById('headerKeysCount');
-        
         if (keysBadge && keysCount) {
             var friendshipDone = GameState.isSeriesCompleted('friendship');
             var careDone = GameState.isSeriesCompleted('care');
             var teamworkDone = GameState.isSeriesCompleted('teamwork');
             var totalKeys = (friendshipDone ? 1 : 0) + (careDone ? 1 : 0) + (teamworkDone ? 1 : 0);
-            
             if (onMain && GameState.hasChildName() && totalKeys > 0) {
-                keysBadge.style.display = 'flex';
-                keysCount.textContent = totalKeys;
+                keysBadge.style.display = 'flex'; keysCount.textContent = totalKeys;
             } else {
                 keysBadge.style.display = 'none';
             }
@@ -418,7 +314,7 @@ const Navigation = (function() {
         var popups = document.querySelectorAll('#gamePopupOverlay, #testPopupOverlay, .game-popup-overlay');
         popups.forEach(function(p) { p.remove(); });
     }
-    
+
     return {
         init: init,
         goTo: goTo,
