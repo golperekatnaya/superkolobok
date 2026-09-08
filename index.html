@@ -183,23 +183,46 @@
                             // video is playing — hide static artwork/text to show the video cleaner
                             if (kolobokContainer) kolobokContainer.style.display = 'none';
                             loadingTexts.forEach(function(t) { t.style.display = 'none'; });
+                            // remove any manual overlay
+                            var ov = document.getElementById('loaderPlayOverlay'); if (ov) ov.remove();
                         }).catch(function(e) {
-                            // autoplay failed — leave fallback artwork visible
+                            // autoplay failed — show an explicit play overlay so user can start the video
                             console.warn('[Loader] Video autoplay failed:', e && e.message);
+                            try {
+                                if (kolobokContainer) kolobokContainer.style.display = 'none';
+                                loadingTexts.forEach(function(t) { t.style.display = 'none'; });
+                                var overlay = document.createElement('div');
+                                overlay.id = 'loaderPlayOverlay';
+                                overlay.style.position = 'absolute';
+                                overlay.style.inset = '0';
+                                overlay.style.display = 'flex';
+                                overlay.style.alignItems = 'center';
+                                overlay.style.justifyContent = 'center';
+                                overlay.style.zIndex = 10;
+                                overlay.style.background = 'rgba(255,255,255,0)';
+                                var btn = document.createElement('button');
+                                btn.textContent = 'Нажмите, чтобы запустить анимацию';
+                                btn.style.background = 'rgba(0,0,0,0.4)';
+                                btn.style.color = '#fff';
+                                btn.style.border = 'none';
+                                btn.style.padding = '10px 16px';
+                                btn.style.borderRadius = '8px';
+                                btn.style.fontSize = '16px';
+                                btn.addEventListener('click', function() {
+                                    loaderVideo.play().then(function() {
+                                        overlay.remove();
+                                    }).catch(function(err) {
+                                        console.warn('[Loader] manual play failed:', err && err.message);
+                                    });
+                                });
+                                overlay.appendChild(btn);
+                                document.getElementById('loadingScreen').appendChild(overlay);
+                            } catch(er) { console.warn(er); }
                         });
                     }
                 }
 
-                var soundBtn = document.getElementById('soundToggleBtn');
-                if (soundBtn) {
-                    soundBtn.addEventListener('click', function() {
-                        if (typeof AudioManager !== 'undefined') {
-                            AudioManager.toggleMute();
-                            // update icon based on actual state
-                            AudioManager.updateSoundIcon(!AudioManager.isMuted());
-                        }
-                    });
-                }
+                // Sound button is wired in Navigation.init(); avoid duplicate handlers here.
             });
         })();
     </script>
