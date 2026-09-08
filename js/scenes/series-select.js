@@ -15,9 +15,11 @@ const SeriesSelect = (function() {
         
         series.forEach(function(s) {
             var done = GameState.isSeriesCompleted(s.id);
-            var locked = (s.order === 2 && !GameState.isSeriesCompleted('friendship'));
+            // Блокируем серию, если предыдущая по order ещё не пройдена
+            var prev = series.find(function(x) { return x.order === (s.order - 1); });
+            var locked = prev ? !GameState.isSeriesCompleted(prev.id) : false;
             var cls = done ? 'completed' : (locked ? 'locked' : '');
-            var badge = done ? 'Пройдено' : (locked ? 'Сначала пройди первую' : '');
+            var badge = done ? 'Пройдено' : (locked ? 'Сначала пройди предыдущую серию' : '');
             var thumb = 'media/images/series' + s.order + '-thumb.png';
             
             cardsHtml += 
@@ -55,6 +57,7 @@ const SeriesSelect = (function() {
                     return;
                 }
                 if (id === 'friendship') startFriendshipSequence();
+                else if (id === 'care') startCare();
                 else if (id === 'teamwork') startTeamwork();
             });
         });
@@ -206,6 +209,11 @@ const SeriesSelect = (function() {
     function startTeamwork() {
         GameState.setCurrentSeries('teamwork');
         Navigation.goTo(VideoScene.renderIntro, 2, 'teamwork');
+    }
+
+    function startCare() {
+        GameState.setCurrentSeries('care');
+        Navigation.goTo(VideoScene.renderIntro, 2, 'care');
     }
     
     return { 

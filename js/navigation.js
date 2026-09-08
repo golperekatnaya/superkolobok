@@ -5,61 +5,89 @@ const Navigation = (function() {
     
     var _sceneContent = null;
     var _backBtn = null;
-    var _homeBtn = null;
-    var _profileBtn = null;
-    var _soundBtn = null;
-    var _resetBtn = null;
-    var _isInitialized = false;
-    var _currentRenderer = null;
-    var _isTransitioning = false;
-    var _transitionQueue = [];
-    var _profileRenderer = null;
-    
-    function init() {
-        _sceneContent = document.getElementById('sceneContent');
-        _backBtn = document.getElementById('backBtn');
-        _homeBtn = document.getElementById('homeBtn');
-        _profileBtn = document.getElementById('profileBtn');
-        _soundBtn = document.getElementById('soundToggleBtn');
-        _resetBtn = document.getElementById('resetBtn');
-        
-        if (!_sceneContent) return false;
-        
-        if (_backBtn) {
-            _backBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                goBack();
-            });
-            _backBtn.style.display = 'none';
+        // РЕНДЕРИМ ПРОФИЛЬ В ОВЕРЛЕЕ (клик вне карточки — закрывает)
+        var overlay = document.createElement('div');
+        overlay.id = 'profileOverlay';
+        overlay.className = 'game-popup-overlay';
+        overlay.innerHTML = 
+            '<div class="profile-card">' +
+                '<button class="popup-close-btn profile-close-btn" id="profileCloseBtn">&times;</button>' +
+                '<div class="profile-avatar" id="profileAvatar">' +
+                    '<img src="' + savedAvatar + '" alt="Аватар" id="avatarImg">' +
+                '</div>' +
+                '<button class="profile-avatar-btn" id="changeAvatarBtn">Сменить аватар</button>' +
+                '<input type="file" id="avatarInput" accept="image/*" style="display:none;">' +
+                '<div class="profile-name">' + name + '</div>' +
+                '<div class="profile-stars">' +
+                    '<span>' + (stars >= 1 ? '★' : '☆') + '</span>' +
+                    '<span>' + (stars >= 2 ? '★' : '☆') + '</span>' +
+                    '<span>' + (stars >= 3 ? '★' : '☆') + '</span>' +
+                '</div>' +
+                '<div class="profile-keys-count">' +
+                    '<img src="media/images/key-icon.png" alt="" style="width:24px;height:24px;">' +
+                    '<span>' + totalKeys + ' / 3</span>' +
+                '</div>' +
+                '<div class="profile-section-title">Награды</div>' +
+                '<div class="medals-grid">' + medalsHtml + '</div>' +
+                '<div class="profile-chest" id="profileChest">' +
+                    '<div class="profile-chest-icon">&#128451;</div>' +
+                    '<div>Сундук с материалами</div>' +
+                '</div>' +
+                '<button class="profile-back-btn" id="profileBackBtn">Назад</button>' +
+            '</div>';
+
+        document.body.appendChild(overlay);
+
+        // Закрытие при клике вне карточки
+        overlay.addEventListener('click', function(e) {
+            if (e.target === overlay) {
+                closeProfile();
+            }
+        });
+
+        // === АВАТАРКА: загрузка ===
+        var changeBtn = overlay.querySelector('#changeAvatarBtn');
+        var avatarInput = overlay.querySelector('#avatarInput');
+        var avatarImg = overlay.querySelector('#avatarImg');
+
+        if (changeBtn && avatarInput) {
+            changeBtn.addEventListener('click', function() { avatarInput.click(); });
         }
-        
-        if (_homeBtn) {
-            _homeBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                goHome();
-            });
-        }
-        
-        if (_profileBtn) {
-            _profileBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                if (!_isTransitioning) showProfile();
-            });
-            _profileBtn.style.display = 'none';
-        }
-        
-        if (_soundBtn) {
-            _soundBtn.addEventListener('click', function() {
-                if (typeof AudioManager !== 'undefined') {
-                    AudioManager.toggleMute();
+
+        if (avatarInput) {
+            avatarInput.addEventListener('change', function(e) {
+                var file = e.target.files[0];
+                if (file) {
+                    var reader = new FileReader();
+                    reader.onload = function(event) {
+                        var imageData = event.target.result;
+                        localStorage.setItem('avatar', imageData);
+                        if (avatarImg) avatarImg.src = imageData;
+                    };
+                    reader.readAsDataURL(file);
                 }
             });
         }
-        
-        if (_resetBtn) {
-            _resetBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                goHome();
+
+        // === ЗАКРЫТИЕ ПРОФИЛЯ ===
+        function closeProfile() {
+            if (overlay && overlay.parentElement) overlay.parentElement.removeChild(overlay);
+            if (_profileRenderer) {
+                clearCurrentScene();
+                _profileRenderer();
+                _profileRenderer = null;
+                updateButtons();
+            }
+            _isTransitioning = false;
+        }
+
+        var backBtnEl = overlay.querySelector('#profileBackBtn');
+        var closeBtnEl = overlay.querySelector('#profileCloseBtn');
+        var chestEl = overlay.querySelector('#profileChest');
+
+        if (backBtnEl) backBtnEl.addEventListener('click', closeProfile);
+        if (closeBtnEl) closeBtnEl.addEventListener('click', closeProfile);
+        if (chestEl) chestEl.addEventListener('click', function() { alert('Здесь будут храниться PDF-файлы с дополнительными материалами.\nСкоро появится!'); });
             });
         }
         
@@ -373,8 +401,9 @@ const Navigation = (function() {
         
         if (keysBadge && keysCount) {
             var friendshipDone = GameState.isSeriesCompleted('friendship');
+            var careDone = GameState.isSeriesCompleted('care');
             var teamworkDone = GameState.isSeriesCompleted('teamwork');
-            var totalKeys = (friendshipDone ? 1 : 0) + (teamworkDone ? 1 : 0);
+            var totalKeys = (friendshipDone ? 1 : 0) + (careDone ? 1 : 0) + (teamworkDone ? 1 : 0);
             
             if (onMain && GameState.hasChildName() && totalKeys > 0) {
                 keysBadge.style.display = 'flex';

@@ -14,6 +14,7 @@ const GameState = (function() {
         maxHistoryLength: 50,
         completedSeries: {
             friendship: false,
+            care: false,
             teamwork: false
         },
         settings: {
@@ -103,7 +104,7 @@ const GameState = (function() {
     
     function setCurrentSeries(seriesId) {
         if (!seriesId) { _state.currentSeries = null; return true; }
-        var valid = ['friendship', 'teamwork'];
+        var valid = ['friendship', 'care', 'teamwork'];
         if (valid.indexOf(seriesId) === -1) return false;
         _state.currentSeries = seriesId;
         saveState();

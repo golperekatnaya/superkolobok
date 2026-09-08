@@ -2,7 +2,7 @@
   "app": {
     "name": "Суперколобок",
     "totalScenes": 23,
-    "series": [
+      "series": [
       {
         "id": "friendship",
         "name": "Сила дружбы",
@@ -13,11 +13,20 @@
         "unlockCondition": null
       },
       {
+        "id": "care",
+        "name": "Сила заботы",
+        "icon": "💚",
+        "type": "video",
+        "videoPath": "media/videos/series-2.mp4",
+        "order": 2,
+        "unlockCondition": null
+      },
+      {
         "id": "teamwork",
         "name": "Сила команды",
         "icon": "⭐",
         "type": "interactive",
-        "order": 2,
+        "order": 3,
         "unlockCondition": null
       }
     ]
