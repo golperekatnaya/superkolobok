@@ -297,17 +297,16 @@ const AudioManager = (function() {
     }
     
     function toggleMute() {
-        var isMuted = (_sfxVolume <= 0 && _voiceVolume <= 0);
-        
-        if (isMuted) {
+        var wasMuted = (_sfxVolume <= 0 && _voiceVolume <= 0);
+        if (wasMuted) {
             unmuteAll();
             console.log('[Audio] unmuted');
-            return false; // звук включён
         } else {
             muteAll();
             console.log('[Audio] muted');
-            return true; // звук выключен
         }
+        // return current mute state (true = muted)
+        return (_sfxVolume <= 0 && _voiceVolume <= 0);
     }
     
     function updateSoundIcon(isOn) {

@@ -14,6 +14,7 @@ const Navigation = (function() {
     var _isTransitioning = false;
     var _transitionQueue = [];
     var _profileRenderer = null;
+    var _lastSoundToggleTs = 0;
 
     function init() {
         _sceneContent = document.getElementById('sceneContent');
@@ -41,9 +42,12 @@ const Navigation = (function() {
         
         if (_soundBtn) {
             _soundBtn.addEventListener('click', function() {
+                var now = Date.now();
+                if (now - _lastSoundToggleTs < 400) return; // debounce double events
+                _lastSoundToggleTs = now;
                 if (typeof AudioManager !== 'undefined') {
-                    var result = AudioManager.toggleMute();
-                    console.log('[Nav] sound toggle result:', result, 'isMuted:', AudioManager.isMuted());
+                    var newMuted = AudioManager.toggleMute();
+                    console.log('[Nav] sound toggle newMuted:', newMuted, 'isMuted():', AudioManager.isMuted());
                     try { AudioManager.updateSoundIcon(!AudioManager.isMuted()); } catch (e) { console.warn(e); }
                 } else {
                     console.warn('[Nav] AudioManager not defined');
