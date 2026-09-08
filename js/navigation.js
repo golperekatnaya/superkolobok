@@ -40,7 +40,13 @@ const Navigation = (function() {
         }
         
         if (_soundBtn) {
-            _soundBtn.addEventListener('click', function() { if (typeof AudioManager !== 'undefined') AudioManager.toggleMute(); });
+            _soundBtn.addEventListener('click', function() {
+                if (typeof AudioManager !== 'undefined') {
+                    AudioManager.toggleMute();
+                    // ensure icon reflects current state
+                    try { AudioManager.updateSoundIcon(!AudioManager.isMuted()); } catch (e) {}
+                }
+            });
         }
         
         if (_resetBtn) {
