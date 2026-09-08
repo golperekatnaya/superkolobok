@@ -294,7 +294,7 @@
       "wrong3": "media/audio/wrong3.m4a"
     },
     "images": { 
-      "lamp": "media/images/lamp.svg",
+    "lamp": "media/images/lamp.svg",
       "mapBtn": "media/images/map-btn.svg",
       "footprintsBtn": "media/images/footprints-btn.svg",
       "shovelBtn": "media/images/shovel-btn.svg",
@@ -340,7 +340,8 @@
       "dinnerRoleIngredients": "media/images/dinner-role-ingredients.svg",
       "dinnerRoleHelp": "media/images/dinner-role-help.svg",
       "series1-thumb": "media/images/series1-thumb.png",
-      "series2-thumb": "media/images/series2-thumb.png",
+      "series2-thumb": "media/images/card_care.png",
+      "series3-thumb": "media/images/series2-thumb.png",
       "key-friendship": "media/images/key-friendship.png",
       "key-team": "media/images/key-team.png"
     }

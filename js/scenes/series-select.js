@@ -74,11 +74,11 @@ const SeriesSelect = (function() {
         var sequence = [
             { video: 'series-1', button: 'lamp' },
             { video: 'series-2', button: 'nota-btn' },
-            { video: 'series-3', button: null },
-            { video: 'series-4', button: null },
-            { video: 'series-5', button: null },
-            { video: 'series-6', button: null },
-            { video: 'series-7', button: null },
+            { video: 'series-3', button: 'nota-btn' },
+            { video: 'series-4', button: 'nota-btn' },
+            { video: 'series-5', button: 'nota-btn' },
+            { video: 'series-6', button: 'nota-btn' },
+            { video: 'series-7', button: 'nota-btn' },
             { video: 'series-8', button: null }
         ];
         
