@@ -191,17 +191,17 @@ const Navigation = (function() {
         var totalKeys = (friendshipDone ? 1 : 0) + (careDone ? 1 : 0) + (teamworkDone ? 1 : 0);
 
         var medalsHtml = '';
-        medalsHtml += '<div class="medal-item' + (friendshipDone ? ' earned' : '') + '">'
-            + '<div class="medal-icon"><img src="media/images/key-friendship.png" alt="" onerror="this.parentElement.innerHTML=\'' + (friendshipDone ? '★' : '☆') + '\';this.parentElement.style.fontSize=\\'28px\\';this.parentElement.style.color=\\'#F5B342\\';"></div>'
-            + '<div class="medal-name">Сила дружбы</div></div>';
+            medalsHtml += '<div class="medal-item' + (friendshipDone ? ' earned' : '') + '">' +
+                '<div class="medal-icon" data-key="friendship"><img src="media/images/key-friendship.png" alt=""></div>' +
+                '<div class="medal-name">Сила дружбы</div></div>';
 
-        medalsHtml += '<div class="medal-item' + (careDone ? ' earned' : '') + '">'
-            + '<div class="medal-icon"><img src="media/images/key-care.png" alt="" onerror="this.parentElement.innerHTML=\'' + (careDone ? '★' : '☆') + '\';this.parentElement.style.fontSize=\\'28px\\';this.parentElement.style.color=\\'#F5B342\\';"></div>'
-            + '<div class="medal-name">Сила заботы</div></div>';
+            medalsHtml += '<div class="medal-item' + (careDone ? ' earned' : '') + '">' +
+                '<div class="medal-icon" data-key="care"><img src="media/images/key-care.png" alt=""></div>' +
+                '<div class="medal-name">Сила заботы</div></div>';
 
-        medalsHtml += '<div class="medal-item' + (teamworkDone ? ' earned' : '') + '">'
-            + '<div class="medal-icon"><img src="media/images/key-team.png" alt="" onerror="this.parentElement.innerHTML=\'' + (teamworkDone ? '★' : '☆') + '\';this.parentElement.style.fontSize=\\'28px\\';this.parentElement.style.color=\\'#F5B342\\';"></div>'
-            + '<div class="medal-name">Сила команды</div></div>';
+            medalsHtml += '<div class="medal-item' + (teamworkDone ? ' earned' : '') + '">' +
+                '<div class="medal-icon" data-key="teamwork"><img src="media/images/key-team.png" alt=""></div>' +
+                '<div class="medal-name">Сила команды</div></div>';
 
         var savedAvatar = localStorage.getItem('avatar') || 'media/images/kolobok.svg';
 
@@ -223,6 +223,23 @@ const Navigation = (function() {
             + '</div>';
 
         document.body.appendChild(overlay);
+
+        // fallback handlers for medal icons if images fail to load
+        (function() {
+            var medalIcons = overlay.querySelectorAll('.medal-icon');
+            medalIcons.forEach(function(el) {
+                var img = el.querySelector('img');
+                if (!img) return;
+                img.onerror = function() {
+                    var key = el.getAttribute('data-key');
+                    var earned = false;
+                    try { earned = !!(key && GameState.isSeriesCompleted(key)); } catch (e) { earned = false; }
+                    el.innerHTML = earned ? '★' : '☆';
+                    el.style.fontSize = '28px';
+                    el.style.color = '#F5B342';
+                };
+            });
+        })();
 
         // Закрытие при клике вне карточки
         overlay.addEventListener('click', function(e) {
