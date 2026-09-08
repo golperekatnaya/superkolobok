@@ -46,9 +46,18 @@ const UI = (function() {
         
         if (audioKey) {
             container.title = 'Нажми, чтобы послушать';
+            container._isPlaying = false;
             container.addEventListener('click', function(e) {
                 e.stopPropagation();
-                AudioManager.playVoice(audioKey);
+                try {
+                    if (container._isPlaying) return; // prevent double-play
+                    container._isPlaying = true;
+                    AudioManager.playVoice(audioKey, function() {
+                        container._isPlaying = false;
+                    });
+                } catch (err) {
+                    container._isPlaying = false;
+                }
             });
         }
         return container;
