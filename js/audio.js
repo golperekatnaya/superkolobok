@@ -38,6 +38,14 @@ const AudioManager = (function() {
         
         _isInitialized = true;
         console.log('[Audio] OK');
+
+        // Debug: reflect saved GameState settings
+        try {
+            if (typeof GameState !== 'undefined') {
+                if (!GameState.isSoundEnabled()) muteAll();
+                else unmuteAll();
+            }
+        } catch(e) { }
         
         // Восстанавливаем состояние иконки звука
         var isMuted = (_sfxVolume <= 0 && _voiceVolume <= 0);
@@ -293,9 +301,11 @@ const AudioManager = (function() {
         
         if (isMuted) {
             unmuteAll();
+            console.log('[Audio] unmuted');
             return false; // звук включён
         } else {
             muteAll();
+            console.log('[Audio] muted');
             return true; // звук выключен
         }
     }

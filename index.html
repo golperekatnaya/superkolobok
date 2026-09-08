@@ -83,13 +83,13 @@
         
         <main class="scene-content" id="sceneContent">
             <div id="loadingScreen" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;background:linear-gradient(180deg, #FFFCF5 0%, #FEF5E6 100%);position:relative;overflow:hidden;">
-                <video id="loaderVideo" autoplay muted playsinline loop poster="media/images/kolobok-progress.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:5;">
+                <video id="loaderVideo" autoplay muted playsinline loop style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:5;">
                     <source src="media/videos/Loader.mov" type="video/quicktime">
                     <source src="media/videos/Loader.mp4" type="video/mp4">
                     <source src="media/videos/Loader.webm" type="video/webm">
                     <!-- fallback text -->
                 </video>
-                <div class="loading-kolobok-container">
+                <div class="loading-kolobok-container" style="display:none;">
                     <div class="loading-ring">
                         <svg viewBox="0 0 100 100">
                             <circle cx="50" cy="50" r="42" fill="none" stroke="#F0E6D8" stroke-width="5"/>
@@ -100,8 +100,8 @@
                         <img src="media/images/kolobok-progress.png" alt="Колобок">
                     </div>
                 </div>
-                <p class="loading-text">Загружаем приключение...</p>
-                <p class="loading-subtitle">Качусь и учусь</p>
+                <p class="loading-text" style="display:none;">Загружаем приключение...</p>
+                <p class="loading-subtitle" style="display:none;">Качусь и учусь</p>
             </div>
         </main>
         

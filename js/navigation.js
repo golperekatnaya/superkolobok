@@ -42,9 +42,11 @@ const Navigation = (function() {
         if (_soundBtn) {
             _soundBtn.addEventListener('click', function() {
                 if (typeof AudioManager !== 'undefined') {
-                    AudioManager.toggleMute();
-                    // ensure icon reflects current state
-                    try { AudioManager.updateSoundIcon(!AudioManager.isMuted()); } catch (e) {}
+                    var result = AudioManager.toggleMute();
+                    console.log('[Nav] sound toggle result:', result, 'isMuted:', AudioManager.isMuted());
+                    try { AudioManager.updateSoundIcon(!AudioManager.isMuted()); } catch (e) { console.warn(e); }
+                } else {
+                    console.warn('[Nav] AudioManager not defined');
                 }
             });
         }
