@@ -83,7 +83,7 @@
         
         <main class="scene-content" id="sceneContent">
             <div id="loadingScreen" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;background:linear-gradient(180deg, #FFFCF5 0%, #FEF5E6 100%);position:relative;overflow:hidden;">
-                <video id="loaderVideo" autoplay muted playsinline loop style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:5;">
+                <video id="loaderVideo" class="loader-spin" autoplay muted playsinline loop style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:5;">
                     <source src="media/videos/Loader.mov" type="video/quicktime">
                     <source src="media/videos/Loader.mp4" type="video/mp4">
                     <source src="media/videos/Loader.webm" type="video/webm">
@@ -185,6 +185,8 @@
                             loadingTexts.forEach(function(t) { t.style.display = 'none'; });
                             // remove any manual overlay
                             var ov = document.getElementById('loaderPlayOverlay'); if (ov) ov.remove();
+                            // stop the spin animation when video actually plays
+                            try { loaderVideo.classList.remove('loader-spin'); } catch(e) {}
                         }).catch(function(e) {
                             // autoplay failed — show an explicit play overlay so user can start the video
                             console.warn('[Loader] Video autoplay failed:', e && e.message);
@@ -217,9 +219,16 @@
                                 });
                                 overlay.appendChild(btn);
                                 document.getElementById('loadingScreen').appendChild(overlay);
+                                // keep the spin for a short time even if autoplay failed
+                                setTimeout(function() { try { loaderVideo.classList.remove('loader-spin'); } catch(e) {} }, 1800);
                             } catch(er) { console.warn(er); }
                         });
                     }
+                }
+                // Ensure we remove the spin class either when the video fires 'playing' or after a small timeout
+                if (loaderVideo) {
+                    loaderVideo.addEventListener('playing', function() { try { loaderVideo.classList.remove('loader-spin'); } catch(e) {} });
+                    setTimeout(function() { try { loaderVideo.classList.remove('loader-spin'); } catch(e) {} }, 2200);
                 }
 
                 // Sound button is wired in Navigation.init(); avoid duplicate handlers here.

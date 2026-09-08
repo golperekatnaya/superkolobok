@@ -340,6 +340,17 @@ body {
     display: block;
 }
 
+/* Brief loader spin animation while app opens */
+@keyframes loaderSpin {
+    0% { transform: rotate(0deg); }
+    50% { transform: rotate(8deg); }
+    100% { transform: rotate(0deg); }
+}
+.loader-spin {
+    transform-origin: 50% 50%;
+    animation: loaderSpin 0.9s ease-in-out 2 both;
+}
+
 .name-banner {
     position: absolute;
     top: 8px;
