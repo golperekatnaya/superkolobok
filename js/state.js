@@ -28,6 +28,8 @@ const GameState = (function() {
             totalWrongMatches: 0,
             totalTimeSpent: 0
         }
+        ,
+        materialsChest: []
     };
     
     function init() {
@@ -200,6 +202,29 @@ const GameState = (function() {
         localStorage.removeItem('gameMode');
         console.log('[State] Режим игры сброшен');
     }
+
+    // ========== MATERIALS CHEST ==========
+    function addMaterial(materialFileName) {
+        if (!materialFileName) return false;
+        _state.materialsChest = _state.materialsChest || [];
+        if (_state.materialsChest.indexOf(materialFileName) === -1) {
+            _state.materialsChest.push(materialFileName);
+            saveState();
+            return true;
+        }
+        return false;
+    }
+
+    function getMaterials() {
+        _state.materialsChest = _state.materialsChest || [];
+        return _state.materialsChest.slice();
+    }
+
+    function hasMaterial(materialFileName) {
+        if (!materialFileName) return false;
+        _state.materialsChest = _state.materialsChest || [];
+        return _state.materialsChest.indexOf(materialFileName) !== -1;
+    }
     
     function saveState() {
         try {
@@ -212,6 +237,7 @@ const GameState = (function() {
                 currentSceneId: _state.currentSceneId,
                 currentSeries: _state.currentSeries,
                 gameMode: getGameMode(), // Сохраняем режим
+                materialsChest: _state.materialsChest || [],
                 lastSaved: Date.now()
             };
             localStorage.setItem('superkolobok-state', JSON.stringify(toSave));
@@ -237,6 +263,7 @@ const GameState = (function() {
                 }
                 if (typeof data.currentSceneId === 'number') _state.currentSceneId = data.currentSceneId;
                 if (data.currentSeries) _state.currentSeries = data.currentSeries;
+                if (data.materialsChest && Array.isArray(data.materialsChest)) _state.materialsChest = data.materialsChest;
                 // Восстанавливаем режим игры, если он был сохранён
                 if (data.gameMode) {
                     setGameMode(data.gameMode);

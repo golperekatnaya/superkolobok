@@ -185,12 +185,16 @@ const SeriesSelect = (function() {
     function completeFriendshipSeries() {
         GameState.completeSeries('friendship');
         GameState.addStar();
-        
+
+        // Добавляем материал в сундук и показываем попап с возможностью скачать
+        var materialFile = 'series1-materials.pdf';
+        GameState.addMaterial(materialFile);
+
         Popup.openConfirmPopup({
             title: 'Отлично!',
-            message: 'Вы прошли серию "Сила дружбы"!\nПолучена звезда!',
+            message: 'Вы прошли серию "Сила дружбы"!\nМатериал для скачивания добавлен в ваш сундук.',
             confirmText: 'К выбору серий',
-            cancelText: 'Закрыть',
+            cancelText: 'Скачать материал',
             onConfirm: function() { 
                 GameState.setCurrentSeries(null); 
                 window._friendshipSequence = null;
@@ -198,6 +202,8 @@ const SeriesSelect = (function() {
                 Navigation.goTo(SeriesSelect.render, 1); 
             },
             onCancel: function() { 
+                // Открыть PDF в новой вкладке и затем возвращаемся к выбору серий
+                window.open('media/bonus/' + materialFile, '_blank');
                 GameState.setCurrentSeries(null); 
                 window._friendshipSequence = null;
                 window._friendshipIndex = 0;

@@ -295,7 +295,74 @@ const Navigation = (function() {
 
         if (backBtnEl) backBtnEl.addEventListener('click', closeProfile);
         if (closeBtnEl) closeBtnEl.addEventListener('click', closeProfile);
-        if (chestEl) chestEl.addEventListener('click', function() { alert('Здесь будут храниться PDF-файлы с дополнительными материалами.\nСкоро появится!'); });
+        if (chestEl) chestEl.addEventListener('click', function() {
+            // Показываем список материалов из GameState
+            var materials = [];
+            try { materials = (typeof GameState !== 'undefined') ? GameState.getMaterials() : []; } catch(e) { materials = []; }
+
+            var overlay2 = document.createElement('div');
+            overlay2.className = 'game-popup-overlay';
+            overlay2.style.opacity = '0';
+            overlay2.style.transition = 'opacity 0.2s ease';
+
+            var popup2 = document.createElement('div');
+            popup2.className = 'game-popup';
+            popup2.style.maxWidth = '480px';
+            popup2.style.textAlign = 'center';
+            popup2.innerHTML = '<h3 style="color:#C68B3C;margin-bottom:12px;font-size:1rem;">Сундук с материалами</h3>';
+
+            if (!materials || materials.length === 0) {
+                popup2.innerHTML += '<p style="color:#666;margin-bottom:12px;">Пока сундук пуст — материалы появятся после прохождения серий.</p>';
+            } else {
+                var list = document.createElement('div');
+                list.style.display = 'flex';
+                list.style.flexDirection = 'column';
+                list.style.gap = '10px';
+                materials.forEach(function(m) {
+                    var row = document.createElement('div');
+                    row.style.display = 'flex';
+                    row.style.justifyContent = 'space-between';
+                    row.style.alignItems = 'center';
+                    row.style.padding = '8px 12px';
+                    row.style.background = '#FFF8F0';
+                    row.style.borderRadius = '10px';
+
+                    var name = document.createElement('div');
+                    name.textContent = m;
+                    name.style.color = '#4A3724';
+                    name.style.fontWeight = '600';
+                    name.style.fontSize = '0.9rem';
+
+                    var btn = document.createElement('button');
+                    btn.textContent = 'Скачать';
+                    btn.style.background = '#F5B342';
+                    btn.style.color = 'white';
+                    btn.style.border = 'none';
+                    btn.style.padding = '6px 12px';
+                    btn.style.borderRadius = '20px';
+                    btn.style.cursor = 'pointer';
+                    btn.addEventListener('click', function() {
+                        window.open('media/bonus/' + m, '_blank');
+                    });
+
+                    row.appendChild(name);
+                    row.appendChild(btn);
+                    list.appendChild(row);
+                });
+                popup2.appendChild(list);
+            }
+
+            var closeBtn2 = document.createElement('button');
+            closeBtn2.className = 'profile-back-btn';
+            closeBtn2.textContent = 'Закрыть';
+            closeBtn2.style.marginTop = '14px';
+            closeBtn2.addEventListener('click', function() { if (overlay2.parentElement) overlay2.parentElement.removeChild(overlay2); });
+            popup2.appendChild(closeBtn2);
+
+            overlay2.appendChild(popup2);
+            document.body.appendChild(overlay2);
+            requestAnimationFrame(function() { overlay2.style.opacity = '1'; });
+        });
 
         // Показываем кнопку назад/скрываем профиль кнопку
         if (_backBtn) _backBtn.style.display = 'flex';
