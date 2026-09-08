@@ -94,6 +94,13 @@ body {
     height: 18px;
 }
 
+/* Sound icon states */
+#soundIcon .wave { stroke: #B87A3A; stroke-width: 2; stroke-linecap: round; }
+#soundIcon .speaker { fill: #B87A3A; }
+#soundIcon.muted .wave { display: none; }
+#soundIcon.muted .speaker { fill: #9E9E9E; opacity: 0.6; }
+#soundIcon.muted .cross { stroke: #9E9E9E; stroke-width: 3; stroke-linecap: round; }
+
 /* ===== ПРОГРЕСС-БАР ===== */
 .progress-container {
     background: #FFF8EC;

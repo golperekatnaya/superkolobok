@@ -303,22 +303,20 @@ const AudioManager = (function() {
     function updateSoundIcon(isOn) {
         var icon = document.getElementById('soundIcon');
         if (!icon) return;
-        
+        // Use classes and SVG children with identifiable classes so CSS can toggle appearance
         if (isOn) {
-            // Звук включён — динамик
-            icon.innerHTML = 
-                '<path d="M6 12V20H10L18 28V4L10 12H6Z" fill="#B87A3A"/>' +
-                '<path d="M22 10C24 12 24 20 22 22" stroke="#B87A3A" stroke-width="2" stroke-linecap="round"/>' +
-                '<path d="M26 6C30 10 30 22 26 26" stroke="#B87A3A" stroke-width="2" stroke-linecap="round"/>';
+            icon.classList.remove('muted');
+            icon.innerHTML =
+                '<path class="speaker" d="M6 12V20H10L18 28V4L10 12H6Z" />' +
+                '<path class="wave" d="M22 10C24 12 24 20 22 22" />' +
+                '<path class="wave" d="M26 6C30 10 30 22 26 26" />';
             icon.style.opacity = '1';
         } else {
-            // Звук выключен — динамик с крестиком
-            icon.innerHTML = 
-                '<path d="M6 12V20H10L18 28V4L10 12H6Z" fill="#B87A3A" opacity="0.4"/>' +
-                '<line x1="4" y1="4" x2="28" y2="28" stroke="#B87A3A" stroke-width="3" stroke-linecap="round"/>' +
-                '<path d="M22 10C24 12 24 20 22 22" stroke="#B87A3A" stroke-width="2" stroke-linecap="round" opacity="0.4"/>' +
-                '<path d="M26 6C30 10 30 22 26 26" stroke="#B87A3A" stroke-width="2" stroke-linecap="round" opacity="0.4"/>';
-            icon.style.opacity = '0.5';
+            icon.classList.add('muted');
+            icon.innerHTML =
+                '<path class="speaker" d="M6 12V20H10L18 28V4L10 12H6Z" />' +
+                '<line class="cross" x1="4" y1="4" x2="28" y2="28" />';
+            icon.style.opacity = '0.6';
         }
     }
     
