@@ -24,9 +24,18 @@ const PWA = (function() {
         
         // Service Worker
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js')
-                .then(function(r) { console.log('[PWA] SW OK'); })
-                .catch(function(e) { console.warn('[PWA] SW:', e); });
+            navigator.serviceWorker.getRegistrations()
+                .then(function(registrations) {
+                    registrations.forEach(function(registration) {
+                        registration.unregister().catch(function() {});
+                    });
+                })
+                .catch(function() {})
+                .finally(function() {
+                    navigator.serviceWorker.register('sw.js', { scope: './' })
+                        .then(function(r) { console.log('[PWA] SW OK'); })
+                        .catch(function(e) { console.warn('[PWA] SW:', e); });
+                });
         }
         
         _isInitialized = true;
