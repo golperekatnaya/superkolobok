@@ -1,7 +1,7 @@
 // ========== Service Worker "Суперколобок" ==========
 
-const CACHE_NAME = 'superkolobok-v1.2.1';  // bumped to force update
-const DYNAMIC_CACHE = 'superkolobok-dynamic-v1';
+const CACHE_NAME = 'superkolobok-v1.2.2';  // bumped to force update after stale cache fix
+const DYNAMIC_CACHE = 'superkolobok-dynamic-v1.2.2';
 
 // Файлы, которые кешируются сразу при установке
 const STATIC_ASSETS = [
