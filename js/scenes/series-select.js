@@ -127,6 +127,7 @@ const SeriesSelect = (function() {
         video.autoplay = true;
         video.style.width = '100%';
         video.style.display = 'block';
+        video.dataset.isSequenceVideo = '1';
         try { video.src = src; } catch (e) {}
 
         var overlay = document.createElement('div');
@@ -137,9 +138,8 @@ const SeriesSelect = (function() {
         overlay.style.right = '0';
         overlay.style.bottom = '0';
         overlay.style.display = 'flex';
-        overlay.style.justifyContent = 'flex-end';
-        overlay.style.alignItems = 'flex-end';
-        overlay.style.padding = '0 24px 24px 0';
+        overlay.style.justifyContent = 'center';
+        overlay.style.alignItems = 'center';
         overlay.style.zIndex = '10';
         overlay.style.pointerEvents = 'none';
 
@@ -151,16 +151,24 @@ const SeriesSelect = (function() {
         var btn = null;
         if (buttonKey) {
             btn = UI.createSceneButton(buttonKey, 'pulse-btn', function() {
+                try {
+                    window.__sequenceVideoTransition = true;
+                    video.dataset.isIntentionalReset = '1';
+                    video.pause();
+                    video.removeAttribute('src');
+                } catch (e) {}
                 playSequenceStep(sequence, index + 1);
             });
             btn.style.display = 'none';
             btn.style.pointerEvents = 'auto';
-            btn.style.position = 'absolute';
-            btn.style.right = '24px';
-            btn.style.bottom = '24px';
+            btn.style.position = 'relative';
+            btn.style.left = 'auto';
+            btn.style.top = 'auto';
+            btn.style.transform = 'none';
             btn.style.width = '62px';
             btn.style.height = '62px';
             btn.style.zIndex = '20';
+            btn.style.margin = '0';
             overlay.appendChild(btn);
         }
 
@@ -178,6 +186,9 @@ const SeriesSelect = (function() {
         });
 
         video.addEventListener('error', function() {
+            if (video.dataset.isIntentionalReset === '1' || window.__sequenceVideoTransition === true) {
+                return;
+            }
             console.error('[SeriesSelect] Ошибка видео:', videoKey);
             c.innerHTML =
                 '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:400px;background:#000;color:white;text-align:center;padding:20px;">' +
@@ -291,11 +302,13 @@ const SeriesSelect = (function() {
         var overlay = document.createElement('div');
         overlay.id = 'careSequenceOverlay';
         overlay.style.position = 'absolute';
-        overlay.style.bottom = '60px';
+        overlay.style.top = '0';
         overlay.style.left = '0';
         overlay.style.right = '0';
+        overlay.style.bottom = '0';
         overlay.style.display = 'flex';
         overlay.style.justifyContent = 'center';
+        overlay.style.alignItems = 'center';
         overlay.style.zIndex = '10';
         overlay.style.pointerEvents = 'none';
 
@@ -306,12 +319,22 @@ const SeriesSelect = (function() {
         var btn = null;
         if (buttonKey) {
             btn = UI.createSceneButton(buttonKey, 'pulse-btn', function() {
+                try {
+                    window.__careSequenceVideoTransition = true;
+                    video.pause();
+                    video.removeAttribute('src');
+                } catch (e) {}
                 playCareSequenceStep(sequence, index + 1);
             });
             btn.style.display = 'none';
             btn.style.pointerEvents = 'auto';
+            btn.style.position = 'relative';
+            btn.style.left = 'auto';
+            btn.style.top = 'auto';
+            btn.style.transform = 'none';
             btn.style.width = '60px';
             btn.style.height = '60px';
+            btn.style.margin = '0';
             overlay.appendChild(btn);
         }
 
@@ -330,6 +353,9 @@ const SeriesSelect = (function() {
         });
 
         video.addEventListener('error', function() {
+            if (window.__careSequenceVideoTransition === true) {
+                return;
+            }
             c.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:300px;color:white;background:#000;text-align:center;padding:20px;">Видео не загрузилось: ' + videoKey + '</div>';
         });
 

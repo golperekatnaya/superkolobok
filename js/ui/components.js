@@ -318,7 +318,12 @@ const UI = (function() {
     function clearContainer(container) {
         if (!container) return;
         var videos = container.querySelectorAll('video');
-        videos.forEach(function(v) { v.pause(); v.src = ''; });
+        videos.forEach(function(v) {
+            try { v.pause(); } catch (e) {}
+            try { v.onloadeddata = null; } catch (e) {}
+            try { v.onerror = null; } catch (e) {}
+            try { v.remove(); } catch (e) {}
+        });
         container.innerHTML = '';
     }
     
