@@ -32,7 +32,7 @@ const PWA = (function() {
                 })
                 .catch(function() {})
                 .finally(function() {
-                    navigator.serviceWorker.register('sw.js', { scope: './' })
+                    navigator.serviceWorker.register('sw.js?v=20260909-2', { scope: './' })
                         .then(function(r) { console.log('[PWA] SW OK'); })
                         .catch(function(e) { console.warn('[PWA] SW:', e); });
                 });
