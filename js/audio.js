@@ -91,7 +91,7 @@ const AudioManager = (function() {
         }
         
         var fallbackSfx = {
-            'cubeClick': 'media/audio/click.mp3',
+            'cubeClick': 'media/audio/switch.mp3',
             'cubeClear': 'media/audio/clear.mp3',
             'cubeConfirm': 'media/audio/confirm.mp3',
             'fireflyAppear': 'media/audio/firefly-appear.mp3',
@@ -189,14 +189,21 @@ const AudioManager = (function() {
         };
         
         audio.onerror = function() {
-            console.warn('[Audio] Ошибка загрузки:', key);
+            // Some environments surface load/play issues as 'error' without useful details.
+            console.debug('[Audio] Ошибка загрузки (or audio element error):', key);
             _currentAudio = null;
             _isPlaying = false;
             if (callback) callback();
         };
-        
+
         audio.play().catch(function(e) {
-            console.warn('[Audio] Ошибка воспроизведения:', key, e.message);
+            var msg = e && e.message ? e.message : '';
+            // Suppress noisy expected errors from autoplay / user-gesture restrictions
+            if (msg.indexOf('not allowed') !== -1 || msg.indexOf('not supported') !== -1 || msg.indexOf('user denied') !== -1) {
+                console.debug('[Audio] play() prevented by UA/platform:', key, msg);
+            } else {
+                console.warn('[Audio] Ошибка воспроизведения:', key, msg);
+            }
             _currentAudio = null;
             _isPlaying = false;
             if (callback) callback();
@@ -211,7 +218,7 @@ const AudioManager = (function() {
         
         var fallbackAudio = {
             'nameGreeting': 'media/audio/name-greeting.m4a',
-            'seriesSelect': 'media/audio/series-select.m4a',
+            'seriesSelect': 'media/audio/name-greeting.m4a',
             'game1Intro': 'media/audio/game1-intro.m4a',
             'game1Popup': 'media/audio/game1-popup.m4a',
             'game2Intro': 'media/audio/game2-intro.m4a',
@@ -288,12 +295,14 @@ const AudioManager = (function() {
         setSfxVolume(0); setVoiceVolume(0); setMusicVolume(0);
         if (typeof GameState !== 'undefined') { GameState.setSetting('soundEnabled', false); GameState.setSetting('musicEnabled', false); }
         updateSoundIcon(false);
+        setVideoMuted(true);
     }
     
     function unmuteAll() {
         setSfxVolume(1); setVoiceVolume(1); setMusicVolume(0.5);
         if (typeof GameState !== 'undefined') { GameState.setSetting('soundEnabled', true); GameState.setSetting('musicEnabled', true); }
         updateSoundIcon(true);
+        setVideoMuted(false);
     }
     
     function toggleMute() {
@@ -307,6 +316,15 @@ const AudioManager = (function() {
         }
         // return current mute state (true = muted)
         return (_sfxVolume <= 0 && _voiceVolume <= 0);
+    }
+
+    function setVideoMuted(muted) {
+        try {
+            var vids = document.querySelectorAll('video');
+            vids.forEach(function(v) {
+                try { v.muted = !!muted; } catch(e) {}
+            });
+        } catch(e) { }
     }
     
     function updateSoundIcon(isOn) {

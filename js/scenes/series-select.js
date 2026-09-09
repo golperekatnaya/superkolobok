@@ -15,12 +15,15 @@ const SeriesSelect = (function() {
         
         series.forEach(function(s) {
             var done = GameState.isSeriesCompleted(s.id);
-            // Блокируем серию, если предыдущая по order ещё не пройдена
-            var prev = series.find(function(x) { return x.order === (s.order - 1); });
-            var locked = prev ? !GameState.isSeriesCompleted(prev.id) : false;
-            var cls = done ? 'completed' : (locked ? 'locked' : '');
-            var badge = done ? 'Пройдено' : (locked ? 'Сначала пройди предыдущую серию' : '');
-            var thumb = 'media/images/series' + s.order + '-thumb.png';
+            // Временно оставляем все серии доступными сразу
+            var locked = false;
+            var cls = done ? 'completed' : '';
+            var badge = done ? 'Пройдено' : '';
+            // Try explicit thumb in series config, then config asset map, then fallback to naming pattern
+            var thumb = '';
+            if (s.thumb) thumb = s.thumb;
+            if (!thumb) thumb = (typeof GameConfig !== 'undefined' && GameConfig.isLoaded()) ? GameConfig.getImage('series' + s.order + '-thumb') : '';
+            if (!thumb) thumb = 'media/images/series' + s.order + '-thumb.png';
             
             cardsHtml += 
                 '<div class="series-card ' + cls + '" data-series-id="' + s.id + '">' +
@@ -43,8 +46,10 @@ const SeriesSelect = (function() {
                 '<div class="menu-cards">' + cardsHtml + '</div>' +
             '</div>';
         
-        document.getElementById('menuFirefly').appendChild(UI.createClickableFirefly(70, 'seriesSelect'));
-        setTimeout(function() { AudioManager.playVoice('seriesSelect'); }, 500);
+        var menuFirefly = document.getElementById('menuFirefly');
+        if (menuFirefly) {
+            menuFirefly.appendChild(UI.createClickableFirefly(70, 'seriesSelect'));
+        }
         
         c.querySelectorAll('.series-card').forEach(function(card) {
             card.addEventListener('click', function() {
@@ -70,24 +75,19 @@ const SeriesSelect = (function() {
     function startFriendshipSequence() {
         GameState.setCurrentSeries('friendship');
         GameState.pushHistory(1);
-        
+
         var sequence = [
-            { video: 'series-1', button: 'lamp' },
-            { video: 'series-2', button: 'nota-btn' },
-            { video: 'series-3', button: 'nota-btn' },
-            { video: 'series-4', button: 'nota-btn' },
-            { video: 'series-5', button: 'nota-btn' },
-            { video: 'series-6', button: 'nota-btn' },
-            { video: 'series-7', button: 'nota-btn' },
-            { video: 'series-8', button: null }
+            { video: 'series-1', button: 'lamp', showBeforeEnd: 1 },
+            { video: 'series-2', button: 'nota-btn', showBeforeEnd: 4 },
+            { video: 'series-3', button: 'play-btn', showBeforeEnd: 3 },
+            { video: 'series-4', button: null, showBeforeEnd: 0 }
         ];
-        
+
         window._friendshipSequence = sequence;
         window._friendshipIndex = 0;
-        
         playSequenceStep(sequence, 0);
     }
-    
+
     function playSequenceStep(sequence, index) {
         if (index >= sequence.length) {
             window._friendshipSequence = null;
@@ -95,88 +95,103 @@ const SeriesSelect = (function() {
             completeFriendshipSeries();
             return;
         }
-        
+
         window._friendshipIndex = index;
-        
+
         var step = sequence[index];
         var videoKey = step.video;
         var buttonKey = step.button;
-        
+        var showBeforeEnd = typeof step.showBeforeEnd === 'number' ? step.showBeforeEnd : 1;
+
         var c = document.getElementById('sceneContent');
+        if (!c) return;
         UI.clearContainer(c);
-        
+
         var src = GameConfig.getVideo(videoKey);
         if (!src) {
             console.error('[SeriesSelect] Видео не найдено:', videoKey);
-            // Показываем сообщение, НЕ ПЕРЕХОДИМ ДАЛЬШЕ!
-            c.innerHTML = 
-                '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:400px;background:#000;color:white;text-align:center;padding:20px;">' +
-                    '<p style="color:#F5B342;font-size:1.3rem;font-weight:700;margin-bottom:12px;">⚠️ Видео не найдено</p>' +
-                    '<p style="color:#aaa;font-size:0.9rem;margin-bottom:16px;">' + videoKey + '</p>' +
-                    '<button onclick="location.reload()" style="background:#F5B342;border:none;padding:10px 28px;border-radius:50px;color:white;font-weight:700;font-size:1rem;cursor:pointer;">Обновить</button>' +
-                '</div>';
+            c.innerHTML = '<p style="color:#fff">Видео не найдено: ' + videoKey + '</p>';
             return;
         }
-        
-        c.innerHTML = 
-            '<div class="video-scene" style="position:relative;width:100%;background:#000;">' +
-                '<video id="seqVideo" preload="auto" playsinline autoplay style="width:100%;display:block;">' +
-                    '<source src="' + src + '" type="video/mp4">' +
-                '</video>' +
-                '<div id="seqBtnOverlay" style="position:absolute;bottom:60px;left:0;right:0;display:flex;justify-content:center;z-index:10;pointer-events:none;">' +
-                '</div>' +
-            '</div>';
-        
-        var video = document.getElementById('seqVideo');
-        var overlay = document.getElementById('seqBtnOverlay');
-        
+
+        var wrapper = document.createElement('div');
+        wrapper.className = 'video-scene';
+        wrapper.style.position = 'relative';
+        wrapper.style.width = '100%';
+        wrapper.style.background = '#000';
+
+        var video = document.createElement('video');
+        video.id = 'seqVideo';
+        video.preload = 'auto';
+        video.playsInline = true;
+        video.autoplay = true;
+        video.style.width = '100%';
+        video.style.display = 'block';
+        try { video.src = src; } catch (e) {}
+
+        var overlay = document.createElement('div');
+        overlay.id = 'seqBtnOverlay';
+        overlay.style.position = 'absolute';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.right = '0';
+        overlay.style.bottom = '0';
+        overlay.style.display = 'flex';
+        overlay.style.justifyContent = 'flex-end';
+        overlay.style.alignItems = 'flex-end';
+        overlay.style.padding = '0 24px 24px 0';
+        overlay.style.zIndex = '10';
+        overlay.style.pointerEvents = 'none';
+
+        wrapper.appendChild(video);
+        wrapper.appendChild(overlay);
+        c.appendChild(wrapper);
+
         var btnShown = false;
         var btn = null;
-        
         if (buttonKey) {
             btn = UI.createSceneButton(buttonKey, 'pulse-btn', function() {
                 playSequenceStep(sequence, index + 1);
             });
             btn.style.display = 'none';
             btn.style.pointerEvents = 'auto';
-            btn.style.width = '60px';
-            btn.style.height = '60px';
+            btn.style.position = 'absolute';
+            btn.style.right = '24px';
+            btn.style.bottom = '24px';
+            btn.style.width = '62px';
+            btn.style.height = '62px';
+            btn.style.zIndex = '20';
             overlay.appendChild(btn);
         }
-        
+
         video.addEventListener('timeupdate', function() {
-            if (!btnShown && btn && video.duration - video.currentTime <= 1.0) {
+            if (!btnShown && btn && video.duration && video.duration - video.currentTime <= showBeforeEnd) {
                 btnShown = true;
                 btn.style.display = 'block';
             }
         });
-        
+
         video.addEventListener('ended', function() {
             if (!btn) {
                 playSequenceStep(sequence, index + 1);
             }
         });
-        
-        // ===== ИСПРАВЛЕННАЯ ОБРАБОТКА ОШИБОК (БЕЗ АВТО-ПЕРЕХОДА И RELOAD) =====
-        video.addEventListener('error', function(e) {
+
+        video.addEventListener('error', function() {
             console.error('[SeriesSelect] Ошибка видео:', videoKey);
-            console.error('  - error code:', video.error ? video.error.code : 'unknown');
-            
-            // НЕ ПЕРЕХОДИМ К СЛЕДУЮЩЕМУ РОЛИКУ!
-            // НЕ ПЕРЕЗАГРУЖАЕМ СТРАНИЦУ!
-            // Просто показываем сообщение
-            c.innerHTML = 
+            c.innerHTML =
                 '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:400px;background:#000;color:white;text-align:center;padding:20px;">' +
                     '<p style="color:#F5B342;font-size:1.3rem;font-weight:700;margin-bottom:12px;">⚠️ Видео не загрузилось</p>' +
-                    '<p style="color:#aaa;font-size:0.9rem;margin-bottom:16px;">' + videoKey + '</p>' +
+                    '<p style="color:#aaa;font-size:0.9rem;margin-bottom:8px;">' + videoKey + '</p>' +
+                    '<a href="' + src + '" target="_blank" style="color:#F5B342;margin-bottom:16px;">Открыть ресурс в новой вкладке</a>' +
                     '<button onclick="location.reload()" style="background:#F5B342;border:none;padding:10px 28px;border-radius:50px;color:white;font-weight:700;font-size:1rem;cursor:pointer;">Попробовать снова</button>' +
                 '</div>';
         });
-        
+
         video.play().catch(function() {
-            video.controls = true;
+            try { video.controls = true; } catch (e) {}
         });
-        
+
         if (typeof Navigation !== 'undefined' && Navigation.updateButtons) {
             Navigation.updateButtons();
         }
@@ -219,7 +234,140 @@ const SeriesSelect = (function() {
 
     function startCare() {
         GameState.setCurrentSeries('care');
-        Navigation.goTo(VideoScene.renderIntro, 2, 'care');
+        GameState.pushHistory(1);
+
+        var sequence = [
+            { video: 'series2_1', button: 'lamp' },
+            { video: 'series2_2', button: 'nota-btn' },
+            { video: 'series2_3', button: 'footprints-btn' },
+            { video: 'series2_4', button: null }
+        ];
+
+        window._careSequence = sequence;
+        window._careIndex = 0;
+        playCareSequenceStep(sequence, 0);
+    }
+
+    function playCareSequenceStep(sequence, index) {
+        if (index >= sequence.length) {
+            window._careSequence = null;
+            window._careIndex = 0;
+            completeCareSeries();
+            return;
+        }
+
+        window._careIndex = index;
+
+        var step = sequence[index];
+        var videoKey = step.video;
+        var buttonKey = step.button;
+        var c = document.getElementById('sceneContent');
+        if (!c) return;
+
+        UI.clearContainer(c);
+
+        var src = GameConfig.getVideo(videoKey);
+        if (!src) {
+            console.error('[SeriesSelect] Видео серии care не найдено:', videoKey);
+            c.innerHTML = '<p style="color:#fff">Видео не найдено: ' + videoKey + '</p>';
+            return;
+        }
+
+        var wrapper = document.createElement('div');
+        wrapper.className = 'video-scene';
+        wrapper.style.position = 'relative';
+        wrapper.style.width = '100%';
+        wrapper.style.background = '#000';
+
+        var video = document.createElement('video');
+        video.id = 'careSequenceVideo';
+        video.preload = 'auto';
+        video.playsInline = true;
+        video.autoplay = true;
+        video.style.width = '100%';
+        video.style.display = 'block';
+        try { video.src = src; } catch (e) {}
+
+        var overlay = document.createElement('div');
+        overlay.id = 'careSequenceOverlay';
+        overlay.style.position = 'absolute';
+        overlay.style.bottom = '60px';
+        overlay.style.left = '0';
+        overlay.style.right = '0';
+        overlay.style.display = 'flex';
+        overlay.style.justifyContent = 'center';
+        overlay.style.zIndex = '10';
+        overlay.style.pointerEvents = 'none';
+
+        wrapper.appendChild(video);
+        wrapper.appendChild(overlay);
+        c.appendChild(wrapper);
+
+        var btn = null;
+        if (buttonKey) {
+            btn = UI.createSceneButton(buttonKey, 'pulse-btn', function() {
+                playCareSequenceStep(sequence, index + 1);
+            });
+            btn.style.display = 'none';
+            btn.style.pointerEvents = 'auto';
+            btn.style.width = '60px';
+            btn.style.height = '60px';
+            overlay.appendChild(btn);
+        }
+
+        if (btn) {
+            video.addEventListener('timeupdate', function() {
+                if (video.duration && video.currentTime >= video.duration - 1.2) {
+                    btn.style.display = 'block';
+                }
+            });
+        }
+
+        video.addEventListener('ended', function() {
+            if (!btn) {
+                playCareSequenceStep(sequence, index + 1);
+            }
+        });
+
+        video.addEventListener('error', function() {
+            c.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:300px;color:white;background:#000;text-align:center;padding:20px;">Видео не загрузилось: ' + videoKey + '</div>';
+        });
+
+        video.play().catch(function() {
+            try { video.controls = true; } catch (e) {}
+        });
+
+        if (typeof Navigation !== 'undefined' && Navigation.updateButtons) {
+            Navigation.updateButtons();
+        }
+    }
+
+    function completeCareSeries() {
+        GameState.completeSeries('care');
+        GameState.addStar();
+
+        var materialFile = 'series2-materials.pdf';
+        GameState.addMaterial(materialFile);
+
+        Popup.openConfirmPopup({
+            title: 'Отлично!',
+            message: 'Вы прошли серию "Сила заботы"!\nМатериал для скачивания добавлен в ваш сундук.',
+            confirmText: 'К выбору серий',
+            cancelText: 'Скачать материал',
+            onConfirm: function() {
+                GameState.setCurrentSeries(null);
+                window._careSequence = null;
+                window._careIndex = 0;
+                Navigation.goTo(SeriesSelect.render, 1);
+            },
+            onCancel: function() {
+                window.open('media/bonus/' + materialFile, '_blank');
+                GameState.setCurrentSeries(null);
+                window._careSequence = null;
+                window._careIndex = 0;
+                Navigation.goTo(SeriesSelect.render, 1);
+            }
+        });
     }
     
     return { 
@@ -229,6 +377,12 @@ const SeriesSelect = (function() {
             window._friendshipSequence = null;
             window._friendshipIndex = 0;
             startFriendshipSequence();
+        },
+        _playCareSequenceStep: playCareSequenceStep,
+        _restartCareSequence: function() {
+            window._careSequence = null;
+            window._careIndex = 0;
+            startCare();
         }
     };
 })();

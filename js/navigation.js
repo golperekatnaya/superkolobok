@@ -130,6 +130,24 @@ const Navigation = (function() {
     function goBack() {
         if (!_isInitialized || _isTransitioning) return;
 
+        if (window._careSequence && window._careIndex !== undefined) {
+            if (window._careIndex > 0) {
+                var prevCareIndex = window._careIndex - 1;
+                if (typeof SeriesSelect !== 'undefined' && SeriesSelect._playCareSequenceStep) {
+                    SeriesSelect._playCareSequenceStep(window._careSequence, prevCareIndex);
+                } else {
+                    window._careIndex = 0;
+                    if (typeof SeriesSelect !== 'undefined' && SeriesSelect._restartCareSequence) SeriesSelect._restartCareSequence();
+                }
+                return;
+            } else {
+                window._careSequence = null;
+                window._careIndex = 0;
+                goTo(SeriesSelect.render, 1);
+                return;
+            }
+        }
+
         if (window._friendshipSequence && window._friendshipIndex !== undefined) {
             if (window._friendshipIndex > 0) {
                 var prevIndex = window._friendshipIndex - 1;
@@ -176,6 +194,8 @@ const Navigation = (function() {
         if (_isTransitioning) return;
         window._friendshipSequence = null;
         window._friendshipIndex = 0;
+        window._careSequence = null;
+        window._careIndex = 0;
         closeAllPopups();
         if (typeof AudioManager !== 'undefined') AudioManager.stopAll();
         _profileRenderer = null;
@@ -384,8 +404,8 @@ const Navigation = (function() {
     }
     
     function updateButtons() {
-        if (_backBtn) _backBtn.style.display = (GameState.canGoBack() || _profileRenderer || (window._friendshipSequence && window._friendshipIndex !== undefined)) ? 'flex' : 'none';
-        var onMain = !GameState.getCurrentSeries() && !window._friendshipSequence;
+        if (_backBtn) _backBtn.style.display = (GameState.canGoBack() || _profileRenderer || (window._friendshipSequence && window._friendshipIndex !== undefined) || (window._careSequence && window._careIndex !== undefined)) ? 'flex' : 'none';
+        var onMain = !GameState.getCurrentSeries() && !window._friendshipSequence && !window._careSequence;
         if (_homeBtn) _homeBtn.style.display = onMain ? 'none' : 'flex';
         if (_soundBtn) _soundBtn.style.display = 'flex';
         if (_resetBtn) _resetBtn.style.display = onMain ? 'none' : 'flex';
