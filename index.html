@@ -158,6 +158,12 @@
 
                         setTimeout(function() {
                             var ls = document.getElementById('loadingScreen');
+                            var loaderOverlay = document.getElementById('loaderPlayOverlay');
+                            if (loaderOverlay) {
+                                loaderOverlay.style.pointerEvents = 'none';
+                                loaderOverlay.style.opacity = '0';
+                                setTimeout(function() { loaderOverlay.remove(); }, 200);
+                            }
                             if (ls) {
                                 ls.style.opacity = '0';
                                 ls.style.transition = 'opacity 0.4s ease';
@@ -200,6 +206,7 @@
                                 overlay.style.justifyContent = 'center';
                                 overlay.style.zIndex = 10;
                                 overlay.style.background = 'rgba(255,255,255,0)';
+                                overlay.style.pointerEvents = 'none';
                                 var btn = document.createElement('button');
                                 btn.textContent = 'Нажмите, чтобы запустить анимацию';
                                 btn.style.background = 'rgba(0,0,0,0.4)';
@@ -208,6 +215,8 @@
                                 btn.style.padding = '10px 16px';
                                 btn.style.borderRadius = '8px';
                                 btn.style.fontSize = '16px';
+                                btn.style.cursor = 'pointer';
+                                btn.style.pointerEvents = 'auto';
                                 btn.addEventListener('click', function() {
                                     loaderVideo.play().then(function() {
                                         overlay.remove();
