@@ -15,11 +15,9 @@ const SeriesSelect = (function() {
         
         series.forEach(function(s) {
             var done = GameState.isSeriesCompleted(s.id);
-            // Временно оставляем все серии доступными сразу
             var locked = false;
             var cls = done ? 'completed' : '';
             var badge = done ? 'Пройдено' : '';
-            // Try explicit thumb in series config, then config asset map, then fallback to naming pattern
             var thumb = '';
             if (s.thumb) thumb = s.thumb;
             if (!thumb) thumb = (typeof GameConfig !== 'undefined' && GameConfig.isLoaded()) ? GameConfig.getImage('series' + s.order + '-thumb') : '';
@@ -186,7 +184,16 @@ const SeriesSelect = (function() {
         });
 
         video.addEventListener('error', function() {
-            if (video.dataset.isIntentionalReset === '1' || window.__sequenceVideoTransition === true) {
+            // Не показываем ошибку, если:
+            // - переход был намеренным (кнопка "Далее", "Домой", "Назад")
+            // - видео уже удалено со страницы
+            // - у видео сброшен src
+            if (
+                video.dataset.isIntentionalReset === '1' ||
+                window.__sequenceVideoTransition === true ||
+                !video.isConnected ||
+                !video.currentSrc
+            ) {
                 return;
             }
             console.error('[SeriesSelect] Ошибка видео:', videoKey);
@@ -212,7 +219,6 @@ const SeriesSelect = (function() {
         GameState.completeSeries('friendship');
         GameState.addStar();
 
-        // Добавляем материал в сундук и показываем попап с возможностью скачать
         var materialFile = 'series1-materials.pdf';
         GameState.addMaterial(materialFile);
 
@@ -228,7 +234,6 @@ const SeriesSelect = (function() {
                 Navigation.goTo(SeriesSelect.render, 1); 
             },
             onCancel: function() { 
-                // Открыть PDF в новой вкладке и затем возвращаемся к выбору серий
                 window.open('media/bonus/' + materialFile, '_blank');
                 GameState.setCurrentSeries(null); 
                 window._friendshipSequence = null;
@@ -321,6 +326,7 @@ const SeriesSelect = (function() {
             btn = UI.createSceneButton(buttonKey, 'pulse-btn', function() {
                 try {
                     window.__careSequenceVideoTransition = true;
+                    video.dataset.isIntentionalReset = '1';
                     video.pause();
                     video.removeAttribute('src');
                 } catch (e) {}
@@ -353,7 +359,12 @@ const SeriesSelect = (function() {
         });
 
         video.addEventListener('error', function() {
-            if (window.__careSequenceVideoTransition === true) {
+            if (
+                window.__careSequenceVideoTransition === true ||
+                video.dataset.isIntentionalReset === '1' ||
+                !video.isConnected ||
+                !video.currentSrc
+            ) {
                 return;
             }
             c.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:300px;color:white;background:#000;text-align:center;padding:20px;">Видео не загрузилось: ' + videoKey + '</div>';

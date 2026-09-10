@@ -2,7 +2,7 @@
 
 const Navigation = (function() {
     'use strict';
-    
+
     var _sceneContent = null;
     var _backBtn = null;
     var _homeBtn = null;
@@ -13,8 +13,15 @@ const Navigation = (function() {
     var _currentRenderer = null;
     var _isTransitioning = false;
     var _transitionQueue = [];
-    var _profileRenderer = null;
     var _lastSoundToggleTs = 0;
+
+    // Список доступных аватаров. Чтобы добавить нового персонажа —
+    // просто добавьте строку с путём к картинке.
+    var AVATARS = [
+        'media/images/kolobok_avatar.png',
+        'media/images/ejik_tonya.png'
+    ];
+    var DEFAULT_AVATAR = AVATARS[0];
 
     function init() {
         _sceneContent = document.getElementById('sceneContent');
@@ -23,64 +30,81 @@ const Navigation = (function() {
         _profileBtn = document.getElementById('profileBtn');
         _soundBtn = document.getElementById('soundToggleBtn');
         _resetBtn = document.getElementById('resetBtn');
-        
+
         if (!_sceneContent) return false;
-        
+
         if (_backBtn) {
             _backBtn.addEventListener('click', function(e) { e.preventDefault(); goBack(); });
             _backBtn.style.display = 'none';
         }
-        
+
         if (_homeBtn) {
             _homeBtn.addEventListener('click', function(e) { e.preventDefault(); goHome(); });
         }
-        
+
         if (_profileBtn) {
-            _profileBtn.addEventListener('click', function(e) { e.preventDefault(); if (!_isTransitioning) showProfile(); });
+            _profileBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (!_isTransitioning) showProfile();
+            });
             _profileBtn.style.display = 'none';
         }
-        
+
         if (_soundBtn) {
             _soundBtn.addEventListener('click', function() {
                 var now = Date.now();
                 if (now - _lastSoundToggleTs < 400) return;
                 _lastSoundToggleTs = now;
                 if (typeof AudioManager !== 'undefined') {
-                    var newMuted = AudioManager.toggleMute();
-                    console.log('[Nav] sound toggle newMuted:', newMuted, 'isMuted():', AudioManager.isMuted());
-                    try { AudioManager.updateSoundIcon(!AudioManager.isMuted()); } catch (e) { console.warn(e); }
-                } else {
-                    console.warn('[Nav] AudioManager not defined');
+                    AudioManager.toggleMute();
+                    try { AudioManager.updateSoundIcon(!AudioManager.isMuted()); } catch (e) {}
                 }
             });
         }
-        
+
         if (_resetBtn) {
             _resetBtn.addEventListener('click', function(e) { e.preventDefault(); goHome(); });
         }
-        
+
         _isInitialized = true;
         return true;
     }
-    
+
+    // ========== ФЛАГИ ПОДАВЛЕНИЯ ОШИБОК ВИДЕО ==========
+    function suppressVideoErrors() {
+        try {
+            var activeVideos = document.querySelectorAll('#sceneContent video');
+            activeVideos.forEach(function(v) {
+                try { v.dataset.isIntentionalReset = '1'; } catch (e) {}
+            });
+            window.__sequenceVideoTransition = true;
+            window.__careSequenceVideoTransition = true;
+        } catch (e) {}
+    }
+
+    function resetSuppressFlags() {
+        window.__sequenceVideoTransition = false;
+        window.__careSequenceVideoTransition = false;
+    }
+
+    // ========== ПЕРЕХОДЫ ==========
     function goTo(rendererFn, sceneIndex, seriesId) {
         if (!_isInitialized || typeof rendererFn !== 'function') return;
-        
+
         if (_isTransitioning) {
             _transitionQueue.push({ renderer: rendererFn, index: sceneIndex, series: seriesId });
             return;
         }
-        
+
         _isTransitioning = true;
-        
+
         if (_currentRenderer !== null && typeof sceneIndex === 'number') {
             GameState.pushHistory(sceneIndex);
         }
-        
-        _profileRenderer = null;
+
         if (seriesId) GameState.setCurrentSeries(seriesId);
         if (typeof sceneIndex === 'number') Progress.update(sceneIndex);
-        
+
         clearCurrentScene();
         try {
             rendererFn();
@@ -89,18 +113,18 @@ const Navigation = (function() {
             console.error('[Nav] Ошибка:', e);
         }
         updateButtons();
-        
+
         _isTransitioning = false;
         processQueue();
     }
-    
+
     function goToScene(sceneId) {
         var scene = GameConfig.getScene(sceneId);
         if (!scene) return;
         var renderer = getRendererBySceneType(scene.type);
         if (renderer) goTo(renderer, sceneId, scene.seriesId);
     }
-    
+
     function getRendererBySceneType(type) {
         switch(type) {
             case 'name-screen': return NameScreen.render;
@@ -118,7 +142,7 @@ const Navigation = (function() {
             default: return null;
         }
     }
-    
+
     function renderVideoSceneManualWithNext(videoKey) {
         var scene = GameConfig.getScene(GameState.getCurrentScene());
         var nextId = scene ? scene.nextScene : null;
@@ -126,11 +150,10 @@ const Navigation = (function() {
             if (nextId !== null) goToScene(nextId);
         }, GameState.getCurrentScene(), true);
     }
-    
+
     function goBack() {
         if (!_isInitialized || _isTransitioning) return;
 
-        // Перед сменой сцены гасим видео, чтобы не сработал обработчик 'error'
         suppressVideoErrors();
 
         if (window._careSequence && window._careIndex !== undefined) {
@@ -169,16 +192,6 @@ const Navigation = (function() {
             }
         }
 
-        if (_profileRenderer) {
-            _isTransitioning = true;
-            clearCurrentScene();
-            _profileRenderer();
-            _profileRenderer = null;
-            updateButtons();
-            _isTransitioning = false;
-            return;
-        }
-
         if (!GameState.canGoBack()) return;
         var prev = GameState.popHistory();
         if (!prev) return;
@@ -192,30 +205,10 @@ const Navigation = (function() {
         updateButtons();
         _isTransitioning = false;
     }
-    
-    // Помечаем все активные видео как "намеренно закрытые",
-    // чтобы их обработчики 'error' не показывали экран "Видео не загрузилось"
-    function suppressVideoErrors() {
-        try {
-            var activeVideos = document.querySelectorAll('#sceneContent video');
-            activeVideos.forEach(function(v) {
-                try { v.dataset.isIntentionalReset = '1'; } catch (e) {}
-            });
-            window.__sequenceVideoTransition = true;
-            window.__careSequenceVideoTransition = true;
-        } catch (e) {}
-    }
-
-    // Снимаем флаги после смены сцены, чтобы они не влияли на будущее
-    function resetSuppressFlags() {
-        window.__sequenceVideoTransition = false;
-        window.__careSequenceVideoTransition = false;
-    }
 
     function goHome() {
         if (_isTransitioning) return;
 
-        // Гасим возможные ложные срабатывания 'error' у видео
         suppressVideoErrors();
 
         window._friendshipSequence = null;
@@ -224,7 +217,6 @@ const Navigation = (function() {
         window._careIndex = 0;
         closeAllPopups();
         if (typeof AudioManager !== 'undefined') AudioManager.stopAll();
-        _profileRenderer = null;
         _currentRenderer = null;
         GameState.setCurrentSeries(null);
         _isTransitioning = true;
@@ -234,13 +226,21 @@ const Navigation = (function() {
         updateButtons();
         _isTransitioning = false;
     }
-    
+
+    // ========== ПРОФИЛЬ ==========
     function showProfile() {
         if (_isTransitioning) return;
+
+        // Профиль можно открывать ТОЛЬКО на экране серий.
+        // Если сейчас идёт серия / ролик / игра — не открываем.
+        if (GameState.getCurrentSeries() || window._friendshipSequence || window._careSequence) {
+            return;
+        }
+
+        // Запоминаем, что вернуть при закрытии профиля
+        var previousRenderer = _currentRenderer;
+
         _isTransitioning = true;
-        closeAllPopups();
-        _profileRenderer = _currentRenderer;
-        clearCurrentScene();
 
         var name = GameState.getChildName() || 'Гость';
         var friendshipDone = GameState.isSeriesCompleted('friendship');
@@ -250,38 +250,57 @@ const Navigation = (function() {
         var totalKeys = (friendshipDone ? 1 : 0) + (careDone ? 1 : 0) + (teamworkDone ? 1 : 0);
 
         var medalsHtml = '';
-            medalsHtml += '<div class="medal-item' + (friendshipDone ? ' earned' : '') + '">' +
-                '<div class="medal-icon" data-key="friendship"><img src="media/images/key-friendship.png" alt=""></div>' +
-                '<div class="medal-name">Сила дружбы</div></div>';
+        medalsHtml += '<div class="medal-item' + (friendshipDone ? ' earned' : '') + '">' +
+            '<div class="medal-icon" data-key="friendship"><img src="media/images/key-friendship.png" alt=""></div>' +
+            '<div class="medal-name">Сила дружбы</div></div>';
+        medalsHtml += '<div class="medal-item' + (careDone ? ' earned' : '') + '">' +
+            '<div class="medal-icon" data-key="care"><img src="media/images/key-care.png" alt=""></div>' +
+            '<div class="medal-name">Сила заботы</div></div>';
+        medalsHtml += '<div class="medal-item' + (teamworkDone ? ' earned' : '') + '">' +
+            '<div class="medal-icon" data-key="teamwork"><img src="media/images/key-team.png" alt=""></div>' +
+            '<div class="medal-name">Сила команды</div></div>';
 
-            medalsHtml += '<div class="medal-item' + (careDone ? ' earned' : '') + '">' +
-                '<div class="medal-icon" data-key="care"><img src="media/images/key-care.png" alt=""></div>' +
-                '<div class="medal-name">Сила заботы</div></div>';
+        // Текущий аватар
+        var savedAvatar = localStorage.getItem('avatar');
+        if (!savedAvatar || AVATARS.indexOf(savedAvatar) === -1) {
+            savedAvatar = DEFAULT_AVATAR;
+        }
 
-            medalsHtml += '<div class="medal-item' + (teamworkDone ? ' earned' : '') + '">' +
-                '<div class="medal-icon" data-key="teamwork"><img src="media/images/key-team.png" alt=""></div>' +
-                '<div class="medal-name">Сила команды</div></div>';
-
-        var savedAvatar = localStorage.getItem('avatar') || 'media/images/kolobok.svg';
+        // Карточки выбора аватара
+        var avatarsHtml = '';
+        AVATARS.forEach(function(path) {
+            var selected = (path === savedAvatar) ? ' selected' : '';
+            avatarsHtml +=
+                '<button class="avatar-choice' + selected + '" data-avatar="' + path + '" type="button">' +
+                    '<img src="' + path + '" alt="">' +
+                '</button>';
+        });
 
         var overlay = document.createElement('div');
         overlay.id = 'profileOverlay';
         overlay.className = 'game-popup-overlay';
-        overlay.innerHTML = '<div class="profile-card">'
-            + '<button class="popup-close-btn profile-close-btn" id="profileCloseBtn">&times;</button>'
-            + '<div class="profile-avatar" id="profileAvatar"><img src="' + savedAvatar + '" alt="Аватар" id="avatarImg"></div>'
-            + '<button class="profile-avatar-btn" id="changeAvatarBtn">Сменить аватар</button>'
-            + '<input type="file" id="avatarInput" accept="image/*" style="display:none;">'
-            + '<div class="profile-name">' + name + '</div>'
-            + '<div class="profile-stars"><span>' + (stars >= 1 ? '★' : '☆') + '</span><span>' + (stars >= 2 ? '★' : '☆') + '</span><span>' + (stars >= 3 ? '★' : '☆') + '</span></div>'
-            + '<div class="profile-keys-count"><img src="media/images/key-icon.png" alt="" style="width:24px;height:24px;"><span>' + totalKeys + ' / 3</span></div>'
-            + '<div class="profile-section-title">Награды</div><div class="medals-grid">' + medalsHtml + '</div>'
-            + '<div class="profile-chest" id="profileChest"><div class="profile-chest-icon">&#128451;</div><div>Сундук с материалами</div></div>'
-            + '<button class="profile-back-btn" id="profileBackBtn">Назад</button>'
-            + '</div>';
+        overlay.innerHTML =
+            '<div class="profile-card">' +
+                '<button class="popup-close-btn profile-close-btn" id="profileCloseBtn" type="button">&times;</button>' +
+                '<div class="profile-avatar" id="profileAvatar"><img src="' + savedAvatar + '" alt="Аватар" id="avatarImg"></div>' +
+                '<div class="profile-section-title">Выбери персонажа</div>' +
+                '<div class="avatars-grid" id="avatarsGrid">' + avatarsHtml + '</div>' +
+                '<div class="profile-name">' + name + '</div>' +
+                '<div class="profile-stars">' +
+                    '<span>' + (stars >= 1 ? '★' : '☆') + '</span>' +
+                    '<span>' + (stars >= 2 ? '★' : '☆') + '</span>' +
+                    '<span>' + (stars >= 3 ? '★' : '☆') + '</span>' +
+                '</div>' +
+                '<div class="profile-keys-count"><img src="media/images/key-icon.png" alt="" style="width:24px;height:24px;"><span>' + totalKeys + ' / 3</span></div>' +
+                '<div class="profile-section-title">Награды</div>' +
+                '<div class="medals-grid">' + medalsHtml + '</div>' +
+                '<div class="profile-chest" id="profileChest"><div class="profile-chest-icon">&#128451;</div><div>Сундук с материалами</div></div>' +
+                '<button class="profile-back-btn" id="profileBackBtn" type="button">Назад</button>' +
+            '</div>';
 
         document.body.appendChild(overlay);
 
+        // Фоллбэк, если картинка медали не загрузилась
         (function() {
             var medalIcons = overlay.querySelectorAll('.medal-icon');
             medalIcons.forEach(function(el) {
@@ -298,38 +317,51 @@ const Navigation = (function() {
             });
         })();
 
+        // Клик по фону — закрыть
         overlay.addEventListener('click', function(e) {
             if (e.target === overlay) closeProfile();
         });
 
-        var changeBtn = overlay.querySelector('#changeAvatarBtn');
-        var avatarInput = overlay.querySelector('#avatarInput');
+        // Обработчики выбора аватара
         var avatarImg = overlay.querySelector('#avatarImg');
-
-        if (changeBtn && avatarInput) changeBtn.addEventListener('click', function() { avatarInput.click(); });
-        if (avatarInput) {
-            avatarInput.addEventListener('change', function(e) {
-                var file = e.target.files[0];
-                if (file) {
-                    var reader = new FileReader();
-                    reader.onload = function(event) {
-                        var imageData = event.target.result;
-                        localStorage.setItem('avatar', imageData);
-                        if (avatarImg) avatarImg.src = imageData;
-                    };
-                    reader.readAsDataURL(file);
-                }
+        var avatarButtons = overlay.querySelectorAll('.avatar-choice');
+        avatarButtons.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var chosen = btn.getAttribute('data-avatar');
+                if (!chosen) return;
+                // Сохраняем
+                try { localStorage.setItem('avatar', chosen); } catch (e) {}
+                // Обновляем большое превью
+                if (avatarImg) avatarImg.src = chosen;
+                // Обновляем подсветку
+                avatarButtons.forEach(function(b) { b.classList.remove('selected'); });
+                btn.classList.add('selected');
             });
-        }
+        });
 
+        // Закрытие профиля
         function closeProfile() {
-            if (overlay && overlay.parentElement) overlay.parentElement.removeChild(overlay);
-            if (_profileRenderer) {
-                clearCurrentScene();
-                _profileRenderer();
-                _profileRenderer = null;
-                updateButtons();
+            try {
+                if (overlay && overlay.parentElement) {
+                    overlay.parentElement.removeChild(overlay);
+                }
+            } catch (e) {
+                console.warn('[Nav] Не удалось закрыть профиль:', e);
             }
+
+            // Возвращаем предыдущую сцену
+            try {
+                if (typeof previousRenderer === 'function') {
+                    clearCurrentScene();
+                    previousRenderer();
+                }
+            } catch (e) {
+                console.warn('[Nav] Не удалось вернуть сцену:', e);
+                // Если что-то пошло не так — на всякий случай на экран серий
+                try { SeriesSelect.render(); } catch (e2) {}
+            }
+
+            updateButtons();
             _isTransitioning = false;
         }
 
@@ -339,9 +371,11 @@ const Navigation = (function() {
 
         if (backBtnEl) backBtnEl.addEventListener('click', closeProfile);
         if (closeBtnEl) closeBtnEl.addEventListener('click', closeProfile);
+
+        // Сундук с материалами
         if (chestEl) chestEl.addEventListener('click', function() {
             var materials = [];
-            try { materials = (typeof GameState !== 'undefined') ? GameState.getMaterials() : []; } catch(e) { materials = []; }
+            try { materials = (typeof GameState !== 'undefined') ? GameState.getMaterials() : []; } catch (e) { materials = []; }
 
             var overlay2 = document.createElement('div');
             overlay2.className = 'game-popup-overlay';
@@ -370,11 +404,11 @@ const Navigation = (function() {
                     row.style.background = '#FFF8F0';
                     row.style.borderRadius = '10px';
 
-                    var name = document.createElement('div');
-                    name.textContent = m;
-                    name.style.color = '#4A3724';
-                    name.style.fontWeight = '600';
-                    name.style.fontSize = '0.9rem';
+                    var nameEl = document.createElement('div');
+                    nameEl.textContent = m;
+                    nameEl.style.color = '#4A3724';
+                    nameEl.style.fontWeight = '600';
+                    nameEl.style.fontSize = '0.9rem';
 
                     var btn = document.createElement('button');
                     btn.textContent = 'Скачать';
@@ -388,7 +422,7 @@ const Navigation = (function() {
                         window.open('media/bonus/' + m, '_blank');
                     });
 
-                    row.appendChild(name);
+                    row.appendChild(nameEl);
                     row.appendChild(btn);
                     list.appendChild(row);
                 });
@@ -399,7 +433,9 @@ const Navigation = (function() {
             closeBtn2.className = 'profile-back-btn';
             closeBtn2.textContent = 'Закрыть';
             closeBtn2.style.marginTop = '14px';
-            closeBtn2.addEventListener('click', function() { if (overlay2.parentElement) overlay2.parentElement.removeChild(overlay2); });
+            closeBtn2.addEventListener('click', function() {
+                if (overlay2.parentElement) overlay2.parentElement.removeChild(overlay2);
+            });
             popup2.appendChild(closeBtn2);
 
             overlay2.appendChild(popup2);
@@ -407,10 +443,9 @@ const Navigation = (function() {
             requestAnimationFrame(function() { overlay2.style.opacity = '1'; });
         });
 
-        if (_backBtn) _backBtn.style.display = 'flex';
-        if (_profileBtn) _profileBtn.style.display = 'none';
+        updateButtons();
     }
-    
+
     function clearCurrentScene() {
         if (!_sceneContent) return;
         var videos = _sceneContent.querySelectorAll('video');
@@ -418,26 +453,50 @@ const Navigation = (function() {
             try { v.dataset.isIntentionalReset = '1'; } catch (e) {}
             try { v.pause(); } catch (e) {}
             try { v.removeAttribute('src'); } catch (e) {}
-            try { v.load(); } catch(e){}
+            try { v.load(); } catch (e) {}
         });
         _sceneContent.innerHTML = '';
         if (typeof AudioManager !== 'undefined' && AudioManager.isPlaying()) AudioManager.stopAll();
     }
-    
+
     function processQueue() {
         if (_transitionQueue.length === 0) return;
         var next = _transitionQueue.shift();
         setTimeout(function() { goTo(next.renderer, next.index, next.series); }, 50);
     }
-    
-    function updateButtons() {
-        if (_backBtn) _backBtn.style.display = (GameState.canGoBack() || _profileRenderer || (window._friendshipSequence && window._friendshipIndex !== undefined) || (window._careSequence && window._careIndex !== undefined)) ? 'flex' : 'none';
-        var onMain = !GameState.getCurrentSeries() && !window._friendshipSequence && !window._careSequence;
-        if (_homeBtn) _homeBtn.style.display = onMain ? 'none' : 'flex';
-        if (_soundBtn) _soundBtn.style.display = 'flex';
-        if (_resetBtn) _resetBtn.style.display = onMain ? 'none' : 'flex';
-        if (_profileBtn) _profileBtn.style.display = onMain && GameState.hasChildName() ? 'flex' : 'none';
 
+    // ========== ВИДИМОСТЬ КНОПОК ==========
+    function updateButtons() {
+        var inSeries = !!GameState.getCurrentSeries() || !!window._friendshipSequence || !!window._careSequence;
+        var onMain = !inSeries;                 // экран серий или экран имени
+        var inProfile = !!document.getElementById('profileOverlay');
+
+        // Назад: показываем, если есть куда назад и мы не на главной
+        if (_backBtn) {
+            var canBack = (GameState.canGoBack() || inSeries) && !inProfile;
+            _backBtn.style.display = canBack ? 'flex' : 'none';
+        }
+
+        // Домой: показываем только вне главного экрана
+        if (_homeBtn) {
+            _homeBtn.style.display = (inSeries && !inProfile) ? 'flex' : 'none';
+        }
+
+        // Профиль: только на главном экране (выбор серий), есть имя, не в серии, не в профиле
+        if (_profileBtn) {
+            var showProfileBtn = onMain && GameState.hasChildName() && !inProfile;
+            _profileBtn.style.display = showProfileBtn ? 'flex' : 'none';
+        }
+
+        // Звук: всегда
+        if (_soundBtn) _soundBtn.style.display = 'flex';
+
+        // Reset (Пройти заново): только на главном экране, не в профиле
+        if (_resetBtn) {
+            _resetBtn.style.display = (onMain && GameState.hasChildName() && !inProfile) ? 'flex' : 'none';
+        }
+
+        // Бейдж с ключиками
         var keysBadge = document.getElementById('headerKeysBadge');
         var keysCount = document.getElementById('headerKeysCount');
         if (keysBadge && keysCount) {
@@ -445,14 +504,15 @@ const Navigation = (function() {
             var careDone = GameState.isSeriesCompleted('care');
             var teamworkDone = GameState.isSeriesCompleted('teamwork');
             var totalKeys = (friendshipDone ? 1 : 0) + (careDone ? 1 : 0) + (teamworkDone ? 1 : 0);
-            if (onMain && GameState.hasChildName() && totalKeys > 0) {
-                keysBadge.style.display = 'flex'; keysCount.textContent = totalKeys;
+            if (onMain && GameState.hasChildName() && totalKeys > 0 && !inProfile) {
+                keysBadge.style.display = 'flex';
+                keysCount.textContent = totalKeys;
             } else {
                 keysBadge.style.display = 'none';
             }
         }
     }
-    
+
     function closeAllPopups() {
         var popups = document.querySelectorAll('#gamePopupOverlay, #testPopupOverlay, .game-popup-overlay');
         popups.forEach(function(p) { p.remove(); });
