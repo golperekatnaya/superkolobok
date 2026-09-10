@@ -1,63 +1,63 @@
 // ========== Service Worker "Суперколобок" ==========
 
-const CACHE_NAME = 'superkolobok-v20260909-2';  // cache-busting bump for GitHub Pages
-const DYNAMIC_CACHE = 'superkolobok-dynamic-v20260909-2';
+const CACHE_NAME = 'superkolobok-v20260910-1';
+const DYNAMIC_CACHE = 'superkolobok-dynamic-v20260910-1';
 
-// Файлы, которые кешируются сразу при установке
+// Пути ОТНОСИТЕЛЬНЫЕ — работают в подпапке /superkolobok/ на GitHub Pages
 const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/css/styles.css',
-  '/js/app.js',
-  '/js/config.js',
-  '/js/state.js',
-  '/js/progress.js',
-  '/js/audio.js',
-  '/js/navigation.js',
-  '/js/ui/components.js',
-  '/js/ui/popup.js',
-  '/js/ui/pwa.js',
-  '/js/scenes/name-screen.js',
-  '/js/scenes/series-select.js',
-  '/js/scenes/video-scene.js',
-  '/js/scenes/hint-screen.js',
-  '/js/scenes/game1.js',
-  '/js/scenes/game2.js',
-  '/js/scenes/game3.js',
-  '/js/scenes/test.js',
-  '/js/scenes/finale.js',
-  '/data/scenes.json',
-  '/media/images/web-app-manifest-192x192.png',
-  '/media/images/web-app-manifest-512x512.png',
-  '/media/images/favicon.svg',
-  '/media/images/favicon-96x96.png',
-  '/media/images/favicon.ico',
-  '/media/images/apple-touch-icon.png',
-  '/media/images/firefly.png',
-  '/media/images/kolobok.svg',
-  '/media/images/play-btn.svg',
-  '/media/images/kolobok-progress.png',
-  '/media/images/key-icon.png'
+  './',
+  './index.html',
+  './manifest.json',
+  './css/styles.css',
+  './js/app.js',
+  './js/config.js',
+  './js/state.js',
+  './js/progress.js',
+  './js/audio.js',
+  './js/navigation.js',
+  './js/ui/components.js',
+  './js/ui/popup.js',
+  './js/ui/pwa.js',
+  './js/scenes/name-screen.js',
+  './js/scenes/series-select.js',
+  './js/scenes/video-scene.js',
+  './js/scenes/hint-screen.js',
+  './js/scenes/game1.js',
+  './js/scenes/game2.js',
+  './js/scenes/game3.js',
+  './js/scenes/test.js',
+  './js/scenes/finale.js',
+  './data/scenes.json',
+  './media/images/web-app-manifest-192x192.png',
+  './media/images/web-app-manifest-512x512.png',
+  './media/images/favicon.svg',
+  './media/images/favicon-96x96.png',
+  './media/images/favicon.ico',
+  './media/images/apple-touch-icon.png',
+  './media/images/firefly.png',
+  './media/images/kolobok.svg',
+  './media/images/play-btn.svg',
+  './media/images/kolobok-progress.png',
+  './media/images/key-icon.png'
 ];
 
 // ========== УСТАНОВКА ==========
-self.addEventListener('install', function(event) {
+self.addEventListener('install', function (event) {
   console.log('[SW] Установка...');
-  
+
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(function(cache) {
+      .then(function (cache) {
         console.log('[SW] Кеширование статических файлов...');
         return Promise.allSettled(
-          STATIC_ASSETS.map(function(url) {
-            return cache.add(url).catch(function(err) {
+          STATIC_ASSETS.map(function (url) {
+            return cache.add(url).catch(function (err) {
               console.warn('[SW] Не удалось закешировать:', url, err);
             });
           })
         );
       })
-      .then(function() {
+      .then(function () {
         console.log('[SW] Статические файлы закешированы');
         return self.skipWaiting();
       })
@@ -65,14 +65,14 @@ self.addEventListener('install', function(event) {
 });
 
 // ========== АКТИВАЦИЯ ==========
-self.addEventListener('activate', function(event) {
+self.addEventListener('activate', function (event) {
   console.log('[SW] Активация...');
-  
+
   event.waitUntil(
     caches.keys()
-      .then(function(keys) {
+      .then(function (keys) {
         return Promise.all(
-          keys.map(function(key) {
+          keys.map(function (key) {
             if (key !== CACHE_NAME && key !== DYNAMIC_CACHE) {
               console.log('[SW] Удаление старого кеша:', key);
               return caches.delete(key);
@@ -80,7 +80,7 @@ self.addEventListener('activate', function(event) {
           })
         );
       })
-      .then(function() {
+      .then(function () {
         console.log('[SW] Активирован');
         return self.clients.claim();
       })
@@ -88,29 +88,39 @@ self.addEventListener('activate', function(event) {
 });
 
 // ========== ПЕРЕХВАТ ЗАПРОСОВ ==========
-self.addEventListener('fetch', function(event) {
-  const { request } = event;
+self.addEventListener('fetch', function (event) {
+  const request = event.request;
   const url = new URL(request.url);
-  
-  if (!url.origin.includes(self.location.origin)) {
+
+  // Чужие домены не трогаем
+  if (url.origin !== self.location.origin) {
     return;
   }
-  
+
+  // Сам sw.js не перехватываем — иначе браузер не сможет его обновить
+  if (url.pathname.endsWith('/sw.js')) {
+    return;
+  }
+
+  // ВИДЕО и АУДИО — пропускаем напрямую в сеть, без кеша.
+  // Это лечит ошибку "Partial response (status code 206) is unsupported".
   if (url.pathname.includes('/media/videos/') || url.pathname.includes('/media/audio/')) {
-    event.respondWith(mediaStrategy(request));
-    return;
+    return; // пусть браузер сам решает, ничего не перехватываем
   }
-  
+
+  // Картинки — сначала кеш
   if (url.pathname.includes('/media/images/')) {
     event.respondWith(cacheFirstStrategy(request));
     return;
   }
-  
+
+  // Данные — сначала сеть
   if (url.pathname.includes('/data/')) {
     event.respondWith(networkFirstStrategy(request));
     return;
   }
-  
+
+  // Всё остальное (html, js, css) — сначала сеть
   event.respondWith(networkFirstStrategy(request));
 });
 
@@ -118,19 +128,24 @@ self.addEventListener('fetch', function(event) {
 
 function cacheFirstStrategy(request) {
   return caches.match(request)
-    .then(function(cachedResponse) {
+    .then(function (cachedResponse) {
       if (cachedResponse) {
         return cachedResponse;
       }
       return fetch(request)
-        .then(function(response) {
-          return caches.open(DYNAMIC_CACHE)
-            .then(function(cache) {
-              cache.put(request, response.clone());
-              return response;
-            });
+        .then(function (response) {
+          // Кешируем только полноценные ответы 200
+          if (response && response.status === 200) {
+            const cloned = response.clone();
+            caches.open(DYNAMIC_CACHE)
+              .then(function (cache) {
+                return cache.put(request, cloned);
+              })
+              .catch(function () { /* игнорируем */ });
+          }
+          return response;
         })
-        .catch(function() {
+        .catch(function () {
           if (request.destination === 'image') {
             return new Response(
               '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect fill="#FFFCF5" width="100" height="100"/></svg>',
@@ -144,37 +159,40 @@ function cacheFirstStrategy(request) {
 
 function networkFirstStrategy(request) {
   const timeout = 3000;
-  
-  return new Promise(function(resolve) {
+
+  return new Promise(function (resolve) {
     let networkFailed = false;
-    
-    const timer = setTimeout(function() {
+
+    const timer = setTimeout(function () {
       networkFailed = true;
-      caches.match(request).then(function(cached) {
+      caches.match(request).then(function (cached) {
         if (cached) resolve(cached);
       });
     }, timeout);
-    
+
     fetch(request)
-      .then(function(response) {
+      .then(function (response) {
         clearTimeout(timer);
-        
-        if (response.ok) {
+
+        // Кешируем ТОЛЬКО полные успешные ответы (200), не 206 и не 304
+        if (response && response.status === 200) {
           const cloned = response.clone();
-          caches.open(DYNAMIC_CACHE).then(function(cache) {
-            cache.put(request, cloned);
-          });
+          caches.open(DYNAMIC_CACHE)
+            .then(function (cache) {
+              return cache.put(request, cloned);
+            })
+            .catch(function () { /* игнорируем */ });
         }
-        
+
         if (!networkFailed) resolve(response);
       })
-      .catch(function() {
+      .catch(function () {
         clearTimeout(timer);
-        return caches.match(request).then(function(cached) {
+        return caches.match(request).then(function (cached) {
           if (cached) {
             resolve(cached);
           } else if (request.destination === 'document') {
-            return caches.match('/index.html').then(function(homeCache) {
+            return caches.match('./index.html').then(function (homeCache) {
               resolve(homeCache || new Response('Нет соединения'));
             });
           }
@@ -183,36 +201,19 @@ function networkFirstStrategy(request) {
   });
 }
 
-function mediaStrategy(request) {
-  return fetch(request)
-    .then(function(response) {
-      const contentLength = response.headers.get('content-length');
-      if (contentLength && parseInt(contentLength) < 5 * 1024 * 1024) {
-        const cloned = response.clone();
-        caches.open(DYNAMIC_CACHE).then(function(cache) {
-          cache.put(request, cloned);
-        });
-      }
-      return response;
-    })
-    .catch(function() {
-      return caches.match(request);
-    });
-}
-
 // ========== СООБЩЕНИЯ ==========
-self.addEventListener('message', function(event) {
+self.addEventListener('message', function (event) {
   if (event.data === 'skipWaiting') {
     self.skipWaiting();
   }
-  
+
   if (event.data === 'clearCache') {
     caches.delete(CACHE_NAME);
     caches.delete(DYNAMIC_CACHE);
   }
 });
 
-self.addEventListener('sync', function(event) {
+self.addEventListener('sync', function (event) {
   if (event.tag === 'sync-progress') {
     event.waitUntil(Promise.resolve());
   }
