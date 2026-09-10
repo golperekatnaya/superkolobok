@@ -43,7 +43,7 @@ const Navigation = (function() {
         if (_soundBtn) {
             _soundBtn.addEventListener('click', function() {
                 var now = Date.now();
-                if (now - _lastSoundToggleTs < 400) return; // debounce double events
+                if (now - _lastSoundToggleTs < 400) return;
                 _lastSoundToggleTs = now;
                 if (typeof AudioManager !== 'undefined') {
                     var newMuted = AudioManager.toggleMute();
@@ -130,6 +130,9 @@ const Navigation = (function() {
     function goBack() {
         if (!_isInitialized || _isTransitioning) return;
 
+        // Перед сменой сцены гасим видео, чтобы не сработал обработчик 'error'
+        suppressVideoErrors();
+
         if (window._careSequence && window._careIndex !== undefined) {
             if (window._careIndex > 0) {
                 var prevCareIndex = window._careIndex - 1;
@@ -190,8 +193,31 @@ const Navigation = (function() {
         _isTransitioning = false;
     }
     
+    // Помечаем все активные видео как "намеренно закрытые",
+    // чтобы их обработчики 'error' не показывали экран "Видео не загрузилось"
+    function suppressVideoErrors() {
+        try {
+            var activeVideos = document.querySelectorAll('#sceneContent video');
+            activeVideos.forEach(function(v) {
+                try { v.dataset.isIntentionalReset = '1'; } catch (e) {}
+            });
+            window.__sequenceVideoTransition = true;
+            window.__careSequenceVideoTransition = true;
+        } catch (e) {}
+    }
+
+    // Снимаем флаги после смены сцены, чтобы они не влияли на будущее
+    function resetSuppressFlags() {
+        window.__sequenceVideoTransition = false;
+        window.__careSequenceVideoTransition = false;
+    }
+
     function goHome() {
         if (_isTransitioning) return;
+
+        // Гасим возможные ложные срабатывания 'error' у видео
+        suppressVideoErrors();
+
         window._friendshipSequence = null;
         window._friendshipIndex = 0;
         window._careSequence = null;
@@ -203,6 +229,7 @@ const Navigation = (function() {
         GameState.setCurrentSeries(null);
         _isTransitioning = true;
         clearCurrentScene();
+        resetSuppressFlags();
         SeriesSelect.render();
         updateButtons();
         _isTransitioning = false;
@@ -237,7 +264,6 @@ const Navigation = (function() {
 
         var savedAvatar = localStorage.getItem('avatar') || 'media/images/kolobok.svg';
 
-        // Создаём overlay
         var overlay = document.createElement('div');
         overlay.id = 'profileOverlay';
         overlay.className = 'game-popup-overlay';
@@ -256,7 +282,6 @@ const Navigation = (function() {
 
         document.body.appendChild(overlay);
 
-        // fallback handlers for medal icons if images fail to load
         (function() {
             var medalIcons = overlay.querySelectorAll('.medal-icon');
             medalIcons.forEach(function(el) {
@@ -273,7 +298,6 @@ const Navigation = (function() {
             });
         })();
 
-        // Закрытие при клике вне карточки
         overlay.addEventListener('click', function(e) {
             if (e.target === overlay) closeProfile();
         });
@@ -316,7 +340,6 @@ const Navigation = (function() {
         if (backBtnEl) backBtnEl.addEventListener('click', closeProfile);
         if (closeBtnEl) closeBtnEl.addEventListener('click', closeProfile);
         if (chestEl) chestEl.addEventListener('click', function() {
-            // Показываем список материалов из GameState
             var materials = [];
             try { materials = (typeof GameState !== 'undefined') ? GameState.getMaterials() : []; } catch(e) { materials = []; }
 
@@ -384,7 +407,6 @@ const Navigation = (function() {
             requestAnimationFrame(function() { overlay2.style.opacity = '1'; });
         });
 
-        // Показываем кнопку назад/скрываем профиль кнопку
         if (_backBtn) _backBtn.style.display = 'flex';
         if (_profileBtn) _profileBtn.style.display = 'none';
     }
@@ -392,7 +414,12 @@ const Navigation = (function() {
     function clearCurrentScene() {
         if (!_sceneContent) return;
         var videos = _sceneContent.querySelectorAll('video');
-        videos.forEach(function(v) { v.pause(); v.src = ''; try { v.load(); } catch(e){} });
+        videos.forEach(function(v) {
+            try { v.dataset.isIntentionalReset = '1'; } catch (e) {}
+            try { v.pause(); } catch (e) {}
+            try { v.removeAttribute('src'); } catch (e) {}
+            try { v.load(); } catch(e){}
+        });
         _sceneContent.innerHTML = '';
         if (typeof AudioManager !== 'undefined' && AudioManager.isPlaying()) AudioManager.stopAll();
     }
