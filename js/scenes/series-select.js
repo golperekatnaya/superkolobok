@@ -74,11 +74,14 @@ const SeriesSelect = (function() {
         GameState.setCurrentSeries('friendship');
         GameState.pushHistory(1);
 
+        // buttonPos — куда положить кнопку поверх ролика.
+        // top и left — проценты от верха и левого края видео.
+        // Центр — примерно 50% / 50%.
         var sequence = [
-            { video: 'series-1', button: 'lamp', showBeforeEnd: 1 },
-            { video: 'series-2', button: 'nota-btn', showBeforeEnd: 4 },
-            { video: 'series-3', button: 'play-btn', showBeforeEnd: 3 },
-            { video: 'series-4', button: null, showBeforeEnd: 0 }
+            { video: 'series-1', button: 'lamp',     showBeforeEnd: 1, buttonPos: { top: '82%', left: '50%' } },
+            { video: 'series-2', button: 'nota-btn', showBeforeEnd: 4, buttonPos: { top: '68%', left: '83%' } },
+            { video: 'series-3', button: 'play-btn', showBeforeEnd: 3, buttonPos: { top: '72%', left: '83%' } },
+            { video: 'series-4', button: null,       showBeforeEnd: 0 }
         ];
 
         window._friendshipSequence = sequence;
@@ -100,6 +103,7 @@ const SeriesSelect = (function() {
         var videoKey = step.video;
         var buttonKey = step.button;
         var showBeforeEnd = typeof step.showBeforeEnd === 'number' ? step.showBeforeEnd : 1;
+        var buttonPos = step.buttonPos || null;
 
         var c = document.getElementById('sceneContent');
         if (!c) return;
@@ -110,6 +114,15 @@ const SeriesSelect = (function() {
             console.error('[SeriesSelect] Видео не найдено:', videoKey);
             c.innerHTML = '<p style="color:#fff">Видео не найдено: ' + videoKey + '</p>';
             return;
+        }
+
+        // Баннер «Здравствуй, ИМЯ» — только на первом ролике серии
+        var bannerHtml = '';
+        if (index === 0) {
+            var name = GameState.getChildName();
+            if (name) {
+                bannerHtml = '<div class="name-banner">Здравствуй, ' + name + '!</div>';
+            }
         }
 
         var wrapper = document.createElement('div');
@@ -135,12 +148,15 @@ const SeriesSelect = (function() {
         overlay.style.left = '0';
         overlay.style.right = '0';
         overlay.style.bottom = '0';
-        overlay.style.display = 'flex';
-        overlay.style.justifyContent = 'center';
-        overlay.style.alignItems = 'center';
+        overlay.style.display = 'block';       // был flex, теперь просто контейнер
         overlay.style.zIndex = '10';
         overlay.style.pointerEvents = 'none';
 
+        if (bannerHtml) {
+            var banner = document.createElement('div');
+            banner.innerHTML = bannerHtml;
+            wrapper.appendChild(banner.firstChild);
+        }
         wrapper.appendChild(video);
         wrapper.appendChild(overlay);
         c.appendChild(wrapper);
@@ -159,14 +175,26 @@ const SeriesSelect = (function() {
             });
             btn.style.display = 'none';
             btn.style.pointerEvents = 'auto';
-            btn.style.position = 'relative';
-            btn.style.left = 'auto';
-            btn.style.top = 'auto';
-            btn.style.transform = 'none';
             btn.style.width = '62px';
             btn.style.height = '62px';
             btn.style.zIndex = '20';
             btn.style.margin = '0';
+
+            // Позиционируем кнопку по координатам из buttonPos
+            if (buttonPos) {
+                btn.style.position = 'absolute';
+                btn.style.top = buttonPos.top;
+                btn.style.left = buttonPos.left;
+                // Сдвигаем кнопку так, чтобы её центр совпал с точкой (top, left)
+                btn.style.transform = 'translate(-50%, -50%)';
+            } else {
+                // Фоллбэк: центрируем по старому
+                btn.style.position = 'absolute';
+                btn.style.top = '50%';
+                btn.style.left = '50%';
+                btn.style.transform = 'translate(-50%, -50%)';
+            }
+
             overlay.appendChild(btn);
         }
 
@@ -184,10 +212,6 @@ const SeriesSelect = (function() {
         });
 
         video.addEventListener('error', function() {
-            // Не показываем ошибку, если:
-            // - переход был намеренным (кнопка "Далее", "Домой", "Назад")
-            // - видео уже удалено со страницы
-            // - у видео сброшен src
             if (
                 video.dataset.isIntentionalReset === '1' ||
                 window.__sequenceVideoTransition === true ||
@@ -252,10 +276,11 @@ const SeriesSelect = (function() {
         GameState.setCurrentSeries('care');
         GameState.pushHistory(1);
 
+        // Те же координаты, что и у серии «Сила дружбы»
         var sequence = [
-            { video: 'series2_1', button: 'lamp' },
-            { video: 'series2_2', button: 'nota-btn' },
-            { video: 'series2_3', button: 'footprints-btn' },
+            { video: 'series2_1', button: 'lamp',         buttonPos: { top: '82%', left: '50%' } },
+            { video: 'series2_2', button: 'nota-btn',     buttonPos: { top: '68%', left: '83%' } },
+            { video: 'series2_3', button: 'footprints-btn', buttonPos: { top: '72%', left: '83%' } },
             { video: 'series2_4', button: null }
         ];
 
@@ -277,6 +302,7 @@ const SeriesSelect = (function() {
         var step = sequence[index];
         var videoKey = step.video;
         var buttonKey = step.button;
+        var buttonPos = step.buttonPos || null;
         var c = document.getElementById('sceneContent');
         if (!c) return;
 
@@ -287,6 +313,15 @@ const SeriesSelect = (function() {
             console.error('[SeriesSelect] Видео серии care не найдено:', videoKey);
             c.innerHTML = '<p style="color:#fff">Видео не найдено: ' + videoKey + '</p>';
             return;
+        }
+
+        // Баннер «Здравствуй, ИМЯ» — только на первом ролике серии
+        var bannerHtml = '';
+        if (index === 0) {
+            var name = GameState.getChildName();
+            if (name) {
+                bannerHtml = '<div class="name-banner">Здравствуй, ' + name + '!</div>';
+            }
         }
 
         var wrapper = document.createElement('div');
@@ -311,12 +346,15 @@ const SeriesSelect = (function() {
         overlay.style.left = '0';
         overlay.style.right = '0';
         overlay.style.bottom = '0';
-        overlay.style.display = 'flex';
-        overlay.style.justifyContent = 'center';
-        overlay.style.alignItems = 'center';
+        overlay.style.display = 'block';
         overlay.style.zIndex = '10';
         overlay.style.pointerEvents = 'none';
 
+        if (bannerHtml) {
+            var banner = document.createElement('div');
+            banner.innerHTML = bannerHtml;
+            wrapper.appendChild(banner.firstChild);
+        }
         wrapper.appendChild(video);
         wrapper.appendChild(overlay);
         c.appendChild(wrapper);
@@ -334,13 +372,23 @@ const SeriesSelect = (function() {
             });
             btn.style.display = 'none';
             btn.style.pointerEvents = 'auto';
-            btn.style.position = 'relative';
-            btn.style.left = 'auto';
-            btn.style.top = 'auto';
-            btn.style.transform = 'none';
-            btn.style.width = '60px';
-            btn.style.height = '60px';
+            btn.style.width = '62px';
+            btn.style.height = '62px';
+            btn.style.zIndex = '20';
             btn.style.margin = '0';
+
+            if (buttonPos) {
+                btn.style.position = 'absolute';
+                btn.style.top = buttonPos.top;
+                btn.style.left = buttonPos.left;
+                btn.style.transform = 'translate(-50%, -50%)';
+            } else {
+                btn.style.position = 'absolute';
+                btn.style.top = '50%';
+                btn.style.left = '50%';
+                btn.style.transform = 'translate(-50%, -50%)';
+            }
+
             overlay.appendChild(btn);
         }
 
@@ -416,7 +464,7 @@ const SeriesSelect = (function() {
             startFriendshipSequence();
         },
         _playCareSequenceStep: playCareSequenceStep,
-        _restartCareSequence: function() {
+        _restartCareSeries: function() {
             window._careSequence = null;
             window._careIndex = 0;
             startCare();
