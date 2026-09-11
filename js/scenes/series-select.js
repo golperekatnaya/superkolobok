@@ -67,21 +67,32 @@ const SeriesSelect = (function() {
     }
     
     // ============================================================
-    // ЛОГИКА ДЛЯ СЕРИИ «СИЛА ДРУЖБЫ» (8 РОЛИКОВ)
+    // ЛОГИКА ДЛЯ СЕРИИ «СИЛА ДРУЖБЫ»
     // ============================================================
     
     function startFriendshipSequence() {
         GameState.setCurrentSeries('friendship');
         GameState.pushHistory(1);
 
-        // buttonPos — куда положить кнопку поверх ролика.
-        // top и left — проценты от верха и левого края видео.
-        // Центр — примерно 50% / 50%.
+        // buttonPos — куда положить кнопку поверх ролика (проценты от верха/левого края).
+        // buttonSize — размер кнопки.
+        // interactive — если указано, шаг обрабатывается отдельным модулем.
         var sequence = [
-            { video: 'series-1', button: 'lamp',     showBeforeEnd: 1, buttonPos: { top: '82%', left: '50%' } },
-            { video: 'series-2', button: 'nota-btn', showBeforeEnd: 4, buttonPos: { top: '68%', left: '83%' } },
-            { video: 'series-3', button: 'play-btn', showBeforeEnd: 3, buttonPos: { top: '72%', left: '83%' } },
-            { video: 'series-4', button: null,       showBeforeEnd: 0 }
+            { video: 'series-1', button: 'lamp',
+              showBeforeEnd: 1,
+              buttonPos: { top: '78%', left: '45.2%' }, buttonSize: '52px' },
+
+            { video: 'series-2', button: 'nota-btn',
+              showBeforeEnd: 4,
+              buttonPos: { top: '72.2%', left: '86.1%' }, buttonSize: '52px' },
+
+            { video: 'series-3', button: 'play-btn',
+              showBeforeEnd: 3,
+              buttonPos: { top: '76.2%', left: '86.1%' }, buttonSize: '52px' },
+
+            { video: 'series-4', interactive: 'series4' },
+
+            { video: 'series-5', button: null, showBeforeEnd: 0 }
         ];
 
         window._friendshipSequence = sequence;
@@ -100,10 +111,22 @@ const SeriesSelect = (function() {
         window._friendshipIndex = index;
 
         var step = sequence[index];
+
+        // Если шаг интерактивный — вызываем отдельный модуль
+        if (step.interactive === 'series4' && typeof Series4Interactive !== 'undefined') {
+            UI.clearContainer(document.getElementById('sceneContent'));
+            Series4Interactive.render();
+            if (typeof Navigation !== 'undefined' && Navigation.updateButtons) {
+                Navigation.updateButtons();
+            }
+            return;
+        }
+
         var videoKey = step.video;
         var buttonKey = step.button;
         var showBeforeEnd = typeof step.showBeforeEnd === 'number' ? step.showBeforeEnd : 1;
         var buttonPos = step.buttonPos || null;
+        var buttonSize = step.buttonSize || '52px';
 
         var c = document.getElementById('sceneContent');
         if (!c) return;
@@ -148,7 +171,7 @@ const SeriesSelect = (function() {
         overlay.style.left = '0';
         overlay.style.right = '0';
         overlay.style.bottom = '0';
-        overlay.style.display = 'block';       // был flex, теперь просто контейнер
+        overlay.style.display = 'block';
         overlay.style.zIndex = '10';
         overlay.style.pointerEvents = 'none';
 
@@ -175,20 +198,17 @@ const SeriesSelect = (function() {
             });
             btn.style.display = 'none';
             btn.style.pointerEvents = 'auto';
-            btn.style.width = '62px';
-            btn.style.height = '62px';
+            btn.style.width = buttonSize;
+            btn.style.height = buttonSize;
             btn.style.zIndex = '20';
             btn.style.margin = '0';
 
-            // Позиционируем кнопку по координатам из buttonPos
             if (buttonPos) {
                 btn.style.position = 'absolute';
                 btn.style.top = buttonPos.top;
                 btn.style.left = buttonPos.left;
-                // Сдвигаем кнопку так, чтобы её центр совпал с точкой (top, left)
                 btn.style.transform = 'translate(-50%, -50%)';
             } else {
-                // Фоллбэк: центрируем по старому
                 btn.style.position = 'absolute';
                 btn.style.top = '50%';
                 btn.style.left = '50%';
@@ -238,6 +258,24 @@ const SeriesSelect = (function() {
             Navigation.updateButtons();
         }
     }
+
+    // Запуск series-5 (вызывается из series-4-interactive.js по клику на стрелку)
+    function playSeries5() {
+        var sequence = window._friendshipSequence;
+        if (!sequence) {
+            Navigation.goTo(SeriesSelect.render, 1);
+            return;
+        }
+        var idx = -1;
+        for (var i = 0; i < sequence.length; i++) {
+            if (sequence[i].video === 'series-5') { idx = i; break; }
+        }
+        if (idx === -1) {
+            completeFriendshipSeries();
+            return;
+        }
+        playSequenceStep(sequence, idx);
+    }
     
     function completeFriendshipSeries() {
         GameState.completeSeries('friendship');
@@ -276,11 +314,13 @@ const SeriesSelect = (function() {
         GameState.setCurrentSeries('care');
         GameState.pushHistory(1);
 
-        // Те же координаты, что и у серии «Сила дружбы»
         var sequence = [
-            { video: 'series2_1', button: 'lamp',         buttonPos: { top: '82%', left: '50%' } },
-            { video: 'series2_2', button: 'nota-btn',     buttonPos: { top: '68%', left: '83%' } },
-            { video: 'series2_3', button: 'footprints-btn', buttonPos: { top: '72%', left: '83%' } },
+            { video: 'series2_1', button: 'lamp',
+              buttonPos: { top: '78%', left: '45.2%' }, buttonSize: '52px' },
+            { video: 'series2_2', button: 'nota-btn',
+              buttonPos: { top: '72.2%', left: '86.1%' }, buttonSize: '52px' },
+            { video: 'series2_3', button: 'footprints-btn',
+              buttonPos: { top: '76.2%', left: '86.1%' }, buttonSize: '52px' },
             { video: 'series2_4', button: null }
         ];
 
@@ -303,6 +343,7 @@ const SeriesSelect = (function() {
         var videoKey = step.video;
         var buttonKey = step.button;
         var buttonPos = step.buttonPos || null;
+        var buttonSize = step.buttonSize || '52px';
         var c = document.getElementById('sceneContent');
         if (!c) return;
 
@@ -372,8 +413,8 @@ const SeriesSelect = (function() {
             });
             btn.style.display = 'none';
             btn.style.pointerEvents = 'auto';
-            btn.style.width = '62px';
-            btn.style.height = '62px';
+            btn.style.width = buttonSize;
+            btn.style.height = buttonSize;
             btn.style.zIndex = '20';
             btn.style.margin = '0';
 
@@ -457,6 +498,7 @@ const SeriesSelect = (function() {
     
     return { 
         render: render,
+        _playSeries5: playSeries5,
         _playSequenceStep: playSequenceStep,
         _restartSequence: function() {
             window._friendshipSequence = null;

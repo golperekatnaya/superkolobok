@@ -112,8 +112,9 @@
     <script src="js/ui/components.js?v=20260909-2"></script>
     <script src="js/ui/popup.js?v=20260909-2"></script>
     <script src="js/scenes/name-screen.js?v=20260909-2"></script>
-    <script src="js/scenes/series-select.js?v=20260909-2"></script>
+    <script src="js/scenes/series-select.js?v=20260911-1"></script>
     <script src="js/scenes/video-scene.js?v=20260909-2"></script>
+    <script src="js/scenes/series-4-interactive.js?v=20260911-1"></script>
     <script src="js/scenes/hint-screen.js?v=20260909-2"></script>
     <script src="js/scenes/game1.js?v=20260909-2"></script>
     <script src="js/scenes/game2.js?v=20260909-2"></script>
@@ -145,7 +146,6 @@
                         clearInterval(interval);
                         circle.style.strokeDashoffset = '0';
 
-                        // остановим и очистим видео-загрузчик, чтобы освободить память
                         var loaderVideo = document.getElementById('loaderVideo');
                         if (loaderVideo) {
                             try {
@@ -175,24 +175,18 @@
             }
             
             document.addEventListener('DOMContentLoaded', function() {
-                // Ensure loader video tries to play; if it plays, hide static loader artwork
                 var loaderVideo = document.getElementById('loaderVideo');
                 var kolobokContainer = document.querySelector('.loading-kolobok-container');
                 var loadingTexts = document.querySelectorAll('.loading-text, .loading-subtitle');
                 if (loaderVideo) {
-                    // try to play; browsers require muted autoplay to succeed
                     var playPromise = loaderVideo.play();
                     if (playPromise !== undefined) {
                         playPromise.then(function() {
-                            // video is playing — hide static artwork/text to show the video cleaner
                             if (kolobokContainer) kolobokContainer.style.display = 'none';
                             loadingTexts.forEach(function(t) { t.style.display = 'none'; });
-                            // remove any manual overlay
                             var ov = document.getElementById('loaderPlayOverlay'); if (ov) ov.remove();
-                            // stop the spin animation when video actually plays
                             try { loaderVideo.classList.remove('loader-spin'); } catch(e) {}
                         }).catch(function(e) {
-                            // autoplay failed — show an explicit play overlay so user can start the video
                             console.warn('[Loader] Video autoplay failed:', e && e.message);
                             try {
                                 if (kolobokContainer) kolobokContainer.style.display = 'none';
@@ -231,19 +225,15 @@
                                 } else {
                                     document.body.appendChild(overlay);
                                 }
-                                // keep the spin for a short time even if autoplay failed
                                 setTimeout(function() { try { loaderVideo.classList.remove('loader-spin'); } catch(e) {} }, 1800);
                             } catch(er) { console.warn(er); }
                         });
                     }
                 }
-                // Ensure we remove the spin class either when the video fires 'playing' or after a small timeout
                 if (loaderVideo) {
                     loaderVideo.addEventListener('playing', function() { try { loaderVideo.classList.remove('loader-spin'); } catch(e) {} });
                     setTimeout(function() { try { loaderVideo.classList.remove('loader-spin'); } catch(e) {} }, 2200);
                 }
-
-                // Sound button is wired in Navigation.init(); avoid duplicate handlers here.
             });
         })();
     </script>
