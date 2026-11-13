@@ -1,7 +1,7 @@
 // ========== Service Worker "Суперколобок" ==========
 
-const CACHE_NAME = 'superkolobok-v20260910-1';
-const DYNAMIC_CACHE = 'superkolobok-dynamic-v20260910-1';
+const CACHE_NAME = 'superkolobok-v20261114-1';
+const DYNAMIC_CACHE = 'superkolobok-dynamic-v20261114-1';
 
 // Пути ОТНОСИТЕЛЬНЫЕ — работают в подпапке /superkolobok/ на GitHub Pages
 const STATIC_ASSETS = [
@@ -19,6 +19,7 @@ const STATIC_ASSETS = [
   './js/ui/popup.js',
   './js/ui/pwa.js',
   './js/scenes/name-screen.js',
+  './js/scenes/public-pages.js',
   './js/scenes/series-select.js',
   './js/scenes/video-scene.js',
   './js/scenes/hint-screen.js',
@@ -31,11 +32,14 @@ const STATIC_ASSETS = [
   './media/images/web-app-manifest-192x192.png',
   './media/images/web-app-manifest-512x512.png',
   './media/images/favicon.svg',
+  './media/images/logo-superkolobok.svg',
+  './media/images/brand-mark.svg',
   './media/images/favicon-96x96.png',
   './media/images/favicon.ico',
   './media/images/apple-touch-icon.png',
   './media/images/firefly.png',
   './media/images/kolobok.svg',
+  './media/images/kolobok_avatar.png',
   './media/images/play-btn.svg',
   './media/images/kolobok-progress.png',
   './media/images/key-icon.png'

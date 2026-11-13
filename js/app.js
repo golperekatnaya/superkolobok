@@ -20,9 +20,6 @@ const App = (function() {
                 
                 GameState.init();
                 
-                // Всегда сбрасываем прогресс при новом запуске
-                GameState.resetProgress();
-                
                 Progress.init();
                 Navigation.init();
                 AudioManager.init();
@@ -32,10 +29,8 @@ const App = (function() {
                 _isInitialized = true;
                 _isLoading = false;
                 
-                console.log('[App] -> Экран имени');
-                
-                // Прямой вызов экрана имени (без выбора режима)
-                Navigation.goTo(NameScreen.render, 0);
+                console.log('[App] -> Публичная главная');
+                PublicPages.renderLanding();
             })
             .catch(function(error) {
                 console.error('[App] Ошибка:', error);
