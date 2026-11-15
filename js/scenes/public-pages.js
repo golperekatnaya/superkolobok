@@ -47,6 +47,14 @@ const PublicPages = (function() {
                             <article class="story-card story-card-offset"><img src="media/images/card_care.png" alt="Кадр истории о заботе"><div><span>02</span><h3>Игровые задания</h3><p>Выполняет задания, взаимодействует с предметами и игровыми элементами, ищет ответы и пробует свои решения.</p></div></article>
                             <article class="story-card story-card-wide"><img src="media/images/series2-thumb.png" alt="Карта игровой истории проекта"><div><span>03</span><h3>Выбор и последствия</h3><p>Принимает решения в игровых ситуациях и наблюдает, как его действия влияют на дальнейшее развитие истории.</p></div></article>
                         </div>
+                        <section class="download-materials" aria-labelledby="download-materials-title">
+                            <div class="download-materials-heading"><div><p class="section-kicker">ДОПОЛНИТЕЛЬНО</p><h3 id="download-materials-title">Игровые материалы для печати</h3></div><p>Скачайте бонусные задания и распечатайте, чтобы продолжить игру вместе с ребёнком.</p></div>
+                            <div class="download-materials-grid">
+                                <a class="download-material-card" href="media/bonus/series1-materials.pdf" download="Суперколобок-Сила-дружбы.pdf"><span class="download-material-index">БОНУС · PDF</span><h4>Сила дружбы</h4><span class="download-material-action">Скачать и распечатать <span aria-hidden="true">↓</span></span></a>
+                                <a class="download-material-card" href="media/bonus/series2-materials.pdf" download="Суперколобок-Сила-заботы.pdf"><span class="download-material-index">БОНУС · PDF</span><h4>Сила заботы</h4><span class="download-material-action">Скачать и распечатать <span aria-hidden="true">↓</span></span></a>
+                                <a class="download-material-card" href="media/bonus/series3-materials.pdf" download="Суперколобок-Сила-команды.pdf"><span class="download-material-index">БОНУС · PDF</span><h4>Сила команды</h4><span class="download-material-action">Скачать и распечатать <span aria-hidden="true">↓</span></span></a>
+                            </div>
+                        </section>
                     </section>
 
                     <section class="process-section public-section" id="how">
@@ -62,6 +70,15 @@ const PublicPages = (function() {
                     <section class="characters-section public-section" id="characters">
                         <div class="section-heading"><p class="section-kicker">ГЕРОИ ИСТОРИЙ</p><h2>Знакомьтесь: друзья Суперколобка</h2><p>Каждый герой — часть историй, в которых ребёнок учится замечать важное, понимать других и взаимодействовать с окружающим миром.</p></div>
                         <div class="character-groups">
+                          <section class="character-group character-group-adults" aria-labelledby="adult-characters-title">
+                            <div class="character-group-heading"><div><p class="character-group-eyebrow">ПОДДЕРЖКА И НАСТАВНИКИ</p><h3 id="adult-characters-title">Взрослые и ведущие</h3></div><p>Помогают героям, делятся опытом и сопровождают в путешествии.</p></div>
+                            <div class="character-grid">
+                            <button class="character-card" type="button" data-character="firefly"><span class="character-art"><img src="media/images/firefly.png" alt=""></span><span class="character-name">Светлячок</span><span class="character-hint">Главный ведущий <span aria-hidden="true">↗</span></span></button>
+                            <button class="character-card character-bear-educator" type="button" data-character="medveditsa"><span class="character-art"><img src="media/images/medvezhonok.png" alt=""></span><span class="character-name">Медведица-воспитательница</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
+                            <button class="character-card" type="button" data-character="grandma"><span class="character-art"><img src="media/images/series1-grandma-bean.png" alt=""></span><span class="character-name">Бабушка Фасоль</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
+                            <button class="character-card" type="button" data-character="grandpa"><span class="character-art"><img src="media/images/series1-grandpa.png" alt=""></span><span class="character-name">Дедушка</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
+                            </div>
+                          </section>
                           <section class="character-group character-group-kids" aria-labelledby="child-characters-title">
                             <div class="character-group-heading"><div><p class="character-group-eyebrow">ДЕТСКИЕ ПЕРСОНАЖИ</p><h3 id="child-characters-title">Дети</h3></div><p>Друзья, которые вместе с ребёнком исследуют мир и учатся новому.</p></div>
                             <div class="character-grid">
@@ -70,15 +87,6 @@ const PublicPages = (function() {
                             <button class="character-card" type="button" data-character="sonya"><span class="character-art"><img src="media/images/series1-sonya.png" alt=""></span><span class="character-name">Ёжиха Соня</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
                             <button class="character-card" type="button" data-character="tonya"><span class="character-art"><img src="media/images/series1-tonya.png" alt=""></span><span class="character-name">Ёжиха Тоня</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
                             <button class="character-card" type="button" data-character="medvezhonok"><span class="character-art"><img src="media/images/medvezhonok.png" alt=""></span><span class="character-name">Медвежонок</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
-                            </div>
-                          </section>
-                          <section class="character-group character-group-adults" aria-labelledby="adult-characters-title">
-                            <div class="character-group-heading"><div><p class="character-group-eyebrow">ПОДДЕРЖКА И НАСТАВНИКИ</p><h3 id="adult-characters-title">Взрослые и ведущие</h3></div><p>Помогают героям, делятся опытом и сопровождают в путешествии.</p></div>
-                            <div class="character-grid">
-                            <button class="character-card" type="button" data-character="firefly"><span class="character-art"><img src="media/images/firefly.png" alt=""></span><span class="character-name">Светлячок</span><span class="character-hint">Главный ведущий <span aria-hidden="true">↗</span></span></button>
-                            <button class="character-card character-bear-teacher" type="button" data-character="medveditsa"><span class="character-art"><img src="media/images/medvezhonok.png" alt=""><span class="character-role-badge">Педагог</span></span><span class="character-name">Медведица</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
-                            <button class="character-card" type="button" data-character="grandma"><span class="character-art"><img src="media/images/series1-grandma-bean.png" alt=""></span><span class="character-name">Бабушка Фасоль</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
-                            <button class="character-card" type="button" data-character="grandpa"><span class="character-art"><img src="media/images/series1-grandpa.png" alt=""></span><span class="character-name">Дедушка</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
                             </div>
                           </section>
                         </div>
@@ -98,12 +106,12 @@ const PublicPages = (function() {
 
                     <section class="team-section public-section" id="team">
                         <div class="team-heading"><p class="section-kicker">КОМАНДА ПРОЕКТА</p><h2>Проект создаёт команда «Моего университета»</h2><a class="university-logo-link" href="https://moi-universitet.ru/" target="_blank" rel="noopener noreferrer" aria-label="Сайт «Моего университета»"><img src="media/images/logo-my-university.png" alt="Логотип «Моего университета»"><span>АНО ДПО «Мой университет» <span aria-hidden="true">↗</span></span></a></div>
-                        <div class="team-copy"><p>«Суперколобок и его друзья» объединяет образовательную экспертизу, методическую разработку, цифровые технологии и мультимедийный контент.</p><p>Над проектом работают авторы сценария, методисты, иллюстраторы и специалисты по игровым механикам.</p></div>
+                        <div class="team-copy"><p>Идею проекта вместе разработали Ирина, Алина, Вероника и Тимофей. «Суперколобок и его друзья» объединяет образовательную экспертизу, методическую разработку, цифровые технологии и мультимедийный контент.</p><p>Каждый участник команды отвечает за свою часть проекта — от сценариев и иллюстраций до разработки приложения и методических решений.</p></div>
                         <div class="team-members" aria-label="Участники команды">
-                            <article class="team-member"><div class="team-member-head"><span class="team-member-avatar" aria-hidden="true">И</span><h3>Ирина</h3></div><p>Идея и сценарий, методическая основа, координация процессов и сроков, работа с фокус-группами.</p></article>
-                            <article class="team-member"><div class="team-member-head"><span class="team-member-avatar" aria-hidden="true">А</span><h3>Алина</h3></div><p>Идея и сценарий, иллюстрации и анимация, озвучка героев, дизайн дополнительных материалов.</p></article>
-                            <article class="team-member"><div class="team-member-head"><img class="team-member-photo" src="media/images/team-veronika.jpg" alt="Вероника, участница команды проекта"><h3>Вероника</h3></div><p>Содержание методических материалов, саунд-дизайн, озвучка, игровые механики и приложение.</p></article>
-                            <article class="team-member"><div class="team-member-head"><span class="team-member-avatar" aria-hidden="true">Т</span><h3>Тимофей</h3></div><p>Методическая основа сценария, анализ рынка, потребностей и особенностей восприятия аудитории.</p></article>
+                            <article class="team-member"><div class="team-member-head"><span class="team-member-avatar" aria-hidden="true">И</span><h3>Ирина</h3></div><p>Методическая основа сценариев, координация процессов и сроков, работа с фокус-группами.</p></article>
+                            <article class="team-member"><div class="team-member-head"><span class="team-member-avatar" aria-hidden="true">А</span><h3>Алина</h3></div><p>Сценарии, иллюстрации и анимация, озвучка героев, дизайн дополнительных материалов.</p></article>
+                            <article class="team-member"><div class="team-member-head"><img class="team-member-photo" src="media/images/team-veronika.jpg" alt="Вероника, участница команды проекта"><h3>Вероника</h3></div><p>Руководитель проекта, сценарист сюжетов и разработчик приложения; отвечает за методические материалы, саунд-дизайн и игровые механики.</p></article>
+                            <article class="team-member"><div class="team-member-head"><span class="team-member-avatar" aria-hidden="true">Т</span><h3>Тимофей</h3></div><p>Методическая основа сценариев, анализ рынка и потребностей, особенности восприятия аудитории.</p></article>
                         </div>
                     </section>
 
@@ -132,9 +140,19 @@ const PublicPages = (function() {
         if (reducedMotion && introVideo) {
             introVideo.pause();
             introVideo.removeAttribute('autoplay');
+        } else if (introVideo) {
+            introVideo.muted = true;
+            introVideo.defaultMuted = true;
+            introVideo.autoplay = true;
+            introVideo.playsInline = true;
+            var attemptIntroPlayback = function() {
+                if (introVideo.paused) introVideo.play().catch(function() {});
+            };
+            introVideo.addEventListener('canplay', attemptIntroPlayback, { once: true });
+            attemptIntroPlayback();
         }
         if (!('IntersectionObserver' in window) || reducedMotion) return;
-        var targets = root.querySelectorAll('.hero-copy, .hero-art, .about-visual, .about-copy, .section-heading, .story-card, .process-step, .character-group-heading, .character-card, .audience-intro, .audience-card, .recognition-section > *, .team-heading, .team-copy, .team-member, .final-cta > *');
+        var targets = root.querySelectorAll('.hero-copy, .hero-art, .about-visual, .about-copy, .section-heading, .story-card, .download-materials-heading, .download-material-card, .process-step, .character-group-heading, .character-card, .audience-intro, .audience-card, .recognition-section > *, .team-heading, .team-copy, .team-member, .final-cta > *');
         var observer = new IntersectionObserver(function(entries) {
             entries.forEach(function(entry) {
                 if (!entry.isIntersecting) return;
@@ -181,9 +199,9 @@ const PublicPages = (function() {
                 description: 'Его направление — уважение к традициям, семье и окружающим.'
             },
             medveditsa: {
-                name: 'Медведица', image: 'media/images/medvezhonok.png',
-                direction: 'Педагогическое сопровождение и развитие ребёнка',
-                description: 'Медведица олицетворяет педагога: помогает ребёнку исследовать новое, задаёт поддерживающие вопросы и связывает игровые открытия с повседневным опытом.'
+                name: 'Медведица-воспитательница', image: 'media/images/medvezhonok.png',
+                direction: 'Воспитание и поддержка ребёнка',
+                description: 'Медведица-воспитательница помогает ребёнку исследовать новое, задаёт поддерживающие вопросы и связывает игровые открытия с повседневным опытом.'
             },
             firefly: {
                 name: 'Светлячок', image: 'media/images/firefly.png',

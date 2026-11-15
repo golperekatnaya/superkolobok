@@ -1961,6 +1961,18 @@ body.public-mode .public-site main { display:block; }
 .story-card-wide { grid-column:span 5; }
 .story-card-offset { grid-column:span 7; margin-top:52px; }
 .story-card-offset img { height:246px; }
+.download-materials { margin-top:56px; padding:30px 32px; border-radius:22px; background:#f4f0fc; }
+.download-materials-heading { display:flex; align-items:flex-end; justify-content:space-between; gap:28px; margin-bottom:23px; }
+.download-materials-heading .section-kicker { margin:0 0 7px; }
+.download-materials-heading h3 { margin:0; color:var(--purple); font-size:clamp(24px,2.5vw,31px); line-height:1.15; }
+.download-materials-heading>p { max-width:430px; margin:0; color:#625b73; font-size:15px; line-height:1.5; }
+.download-materials-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
+.download-material-card { min-height:154px; display:flex; flex-direction:column; align-items:flex-start; padding:20px 21px 17px; border:1px solid rgba(67,42,155,.1); border-radius:16px; background:#fff; color:var(--purple); text-decoration:none; transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease; }
+.download-material-card:hover { transform:translateY(-3px); border-color:rgba(67,42,155,.25); box-shadow:0 10px 25px rgba(41,29,76,.08); }
+.download-material-index { color:#786f8c; font-size:10px; font-weight:800; letter-spacing:.08em; }
+.download-material-card h4 { margin:9px 0 15px; color:var(--purple); font-size:20px; line-height:1.2; }
+.download-material-action { display:flex; justify-content:space-between; align-items:center; gap:12px; width:100%; margin-top:auto; color:#0b4e9e; font-size:13px; font-weight:750; }
+.download-material-action>span { color:var(--orange); font-size:20px; line-height:1; }
 .process-section { border-top:1px solid rgba(67,42,155,.1); }
 .process-steps { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; position:relative; }
 .process-step { min-height:194px; display:flex; align-items:flex-start; gap:18px; padding:25px 22px; border:1px solid rgba(67,42,155,.1); border-radius:22px; background:#f7f4fc; box-shadow:0 8px 24px rgba(41,29,76,.04); }
@@ -2139,8 +2151,7 @@ body.public-mode .landing-hero { grid-template-columns:1.05fr .95fr; align-items
 .character-art img { display:block; max-width:76%; max-height:174px; object-fit:contain; }
 .character-kolobok .character-art img { max-width:150px; max-height:150px; }
 .character-card[data-character="firefly"] .character-art img { max-width:72%; max-height:132px; }
-.character-bear-teacher .character-art { position:relative; background:#fff1e4; }
-.character-role-badge { position:absolute; top:12px; right:12px; padding:6px 10px; border-radius:999px; background:var(--purple); color:white; font-size:11px; font-weight:800; }
+.character-bear-educator .character-art { background:#fff1e4; }
 .character-name { display:block; padding:14px 15px 2px; color:var(--purple); font-size:18px; font-weight:800; line-height:1.2; }
 .character-hint { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:6px 15px 14px; color:#766f86; font-size:12px; }
 .character-hint>span { color:var(--orange); font-size:18px; }
@@ -2201,10 +2212,16 @@ body.public-mode #sceneContent { scroll-behavior:smooth; }
     .register-rolling-note { margin-top:15px; }
 }
 @media(max-width:1024px) {
+    .download-materials { padding:25px 24px; }
+    .download-materials-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
     .character-group-kids .character-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
     .character-group-adults .character-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
 }
 @media(max-width:820px) {
+    .download-materials { margin-top:40px; padding:22px 18px; }
+    .download-materials-heading { align-items:flex-start; flex-direction:column; gap:9px; margin-bottom:17px; }
+    .download-materials-grid { grid-template-columns:1fr; gap:10px; }
+    .download-material-card { min-height:132px; padding:17px 18px 15px; }
     .character-group-kids .character-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
     .character-group-heading { grid-template-columns:1fr; gap:8px; margin-bottom:18px; padding:17px 18px; }
     .character-group-heading>p { padding:0; border:0; font-size:14px; }
