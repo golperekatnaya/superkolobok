@@ -27,9 +27,8 @@ const PublicPages = (function() {
                             <div class="hero-actions"><button class="primary-cta" type="button" data-page="register">Начать путешествие <span aria-hidden="true">→</span></button></div>
                         </div>
                         <figure class="hero-art">
-                            <video class="hero-art-main hero-intro-video" autoplay muted loop playsinline controls preload="metadata" poster="media/images/friendpower_card.png" aria-label="Беззвучная заставка проекта «Суперколобок»"><source src="media/videos/superkolobok-splash.mp4" type="video/mp4"></video>
-                            <div class="hero-art-detail"><img src="media/images/kolobok_avatar.png" alt="Колобок"><span>Истории, в которых можно действовать</span></div>
-                            <figcaption>Заставка проекта · звук выключен</figcaption>
+                            <video class="hero-art-main hero-intro-video" autoplay muted loop playsinline preload="auto" poster="media/images/friendpower_card.png" aria-label="Беззвучная заставка проекта «Суперколобок»"><source src="media/videos/superkolobok-splash.mp4" type="video/mp4"></video>
+                            <figcaption>Звук отключён</figcaption>
                         </figure>
                     </section>
 
@@ -65,8 +64,8 @@ const PublicPages = (function() {
                         <div class="character-grid">
                             <button class="character-card character-kolobok" type="button" data-character="kolobok"><span class="character-art"><img src="media/images/series1-kolobok-neutral.png" alt=""></span><span class="character-name">Колобок</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
                             <button class="character-card" type="button" data-character="zaychonok"><span class="character-art"><img src="media/images/series1-rabbit-neutral.png" alt=""></span><span class="character-name">Зайчонок</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
-                            <button class="character-card" type="button" data-character="sonya"><span class="character-art"><img src="media/images/sonya.svg" alt=""></span><span class="character-name">Ёжиха Соня</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
-                            <button class="character-card" type="button" data-character="tonya"><span class="character-art"><img src="media/images/tonya.svg" alt=""></span><span class="character-name">Ёжиха Тоня</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
+                            <button class="character-card" type="button" data-character="sonya"><span class="character-art"><img src="media/images/series1-sonya.png" alt=""></span><span class="character-name">Ёжиха Соня</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
+                            <button class="character-card" type="button" data-character="tonya"><span class="character-art"><img src="media/images/series1-tonya.png" alt=""></span><span class="character-name">Ёжиха Тоня</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
                             <button class="character-card" type="button" data-character="medvezhonok"><span class="character-art"><img src="media/images/medvezhonok.png" alt=""></span><span class="character-name">Медвежонок</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
                             <button class="character-card character-bear-teacher" type="button" data-character="medveditsa"><span class="character-art"><img src="media/images/medvezhonok.png" alt=""><span class="character-role-badge">Педагог</span></span><span class="character-name">Медведица</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
                             <button class="character-card" type="button" data-character="firefly"><span class="character-art"><img src="media/images/firefly.png" alt=""></span><span class="character-name">Светлячок</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
@@ -156,12 +155,12 @@ const PublicPages = (function() {
                 description: 'Через его истории дети учатся понимать свои чувства, просить о помощи и принимать особенности себя и других.'
             },
             sonya: {
-                name: 'Ёжиха Соня', image: 'media/images/sonya.svg',
+                name: 'Ёжиха Соня', image: 'media/images/series1-sonya.png',
                 direction: 'Креативное и адаптивное мышление',
                 description: 'Соня помогает детям искать нестандартные решения.'
             },
             tonya: {
-                name: 'Ёжиха Тоня', image: 'media/images/tonya.svg',
+                name: 'Ёжиха Тоня', image: 'media/images/series1-tonya.png',
                 direction: 'Проектное мышление',
                 description: 'С Тоней дети знакомятся с планированием, созданием идей и работой над результатом.'
             },

@@ -1938,8 +1938,6 @@ body.public-mode .public-site main { display:block; }
 .hero-art { position:relative; min-width:0; margin:0; padding:18px 18px 46px; border-radius:28px; background:var(--cream); }
 .hero-art-main { display:block; width:100%; aspect-ratio:1.58; border-radius:18px; object-fit:cover; }
 .hero-intro-video { background:#432a9b; }
-.hero-art-detail { position:absolute; right:32px; bottom:35px; display:flex; align-items:center; gap:12px; max-width:285px; padding:11px 16px 11px 11px; border:1px solid rgba(67,42,155,.1); border-radius:15px; background:var(--paper); color:var(--purple); font-size:13px; line-height:1.25; font-weight:700; }
-.hero-art-detail img { width:52px; height:52px; object-fit:contain; }
 .hero-art figcaption { position:absolute; bottom:15px; left:28px; color:#594c68; font-size:12px; }
 .public-section { margin:0; padding:108px 0; scroll-margin-top:100px; }
 .about-section { display:grid; grid-template-columns:1.08fr .92fr; align-items:center; gap:clamp(36px,7vw,92px); border-top:1px solid rgba(67,42,155,.1); }
@@ -2055,7 +2053,7 @@ body.public-mode :focus-visible { outline:3px solid var(--orange); outline-offse
     .hero-actions { display:grid; grid-template-columns:1fr; gap:9px; margin-top:22px; }
     .primary-cta { width:100%; min-height:54px; padding:0 16px; font-size:15px; }
     .text-cta { justify-content:center; min-height:46px; }
-    .hero-art { padding:10px 10px 40px; border-radius:19px; }.hero-art-main { border-radius:12px; aspect-ratio:1.25; }.hero-art-detail { right:17px; bottom:29px; max-width:220px; padding:8px 10px; font-size:11px; }.hero-art-detail img { width:39px; height:39px; }.hero-art figcaption { bottom:9px; left:15px; font-size:10px; }
+    .hero-art { padding:10px 10px 40px; border-radius:19px; }.hero-art-main { border-radius:12px; aspect-ratio:1.25; }.hero-art figcaption { bottom:9px; left:15px; font-size:10px; }
     .public-section { padding:68px 0; }.about-section,.team-section { grid-template-columns:1fr; gap:26px; }.about-copy h2,.section-heading h2,.audience-intro h2,.team-section h2 { font-size:31px; }.about-copy p:not(.section-kicker),.section-heading>p:not(.section-kicker),.audience-intro>p:not(.section-kicker),.team-copy p { font-size:16px; }
     .section-heading { margin-bottom:26px; }
     .story-cards { grid-template-columns:1fr; gap:13px; }.story-card-wide,.story-card-offset { grid-column:auto; }.story-card img,.story-card-offset img { height:auto; aspect-ratio:1.55; }.story-card>div { padding:18px 19px 22px; }.story-card h3 { font-size:21px; }.story-card p { font-size:15px; }
