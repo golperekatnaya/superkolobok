@@ -11,7 +11,7 @@ const PublicPages = (function() {
         root.innerHTML = `
             <div class="public-site" id="top">
                 <header class="public-nav">
-                    <a class="brand" href="#top" aria-label="Суперколобок — на главную"><img class="brand-wordmark" src="media/images/logo-superkolobok.svg" alt="Суперколобок и его друзья"></a>
+                    <a class="brand" href="#top" aria-label="Суперколобок — на главную"><img class="brand-wordmark" src="media/images/logo-superkolobok-firefly.svg" alt="Суперколобок и его друзья"></a>
                     <nav class="public-links" aria-label="Навигация">
                         <a href="#about">О проекте</a><a href="#stories">Игровые истории</a><a href="#parents">Для родителей</a><a href="#teachers">Для педагогов</a>
                     </nav>
@@ -66,11 +66,11 @@ const PublicPages = (function() {
                         <div class="section-heading"><p class="section-kicker">ГЕРОИ ИСТОРИЙ</p><h2>Знакомьтесь: друзья Суперколобка</h2><p>Каждый герой — часть историй, в которых ребёнок учится замечать важное, понимать других и взаимодействовать с окружающим миром.</p></div>
                         <div class="character-grid">
                             <article class="character-card character-kolobok"><div><img src="media/images/kolobok_avatar.png" alt="Колобок"></div><h3>Колобок</h3></article>
-                            <article class="character-card"><div><img src="media/images/zaychonok.svg" alt="Заяц"></div><h3>Заяц</h3></article>
-                            <article class="character-card"><div><img src="media/images/soroka.png" alt="Сорока"></div><h3>Сорока</h3></article>
+                            <article class="character-card"><div><img src="media/images/series1-rabbit-neutral.png" alt="Заяц"></div><h3>Заяц</h3></article>
+                            <article class="character-card"><div><img src="media/images/series1-soroka-open.png" alt="Сорока"></div><h3>Сорока</h3></article>
                             <article class="character-card"><div class="hedgehogs"><img src="media/images/sonya.svg" alt="Ёжик Соня"><img src="media/images/tonya.svg" alt="Ёжик Тоня"></div><h3>Ёжики</h3></article>
                             <article class="character-card"><div><img src="media/images/grandpa.png" alt="Дедушка"></div><h3>Дедушка</h3></article>
-                            <article class="character-card"><div><img src="media/images/grandma.png" alt="Бабушка"></div><h3>Бабушка</h3></article>
+                            <article class="character-card"><div><img src="media/images/series1-grandma-bean.png" alt="Бабушка Фасоль"></div><h3>Бабушка Фасоль</h3></article>
                             <article class="character-card character-firefly"><div><img src="media/images/firefly.png" alt="Светлячок"></div><h3>Светлячок</h3></article>
                         </div>
                     </section>
@@ -97,7 +97,7 @@ const PublicPages = (function() {
                         <div><p class="section-kicker">ВАШЕ ПУТЕШЕСТВИЕ НАЧИНАЕТСЯ ЗДЕСЬ</p><h2>Готовы познакомиться с миром Суперколобка?</h2><p>Отправляйтесь вместе с Колобком и его друзьями в игровые истории, где каждый ребёнок может попробовать себя в новой роли, выполнить задания и найти собственные решения.</p><button class="primary-cta" type="button" data-page="register">Перейти к игровому пространству <span aria-hidden="true">→</span></button></div>
                     </section>
                 </main>
-                <footer class="public-footer"><a href="#top" class="footer-brand"><img src="media/images/logo-superkolobok.svg" alt="Суперколобок и его друзья"></a><nav aria-label="Разделы сайта"><a href="#about">О проекте</a><a href="#stories">Игровые истории</a><a href="#parents">Родителям</a><a href="#teachers">Педагогам</a></nav><span>Для семей · образовательных организаций · педагогического сообщества</span></footer>
+                <footer class="public-footer"><a href="#top" class="footer-brand"><img src="media/images/logo-superkolobok-firefly.svg" alt="Суперколобок и его друзья"></a><nav aria-label="Разделы сайта"><a href="#about">О проекте</a><a href="#stories">Игровые истории</a><a href="#parents">Родителям</a><a href="#teachers">Педагогам</a></nav><span>Для семей · образовательных организаций · педагогического сообщества</span></footer>
             </div>`;
         bindCommon();
         var menu = root.querySelector('.mobile-menu');
@@ -115,12 +115,12 @@ const PublicPages = (function() {
         var isRegister = mode === 'register';
         root.innerHTML = '<div class="auth-page ' + (isRegister ? 'auth-register' : 'auth-login') + '">' +
             '<aside class="auth-aside ' + (isRegister ? 'aside-purple' : 'aside-peach') + '">' +
-                '<a class="brand auth-brand" href="#" data-page="landing">' + (isRegister ? '<span class="brand-mark"><img src="media/images/brand-mark.svg" alt="Суперколобок"></span>' : '<img class="brand-wordmark" src="media/images/logo-superkolobok.svg" alt="Суперколобок">') + '</a>' +
+                '<a class="brand auth-brand" href="#" data-page="landing"><img class="brand-wordmark" src="media/images/logo-superkolobok-firefly.svg" alt="Суперколобок и Светлячок"></a>' +
                 '<div class="aside-copy"><h1>' + (isRegister ? 'Создаём ваш<br>сказочный мир' : 'Сказка начинается<br>здесь') + '</h1><p>' + (isRegister ? 'Зарегистрируйтесь, чтобы сохранять истории, достижения и прогресс ребёнка.' : 'Войдите, чтобы продолжить путешествие по сказочному миру вместе с Колобком.') + '</p></div>' +
                 '<div class="auth-media-row"><div class="aside-illustration"><video class="aside-loader" autoplay muted loop playsinline preload="metadata" poster="media/images/kolobok_avatar.png" aria-label="Колобок катится"><source src="media/videos/Loader.mov" type="video/quicktime"></video></div><p class="aside-tagline">Качусь и учусь</p></div>' +
             '</aside>' +
             '<section class="auth-main"><button class="auth-back" type="button" data-page="landing">← <span>На главную</span></button>' +
-                '<div class="auth-form-wrap"><div class="auth-mobile-brand"><img class="brand-wordmark" src="media/images/logo-superkolobok.svg" alt="Суперколобок"></div>' +
+                '<div class="auth-form-wrap"><div class="auth-mobile-brand"><img class="brand-wordmark" src="media/images/logo-superkolobok-firefly.svg" alt="Суперколобок и Светлячок"></div>' +
                     '<h2>' + (isRegister ? 'Регистрация' : 'Вход в аккаунт') + '</h2><p class="auth-subtitle">' + (isRegister ? 'Создайте аккаунт взрослого, который будет управлять профилем ребёнка.' : 'Продолжите с того места, где остановились.') + '</p>' +
                     '<form id="accountForm" novalidate>' +
                         (isRegister ? '<label for="accountName">Ваше имя</label><input id="accountName" name="name" autocomplete="name" placeholder="Как к вам обращаться" required maxlength="60">' : '') +

@@ -21,6 +21,7 @@ const HintScreen = (function() {
                 '<div class="hint-card" id="hintCard" style="display:none;">' +
                     '<div class="hint-title">' + config.cardTitle + '</div>' +
                     '<div class="hint-text">' + config.cardText + '</div>' +
+                    (config.adultIllustration ? '<div class="hint-adult-visual" aria-label="Взрослый и ребёнок играют вместе"><img class="hint-together-art" src="media/images/series1-together-adult.png" alt="Вместе со взрослым"><div><img src="media/images/series1-adult-hat.png" alt="Волшебная шляпа взрослого"><img src="media/images/series1-child-hat.png" alt="Волшебная шляпа ребёнка"></div></div>' : '') +
                 '</div>' +
             '</div>';
         
@@ -38,6 +39,7 @@ const HintScreen = (function() {
             sceneIndex: 6,
             bubbleText: 'Эта подсказка поможет мягко направить ребёнка.',
             cardTitle: 'Подсказка взрослому',
+            adultIllustration: true,
             cardText: '<strong>Вместе с ребёнком внимательно посмотрите на сцену.</strong>\n' +
                 'Не торопитесь объяснять — важно дать ему самому заметить, что у героев что-то не получается.\n\n' +
                 '<strong>Можно мягко направить вопросами:</strong>\n' +

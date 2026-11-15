@@ -38,16 +38,10 @@ const SeriesSelect = (function() {
         
         c.innerHTML = 
             '<div class="menu-screen">' +
-                '<div class="menu-firefly" id="menuFirefly"></div>' +
-                '<h1 class="menu-title">Суперколобок</h1>' +
+                '<h1 class="menu-title"><img class="menu-logo" src="media/images/logo-superkolobok-firefly.svg" alt="Суперколобок"></h1>' +
                 '<p class="menu-subtitle">Качусь и учусь</p>' +
                 '<div class="menu-cards">' + cardsHtml + '</div>' +
             '</div>';
-        
-        var menuFirefly = document.getElementById('menuFirefly');
-        if (menuFirefly) {
-            menuFirefly.appendChild(UI.createClickableFirefly(70, 'seriesSelect'));
-        }
         
         c.querySelectorAll('.series-card').forEach(function(card) {
             card.addEventListener('click', function() {
@@ -70,6 +64,52 @@ const SeriesSelect = (function() {
     // ЛОГИКА ДЛЯ СЕРИИ «СИЛА ДРУЖБЫ»
     // ============================================================
     
+    function showSeriesSplash(onComplete) {
+        var c = document.getElementById('sceneContent');
+        if (!c) return;
+        Progress.hide();
+        UI.clearContainer(c);
+        c.innerHTML =
+            '<section class="series-splash" aria-label="Заставка Суперколобка">' +
+                '<img class="series-splash-logo" src="media/images/logo-superkolobok-firefly.svg" alt="Суперколобок и Светлячок">' +
+                '<div class="series-splash-player">' +
+                    '<video id="seriesSplashVideo" autoplay playsinline preload="auto" poster="media/images/logo-superkolobok-firefly.svg" aria-label="Заставка мульт-игры Суперколобок">' +
+                        '<source src="media/videos/superkolobok-splash.mp4" type="video/mp4">' +
+                    '</video>' +
+                    '<button class="series-splash-continue" id="seriesSplashContinue" type="button">Пропустить заставку</button>' +
+                    '<button class="series-splash-play" id="seriesSplashPlay" type="button" hidden>Смотреть заставку</button>' +
+                '</div>' +
+                '<p class="series-splash-caption">Сейчас начнётся новое приключение!</p>' +
+            '</section>';
+
+        var video = document.getElementById('seriesSplashVideo');
+        var continueButton = document.getElementById('seriesSplashContinue');
+        var playButton = document.getElementById('seriesSplashPlay');
+        var completed = false;
+        function continueToGame() {
+            if (completed) return;
+            completed = true;
+            if (onComplete) onComplete();
+        }
+        continueButton.addEventListener('click', continueToGame);
+        video.addEventListener('ended', continueToGame);
+        video.addEventListener('error', function() {
+            playButton.hidden = true;
+            continueButton.textContent = 'Продолжить';
+        });
+        video.play().catch(function() {
+            playButton.hidden = false;
+            continueButton.textContent = 'Продолжить';
+        });
+        playButton.addEventListener('click', function() {
+            video.play().then(function() {
+                playButton.hidden = true;
+                continueButton.textContent = 'Пропустить заставку';
+            }).catch(function() {});
+        });
+        if (typeof Navigation !== 'undefined' && Navigation.updateButtons) Navigation.updateButtons();
+    }
+
     function startFriendshipSequence() {
         GameState.setCurrentSeries('friendship');
         GameState.pushHistory(1);
@@ -97,7 +137,7 @@ const SeriesSelect = (function() {
 
         window._friendshipSequence = sequence;
         window._friendshipIndex = 0;
-        playSequenceStep(sequence, 0);
+        showSeriesSplash(function() { playSequenceStep(sequence, 0); });
     }
 
     function playSequenceStep(sequence, index) {
@@ -307,7 +347,7 @@ const SeriesSelect = (function() {
     
     function startTeamwork() {
         GameState.setCurrentSeries('teamwork');
-        Navigation.goTo(VideoScene.renderIntro, 2, 'teamwork');
+        showSeriesSplash(function() { Navigation.goTo(VideoScene.renderIntro, 2, 'teamwork'); });
     }
 
     function startCare() {
@@ -326,7 +366,7 @@ const SeriesSelect = (function() {
 
         window._careSequence = sequence;
         window._careIndex = 0;
-        playCareSequenceStep(sequence, 0);
+        showSeriesSplash(function() { playCareSequenceStep(sequence, 0); });
     }
 
     function playCareSequenceStep(sequence, index) {

@@ -350,7 +350,8 @@
       "series2-thumb": "media/images/card_care.png",
       "series3-thumb": "media/images/series2-thumb.png",
       "key-friendship": "media/images/key-friendship.png",
-      "key-team": "media/images/key-team.png"
+      "key-team": "media/images/key-team.png",
+      "series1RabbitNeutral": "media/images/series1-rabbit-neutral.png"
     }
   }
 }

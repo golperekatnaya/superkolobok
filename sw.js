@@ -1,7 +1,7 @@
 // ========== Service Worker "Суперколобок" ==========
 
-const CACHE_NAME = 'superkolobok-v20261115-2';
-const DYNAMIC_CACHE = 'superkolobok-dynamic-v20261115-2';
+const CACHE_NAME = 'superkolobok-v20261115-3';
+const DYNAMIC_CACHE = 'superkolobok-dynamic-v20261115-3';
 
 // Пути ОТНОСИТЕЛЬНЫЕ — работают в подпапке /superkolobok/ на GitHub Pages
 const STATIC_ASSETS = [
@@ -33,6 +33,7 @@ const STATIC_ASSETS = [
   './media/images/web-app-manifest-512x512.png',
   './media/images/favicon.svg',
   './media/images/logo-superkolobok.svg',
+  './media/images/logo-superkolobok-firefly.svg',
   './media/images/brand-mark.svg',
   './media/images/favicon-96x96.png',
   './media/images/favicon.ico',
@@ -42,7 +43,17 @@ const STATIC_ASSETS = [
   './media/images/kolobok_avatar.png',
   './media/images/play-btn.svg',
   './media/images/kolobok-progress.png',
-  './media/images/key-icon.png'
+  './media/images/key-icon.png',
+  './media/images/series1-envelope.png',
+  './media/images/series1-together-adult.png',
+  './media/images/series1-magic-wand.png',
+  './media/images/series1-adult-hat.png',
+  './media/images/series1-child-hat.png',
+  './media/images/series1-rabbit-neutral.png',
+  './media/images/series1-progress-bar.png',
+  './media/images/series1-kolobok-sandbox.png',
+  './media/images/series1-soroka-open.png',
+  './media/images/series1-grandma-bean.png'
 ];
 
 // ========== УСТАНОВКА ==========

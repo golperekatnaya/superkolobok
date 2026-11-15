@@ -2060,3 +2060,36 @@ body.public-mode :focus-visible { outline:3px solid var(--orange); outline-offse
     .auth-media-row { width:100%; max-width:390px; gap:7px; }.aside-illustration { height:190px; flex-basis:68%; width:68%; }.aside-tagline { font-size:clamp(20px,6vw,25px); }
 }
 @media(prefers-reduced-motion:reduce) { .primary-cta { transition:none; } }
+
+/* Повторяющаяся заставка и новые фирменные иллюстрации серии «Сила дружбы». */
+.menu-title { display:flex; justify-content:center; align-items:center; min-height:80px; }
+.menu-logo { display:block; width:min(310px,76vw); height:auto; }
+.series-splash { min-height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; padding:22px; background:linear-gradient(180deg,#fffaf3 0%,#fbe7cf 100%); text-align:center; }
+.series-splash-logo { display:block; width:min(360px,75vw); height:auto; }
+.series-splash-player { position:relative; width:min(100%,960px); overflow:hidden; border:5px solid #f9c432; border-radius:22px; background:#432a9b; box-shadow:0 14px 36px rgba(67,42,155,.18); }
+.series-splash-player video { display:block; width:100%; max-height:min(62vh,560px); object-fit:contain; }
+.series-splash-continue,.series-splash-play { position:absolute; right:14px; bottom:14px; min-height:42px; padding:0 18px; border:0; border-radius:999px; background:#432a9b; color:white; font:700 14px 'MPLUS Rounded 1c',sans-serif; cursor:pointer; box-shadow:0 4px 14px rgba(35,24,76,.22); }
+.series-splash-play { right:auto; left:50%; bottom:50%; transform:translate(-50%,50%); min-height:50px; padding:0 26px; background:#ed6f33; }
+.series-splash-play[hidden] { display:none; }
+.series-splash-caption { margin:0; color:#432a9b; font-size:clamp(17px,2.2vw,23px); font-weight:700; }
+.series1-task-art { display:flex; align-items:center; justify-content:center; gap:clamp(8px,2vw,20px); width:min(100%,650px); min-height:86px; margin:2px auto 10px; padding:6px 12px; border:1px solid rgba(67,42,155,.12); border-radius:16px; background:#fff7ed; }
+.series1-task-envelope { width:clamp(100px,20vw,150px); max-height:82px; object-fit:contain; }
+.series1-task-wand { width:clamp(36px,7vw,54px); height:auto; object-fit:contain; }
+.series1-task-progress { width:min(48%,270px); max-height:46px; object-fit:contain; }
+.hint-adult-visual { display:flex; align-items:center; justify-content:center; gap:16px; width:min(100%,380px); margin:10px auto 2px; padding:8px 12px; border-radius:12px; background:#fffaf2; }
+.hint-together-art { width:min(55%,210px); max-height:88px; object-fit:contain; }
+.hint-adult-visual>div { display:flex; align-items:flex-end; gap:8px; }
+.hint-adult-visual>div img { width:42px; max-height:68px; object-fit:contain; }
+@media(max-width:650px) {
+    .menu-title { min-height:58px; }
+    .menu-logo { width:min(260px,78vw); }
+    .series-splash { gap:12px; padding:16px 12px; }
+    .series-splash-player { border-width:3px; border-radius:15px; }
+    .series-splash-player video { max-height:56vh; }
+    .series-splash-continue { right:8px; bottom:8px; min-height:38px; padding:0 13px; font-size:12px; }
+    .series1-task-art { min-height:66px; gap:8px; margin:0 auto 8px; padding:5px 8px; }
+    .series1-task-envelope { max-height:62px; }
+    .series1-task-progress { max-height:34px; }
+    .hint-adult-visual { gap:10px; padding:6px 8px; }
+    .hint-adult-visual>div img { width:34px; max-height:54px; }
+}

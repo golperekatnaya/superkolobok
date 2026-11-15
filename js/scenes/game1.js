@@ -22,8 +22,13 @@ const Game1 = (function() {
                     '<div class="firefly-avatar-lg" id="fireflyAvatar"></div>' +
                     '<div class="firefly-speech-bubble" id="fireflySpeech"></div>' +
                 '</div>' +
+                '<div class="series1-task-art" aria-hidden="true">' +
+                    '<img class="series1-task-envelope" src="media/images/series1-envelope.png" alt="">' +
+                    '<img class="series1-task-wand" src="media/images/series1-magic-wand.png" alt="">' +
+                    '<img class="series1-task-progress" src="media/images/series1-progress-bar.png" alt="">' +
+                '</div>' +
                 '<div class="overview-video-container" id="videoContainer" style="display:none;">' +
-                    '<video id="overviewVideo" preload="auto" playsinline muted>' +
+                    '<video id="overviewVideo" preload="auto" playsinline muted poster="media/images/series1-kolobok-sandbox.png">' +
                         '<source src="' + GameConfig.getVideo('sandboxOverview') + '" type="video/mp4">' +
                     '</video>' +
                     '<div class="play-overlay" id="playOverlay"></div>' +
@@ -89,7 +94,7 @@ const Game1 = (function() {
             totalPairs: 5,
             characters: [
                 { id: 'medvezhonok', img: 'medvezhonok' },
-                { id: 'zaychonok', img: 'zaychonok' },
+                { id: 'zaychonok', img: 'series1RabbitNeutral' },
                 { id: 'tonya', img: 'tonya' },
                 { id: 'sonya', img: 'sonya' },
                 { id: 'kolobok', img: 'kolobok' }
