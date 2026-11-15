@@ -1,7 +1,7 @@
 // ========== Service Worker "Суперколобок" ==========
 
-const CACHE_NAME = 'superkolobok-v20261116-8';
-const DYNAMIC_CACHE = 'superkolobok-dynamic-v20261116-8';
+const CACHE_NAME = 'superkolobok-v20261116-9';
+const DYNAMIC_CACHE = 'superkolobok-dynamic-v20261116-9';
 
 // Пути ОТНОСИТЕЛЬНЫЕ — работают в подпапке /superkolobok/ на GitHub Pages
 const STATIC_ASSETS = [
@@ -61,7 +61,9 @@ const STATIC_ASSETS = [
   './media/images/series1-sonya.png',
   './media/images/series1-tonya.png',
   './media/images/team-veronika.jpg',
-  './media/images/kivo-2025-certificate.jpg'
+  './media/images/kivo-2025-certificate.jpg',
+  './media/images/bonus-stickers-preview.jpg',
+  './media/images/bonus-heart-preview.jpg'
 ];
 
 // ========== УСТАНОВКА ==========

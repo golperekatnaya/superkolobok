@@ -46,15 +46,8 @@ const PublicPages = (function() {
                             <article class="story-card story-card-wide"><img src="media/images/friendpower_card.png" alt="Колобок и Зайчонок в игровой истории о дружбе"><div><span>01</span><h3>Интерактивные истории</h3><p>Ребёнок знакомится с героями, следит за развитием событий и становится участником мультимедийной истории.</p></div></article>
                             <article class="story-card story-card-offset"><img src="media/images/card_care.png" alt="Кадр истории о заботе"><div><span>02</span><h3>Игровые задания</h3><p>Выполняет задания, взаимодействует с предметами и игровыми элементами, ищет ответы и пробует свои решения.</p></div></article>
                             <article class="story-card story-card-wide"><img src="media/images/series2-thumb.png" alt="Карта игровой истории проекта"><div><span>03</span><h3>Выбор и последствия</h3><p>Принимает решения в игровых ситуациях и наблюдает, как его действия влияют на дальнейшее развитие истории.</p></div></article>
+                            <article class="story-card story-card-materials"><div class="materials-preview-pair"><figure><img src="media/images/bonus-stickers-preview.jpg" alt="Лист со стикерами Колобка из игрового материала"><figcaption>Стикеры</figcaption></figure><figure><img src="media/images/bonus-heart-preview.jpg" alt="Печатная открытка «Отпечаток сердца»"><figcaption>Открытка</figcaption></figure></div><div><span>04</span><h3>Материалы для игры и творчества</h3><p>В дополнение к мульт-играм — печатные задания, карточки и творческие материалы для совместных занятий ребёнка и взрослого.</p></div></article>
                         </div>
-                        <section class="download-materials" aria-labelledby="download-materials-title">
-                            <div class="download-materials-heading"><div><p class="section-kicker">ДОПОЛНИТЕЛЬНО</p><h3 id="download-materials-title">Игровые материалы для печати</h3></div><p>Скачайте бонусные задания и распечатайте, чтобы продолжить игру вместе с ребёнком.</p></div>
-                            <div class="download-materials-grid">
-                                <a class="download-material-card" href="media/bonus/series1-materials.pdf" download="Суперколобок-Сила-дружбы.pdf"><span class="download-material-index">БОНУС · PDF</span><h4>Сила дружбы</h4><span class="download-material-action">Скачать и распечатать <span aria-hidden="true">↓</span></span></a>
-                                <a class="download-material-card" href="media/bonus/series2-materials.pdf" download="Суперколобок-Сила-заботы.pdf"><span class="download-material-index">БОНУС · PDF</span><h4>Сила заботы</h4><span class="download-material-action">Скачать и распечатать <span aria-hidden="true">↓</span></span></a>
-                                <a class="download-material-card" href="media/bonus/series3-materials.pdf" download="Суперколобок-Сила-команды.pdf"><span class="download-material-index">БОНУС · PDF</span><h4>Сила команды</h4><span class="download-material-action">Скачать и распечатать <span aria-hidden="true">↓</span></span></a>
-                            </div>
-                        </section>
                     </section>
 
                     <section class="process-section public-section" id="how">
@@ -104,6 +97,17 @@ const PublicPages = (function() {
                         <div class="recognition-date">КИвО<br><b>2025</b></div><div class="recognition-copy"><p class="section-kicker">ПРОФЕССИОНАЛЬНОЕ СООБЩЕСТВО</p><h2>Признание проекта</h2><p>Проект «Суперколобок и его друзья» вошёл в ТОП-100 КИвО-2025. Команда проекта также получила отдельное специальное признание от Фонда «Наше будущее».</p></div><a class="recognition-certificate" href="media/images/kivo-2025-certificate.jpg" target="_blank" rel="noopener noreferrer" aria-label="Открыть сертификат КИвО-2025 в полном размере"><img src="media/images/kivo-2025-certificate.jpg" alt="Сертификат участника конкурса инноваций в образовании КИвО-2025 для проекта «Колобок. Секреты дружелюбного общения»"><span>Смотреть сертификат <span aria-hidden="true">↗</span></span></a>
                     </section>
 
+                    <section class="reviews-section public-section" id="reviews" aria-labelledby="reviews-title">
+                        <div class="section-heading reviews-heading"><p class="section-kicker">ОТЗЫВЫ СЕМЕЙ И ПЕДАГОГОВ</p><h2 id="reviews-title">Истории тех, кто уже познакомился с проектом</h2><p>Листайте впечатления родителей, бабушек и воспитательниц. Нажмите на отзыв, чтобы прочитать его крупнее.</p></div>
+                        <div class="reviews-carousel" aria-roledescription="карусель отзывов">
+                            <button class="reviews-arrow reviews-prev" type="button" aria-label="Предыдущий отзыв">←</button>
+                            <button class="review-card" type="button" aria-haspopup="dialog" aria-label="Открыть отзыв крупнее"><span class="review-stars" aria-hidden="true">✦ ✦ ✦</span><span class="review-quote"></span><span class="review-author"></span><span class="review-open-hint">Читать отзыв <span aria-hidden="true">↗</span></span></button>
+                            <button class="reviews-arrow reviews-next" type="button" aria-label="Следующий отзыв">→</button>
+                        </div>
+                        <div class="reviews-pagination" role="group" aria-label="Выбрать отзыв"></div>
+                        <div class="reviews-dialog-backdrop" hidden><section class="reviews-dialog" role="dialog" aria-modal="true" aria-labelledby="reviewDialogTitle" aria-describedby="reviewDialogQuote" tabindex="-1"><button class="reviews-dialog-close" type="button" aria-label="Закрыть отзыв">×</button><span class="review-stars" aria-hidden="true">✦ ✦ ✦</span><p class="reviews-dialog-quote" id="reviewDialogQuote"></p><h3 id="reviewDialogTitle"></h3><p class="reviews-dialog-source">Отзыв из презентации проекта</p></section></div>
+                    </section>
+
                     <section class="team-section public-section" id="team">
                         <div class="team-heading"><p class="section-kicker">КОМАНДА ПРОЕКТА</p><h2>Проект создаёт команда «Моего университета»</h2><a class="university-logo-link" href="https://moi-universitet.ru/" target="_blank" rel="noopener noreferrer" aria-label="Сайт «Моего университета»"><img src="media/images/logo-my-university.png" alt="Логотип «Моего университета»"><span>АНО ДПО «Мой университет» <span aria-hidden="true">↗</span></span></a></div>
                         <div class="team-copy"><p>Идею проекта вместе разработали Ирина, Алина, Вероника и Тимофей. «Суперколобок и его друзья» объединяет образовательную экспертизу, методическую разработку, цифровые технологии и мультимедийный контент.</p><p>Каждый участник команды отвечает за свою часть проекта — от сценариев и иллюстраций до разработки приложения и методических решений.</p></div>
@@ -125,6 +129,7 @@ const PublicPages = (function() {
         root.scrollTop = 0;
         bindCommon();
         bindCharacterCards();
+        bindTestimonials();
         bindLandingMotion();
         var menu = root.querySelector('.mobile-menu');
         if (menu) menu.addEventListener('click', function() {
@@ -152,7 +157,7 @@ const PublicPages = (function() {
             attemptIntroPlayback();
         }
         if (!('IntersectionObserver' in window) || reducedMotion) return;
-        var targets = root.querySelectorAll('.hero-copy, .hero-art, .about-visual, .about-copy, .section-heading, .story-card, .download-materials-heading, .download-material-card, .process-step, .character-group-heading, .character-card, .audience-intro, .audience-card, .recognition-section > *, .team-heading, .team-copy, .team-member, .final-cta > *');
+        var targets = root.querySelectorAll('.hero-copy, .hero-art, .about-visual, .about-copy, .section-heading, .story-card, .reviews-carousel, .reviews-pagination, .process-step, .character-group-heading, .character-card, .audience-intro, .audience-card, .recognition-section > *, .team-heading, .team-copy, .team-member, .final-cta > *');
         var observer = new IntersectionObserver(function(entries) {
             entries.forEach(function(entry) {
                 if (!entry.isIntersecting) return;
@@ -169,6 +174,69 @@ const PublicPages = (function() {
             target.style.setProperty('--reveal-delay', Math.min(index, 4) * 90 + 'ms');
             observer.observe(target);
         });
+    }
+
+    function bindTestimonials() {
+        var section = root.querySelector('.reviews-section');
+        if (!section) return;
+        var reviews = [
+            { role: 'Воспитательница', quote: 'Грамотно сделано, хорошая анимация, не перегружена картинка; ребёнок развивается комплексно: эмоционально-волевая сфера, когнитивная, эстетическое воспитание, формирование личностных качеств.' },
+            { role: 'Валентина, бабушка', quote: 'Мне понравилось, что ситуации здесь понятны ребёнку и действительно близки его жизни. Герои приятные, речь хорошая, всё легко воспринимается. Чувствуется, что сделано с душой.' },
+            { role: 'Елена, мама', quote: 'Дочке 5 лет, смотрела с удовольствием. Очень красочный и позитивный, то что нужно для ребёнка. Мне как маме тоже очень понравилось.' },
+            { role: 'Воспитательница', quote: 'Мне было интересно, понравился выбор лексики ведущего, выбор конфликтных ситуаций. Мультфильм предлагает проблемные ситуации, которые точно уже встречались в жизни ребёнка… Учит размышлять, прежде чем действовать…' },
+            { role: 'Воспитательница', quote: 'В своей работе я тоже планирую его использовать во время адаптации детей или сложных и конфликтных ситуациях. Сам мультфильм сделан прекрасно! Чёткие персонажи, понятная речь и инструкции.' },
+            { role: 'Дарья, мама', quote: 'Ребёнку 7 лет было интересно (за гоночную машинку отдельное спасибо, очень оценили :). Смотрел увлечённо, подача понравилась. Он вспоминал ситуации со своими друзьями, сравнивал…' }
+        ];
+        var index = 0;
+        var card = section.querySelector('.review-card');
+        var quote = section.querySelector('.review-quote');
+        var author = section.querySelector('.review-author');
+        var dots = section.querySelector('.reviews-pagination');
+        var dialogBackdrop = section.querySelector('.reviews-dialog-backdrop');
+        var closeButton = section.querySelector('.reviews-dialog-close');
+        var dialogQuote = section.querySelector('.reviews-dialog-quote');
+        var dialogTitle = section.querySelector('#reviewDialogTitle');
+        function render() {
+            var review = reviews[index];
+            card.classList.add('is-changing');
+            window.setTimeout(function() {
+                quote.textContent = '«' + review.quote + '»';
+                author.textContent = review.role;
+                card.setAttribute('aria-label', 'Открыть отзыв: ' + review.role);
+                dots.querySelectorAll('button').forEach(function(dot, dotIndex) {
+                    dot.classList.toggle('is-active', dotIndex === index);
+                    dot.setAttribute('aria-current', dotIndex === index ? 'true' : 'false');
+                });
+                card.classList.remove('is-changing');
+            }, 130);
+        }
+        reviews.forEach(function(_, dotIndex) {
+            var dot = document.createElement('button');
+            dot.type = 'button';
+            dot.className = 'reviews-dot';
+            dot.setAttribute('aria-label', 'Отзыв ' + (dotIndex + 1));
+            dot.addEventListener('click', function() { index = dotIndex; render(); });
+            dots.appendChild(dot);
+        });
+        section.querySelector('.reviews-prev').addEventListener('click', function() { index = (index + reviews.length - 1) % reviews.length; render(); });
+        section.querySelector('.reviews-next').addEventListener('click', function() { index = (index + 1) % reviews.length; render(); });
+        card.addEventListener('click', function() {
+            var review = reviews[index];
+            dialogQuote.textContent = '«' + review.quote + '»';
+            dialogTitle.textContent = review.role;
+            dialogBackdrop.hidden = false;
+            closeButton.focus();
+        });
+        function closeDialog() {
+            dialogBackdrop.hidden = true;
+            card.focus();
+            document.removeEventListener('keydown', onKeydown);
+        }
+        function onKeydown(event) { if (event.key === 'Escape' && !dialogBackdrop.hidden) closeDialog(); }
+        closeButton.addEventListener('click', closeDialog);
+        dialogBackdrop.addEventListener('click', function(event) { if (event.target === dialogBackdrop) closeDialog(); });
+        card.addEventListener('click', function() { document.addEventListener('keydown', onKeydown); });
+        render();
     }
 
     function bindCharacterCards() {

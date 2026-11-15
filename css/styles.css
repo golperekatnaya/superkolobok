@@ -2231,3 +2231,59 @@ body.public-mode #sceneContent { scroll-behavior:smooth; }
     .hero-art,.character-card,.scroll-reveal,.character-dialog-backdrop,.character-dialog { transition:none; animation:none; opacity:1; transform:none; }
     .register-kolobok-track img { animation:none; }
 }
+
+/* Дополнительные материалы и отзывы из презентации проекта. */
+.story-card-materials { grid-column:span 7; margin-top:52px; }
+.materials-preview-pair { min-height:320px; display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:14px; background:#fff4df; }
+.materials-preview-pair figure { min-width:0; display:flex; flex-direction:column; align-items:center; margin:0; overflow:hidden; border-radius:12px; background:#fff; }
+.materials-preview-pair img { width:100%; height:275px; object-fit:contain; }
+.materials-preview-pair figcaption { width:100%; padding:7px 8px 9px; color:var(--purple); font-size:12px; font-weight:750; text-align:center; }
+.reviews-section { border-top:1px solid rgba(67,42,155,.1); }
+.reviews-heading { margin-bottom:25px; }
+.reviews-carousel { display:grid; grid-template-columns:54px minmax(0,760px) 54px; justify-content:center; align-items:center; gap:18px; }
+.reviews-arrow { width:52px; height:52px; border:1px solid rgba(67,42,155,.17); border-radius:50%; background:#fff; color:var(--purple); font-size:26px; line-height:1; cursor:pointer; transition:transform .2s ease,background .2s ease,color .2s ease; }
+.reviews-arrow:hover { transform:scale(1.06); background:var(--purple); color:white; }
+.review-card { position:relative; min-height:280px; display:flex; flex-direction:column; align-items:flex-start; justify-content:center; padding:40px 48px 36px; overflow:hidden; border:1px solid rgba(67,42,155,.13); border-radius:28px 28px 28px 8px; background:#fff; color:inherit; text-align:left; cursor:pointer; box-shadow:0 14px 42px rgba(63,44,104,.07); transition:opacity .13s ease,transform .2s ease,box-shadow .2s ease; }
+.review-card::after { content:""; position:absolute; right:-36px; top:-42px; width:150px; height:150px; border-radius:50%; background:#fff1c8; z-index:0; }
+.review-card>* { position:relative; z-index:1; }
+.review-card:hover { transform:translateY(-3px); box-shadow:0 18px 46px rgba(63,44,104,.12); }
+.review-card.is-changing { opacity:.28; transform:translateY(5px); }
+.review-stars { margin-bottom:18px; color:#f9c432; font-size:17px; letter-spacing:.25em; }
+.review-quote { color:var(--purple); font-size:clamp(19px,2.1vw,25px); font-weight:600; line-height:1.42; }
+.review-author { margin-top:22px; color:#716887; font-size:14px; font-weight:750; }
+.review-open-hint { display:flex; align-items:center; gap:7px; margin-top:16px; color:#e95e31; font-size:13px; font-weight:800; }
+.review-open-hint span { font-size:17px; }
+.reviews-pagination { display:flex; justify-content:center; align-items:center; gap:9px; margin-top:24px; }
+.reviews-dot { width:9px; height:9px; padding:0; border:0; border-radius:50%; background:#d9d2e8; cursor:pointer; transition:width .2s ease,background .2s ease; }
+.reviews-dot.is-active { width:28px; border-radius:99px; background:var(--orange); }
+.reviews-dialog-backdrop { position:fixed; inset:0; z-index:1000; display:grid; place-items:center; padding:24px; background:rgba(37,25,71,.5); backdrop-filter:blur(5px); }
+.reviews-dialog-backdrop[hidden] { display:none; }
+.reviews-dialog { position:relative; width:min(100%,720px); padding:clamp(30px,6vw,58px); border:1px solid rgba(67,42,155,.12); border-radius:30px 30px 30px 10px; background:#fffaf3; box-shadow:0 25px 80px rgba(30,20,60,.25); animation:review-pop .24s cubic-bezier(.2,.8,.2,1) both; }
+.reviews-dialog::after { content:""; position:absolute; top:-24px; right:44px; width:76px; height:76px; border-radius:50%; background:#f9c432; z-index:0; }
+.reviews-dialog>* { position:relative; z-index:1; }
+.reviews-dialog-close { position:absolute; top:14px; right:14px; z-index:2; width:42px; height:42px; border:0; border-radius:50%; background:#f0eafa; color:var(--purple); font-size:28px; line-height:1; cursor:pointer; }
+.reviews-dialog .review-stars { margin-bottom:16px; }
+.reviews-dialog-quote { margin:0; color:var(--purple); font-size:clamp(21px,3vw,31px); font-weight:600; line-height:1.45; }
+.reviews-dialog h3 { margin:24px 0 5px; color:#625b73; font-size:16px; }
+.reviews-dialog-source { color:#8d849a; font-size:12px; }
+@keyframes review-pop { from { opacity:0; transform:translateY(12px) scale(.97); } to { opacity:1; transform:translateY(0) scale(1); } }
+@media(max-width:1024px) { .story-card-materials { grid-column:span 6; margin-top:0; } }
+@media(max-width:680px) {
+    .story-card-materials { grid-column:auto; }
+    .materials-preview-pair { min-height:260px; gap:7px; padding:9px; }
+    .materials-preview-pair img { height:215px; }
+    .materials-preview-pair figcaption { font-size:11px; }
+    .reviews-carousel { grid-template-columns:38px minmax(0,1fr) 38px; gap:8px; }
+    .reviews-arrow { width:38px; height:38px; font-size:21px; }
+    .review-card { min-height:310px; padding:28px 21px 24px; border-radius:22px 22px 22px 7px; }
+    .review-quote { font-size:18px; }
+    .review-author { margin-top:16px; }
+    .reviews-dialog-backdrop { padding:15px; }
+    .reviews-dialog { padding:34px 24px 30px; border-radius:23px 23px 23px 8px; }
+    .reviews-dialog::after { right:30px; width:56px; height:56px; }
+    .reviews-dialog-quote { font-size:21px; }
+}
+@media(prefers-reduced-motion:reduce) {
+    .reviews-arrow,.review-card,.reviews-dot { transition:none; }
+    .reviews-dialog { animation:none; }
+}
