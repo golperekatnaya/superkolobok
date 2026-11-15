@@ -21,12 +21,10 @@ const PublicPages = (function() {
                 <main>
                     <section class="landing-hero" id="project">
                         <div class="hero-copy">
-                            <p class="eyebrow">ДЕТСКОЕ РАЗВИВАЮЩЕЕ ЦИФРОВОЕ ПРОСТРАНСТВО</p>
-                            <h1>Суперколобок<br>и его друзья</h1>
-                            <p class="hero-subtitle">Интерактивные мульт-игры для детей 4–7 лет</p>
-                            <p class="hero-lead">Игровые истории, в которых ребёнок становится участником событий: знакомится с героями, сталкивается с разными ситуациями, выбирает, как поступить, и узнаёт, к чему приводят его решения.</p>
-                            <div class="hero-actions"><button class="primary-cta" type="button" data-page="register">Перейти к игровому пространству <span aria-hidden="true">→</span></button><a class="text-cta" href="#how">Как устроен проект <span aria-hidden="true">↓</span></a></div>
-                            <p class="audience-note">Для детей 4–7 лет</p>
+                            <p class="eyebrow">ИНТЕРАКТИВНЫЕ МУЛЬТ-ИГРЫ · 4–7 ЛЕТ</p>
+                            <h1>У каждого решения есть своя история</h1>
+                            <p class="hero-subtitle">Колобок и друзья помогают детям учиться дружить, понимать чувства и действовать вместе.</p>
+                            <div class="hero-actions"><button class="primary-cta" type="button" data-page="register">Начать путешествие <span aria-hidden="true">→</span></button></div>
                         </div>
                         <figure class="hero-art">
                             <img class="hero-art-main" src="media/images/friendpower_card.png" alt="Кадр игровой истории о дружбе Колобка и Зайчонка">
@@ -65,13 +63,14 @@ const PublicPages = (function() {
                     <section class="characters-section public-section" id="characters">
                         <div class="section-heading"><p class="section-kicker">ГЕРОИ ИСТОРИЙ</p><h2>Знакомьтесь: друзья Суперколобка</h2><p>Каждый герой — часть историй, в которых ребёнок учится замечать важное, понимать других и взаимодействовать с окружающим миром.</p></div>
                         <div class="character-grid">
-                            <article class="character-card character-kolobok"><div><img src="media/images/kolobok_avatar.png" alt="Колобок"></div><h3>Колобок</h3></article>
-                            <article class="character-card"><div><img src="media/images/series1-rabbit-neutral.png" alt="Заяц"></div><h3>Заяц</h3></article>
-                            <article class="character-card"><div><img src="media/images/series1-soroka-open.png" alt="Сорока"></div><h3>Сорока</h3></article>
-                            <article class="character-card"><div class="hedgehogs"><img src="media/images/sonya.svg" alt="Ёжик Соня"><img src="media/images/tonya.svg" alt="Ёжик Тоня"></div><h3>Ёжики</h3></article>
-                            <article class="character-card"><div><img src="media/images/grandpa.png" alt="Дедушка"></div><h3>Дедушка</h3></article>
-                            <article class="character-card"><div><img src="media/images/series1-grandma-bean.png" alt="Бабушка Фасоль"></div><h3>Бабушка Фасоль</h3></article>
-                            <article class="character-card character-firefly"><div><img src="media/images/firefly.png" alt="Светлячок"></div><h3>Светлячок</h3></article>
+                            <button class="character-card character-kolobok" type="button" data-character="kolobok"><span class="character-art"><img src="media/images/kolobok.svg" alt=""></span><span class="character-name">Колобок</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
+                            <button class="character-card" type="button" data-character="zaychonok"><span class="character-art"><img src="media/images/series1-rabbit-neutral.png" alt=""></span><span class="character-name">Зайчонок</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
+                            <button class="character-card" type="button" data-character="sonya"><span class="character-art"><img src="media/images/sonya.svg" alt=""></span><span class="character-name">Ёжиха Соня</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
+                            <button class="character-card" type="button" data-character="tonya"><span class="character-art"><img src="media/images/tonya.svg" alt=""></span><span class="character-name">Ёжиха Тоня</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
+                            <button class="character-card" type="button" data-character="medvezhonok"><span class="character-art"><img src="media/images/medvezhonok.svg" alt=""></span><span class="character-name">Медвежонок</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
+                            <button class="character-card" type="button" data-character="firefly"><span class="character-art"><img src="media/images/firefly.png" alt=""></span><span class="character-name">Светлячок</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
+                            <button class="character-card" type="button" data-character="grandma"><span class="character-art"><img src="media/images/series1-grandma-bean.png" alt=""></span><span class="character-name">Бабушка Фасоль</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
+                            <button class="character-card" type="button" data-character="grandpa"><span class="character-art"><img src="media/images/grandpa.png" alt=""></span><span class="character-name">Дедушка</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
                         </div>
                     </section>
 
@@ -100,11 +99,101 @@ const PublicPages = (function() {
                 <footer class="public-footer"><a href="#top" class="footer-brand"><img src="media/images/logo-superkolobok-firefly.svg" alt="Суперколобок и его друзья"></a><nav aria-label="Разделы сайта"><a href="#about">О проекте</a><a href="#stories">Игровые истории</a><a href="#parents">Родителям</a><a href="#teachers">Педагогам</a></nav><span>Для семей · образовательных организаций · педагогического сообщества</span></footer>
             </div>`;
         bindCommon();
+        bindCharacterCards();
+        bindLandingMotion();
         var menu = root.querySelector('.mobile-menu');
         if (menu) menu.addEventListener('click', function() {
             var links = root.querySelector('.public-links');
             var open = links.classList.toggle('is-open');
             menu.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+    }
+
+    function bindLandingMotion() {
+        if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        var targets = root.querySelectorAll('.hero-copy, .hero-art, .public-section > *, .story-card, .character-card, .audience-card, .final-cta > *');
+        var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (!entry.isIntersecting) return;
+                entry.target.classList.add('is-revealed');
+                observer.unobserve(entry.target);
+            });
+        }, { root: document.getElementById('sceneContent'), threshold: 0.08, rootMargin: '0px 0px -36px 0px' });
+        targets.forEach(function(target, index) {
+            target.classList.add('scroll-reveal');
+            target.style.setProperty('--reveal-delay', (index % 4) * 65 + 'ms');
+            observer.observe(target);
+        });
+    }
+
+    function bindCharacterCards() {
+        var characters = {
+            kolobok: {
+                name: 'Колобок', image: 'media/images/kolobok.svg',
+                direction: 'Лидерство и командная работа',
+                description: 'Истории Колобка развивают способность принимать решения и справляться с изменениями.'
+            },
+            zaychonok: {
+                name: 'Зайчонок', image: 'media/images/series1-rabbit-neutral.png',
+                direction: 'Эмоциональный интеллект и личностное развитие',
+                description: 'Через его истории дети учатся понимать свои чувства, просить о помощи и принимать особенности себя и других.'
+            },
+            sonya: {
+                name: 'Ёжиха Соня', image: 'media/images/sonya.svg',
+                direction: 'Креативное и адаптивное мышление',
+                description: 'Соня помогает детям искать нестандартные решения.'
+            },
+            tonya: {
+                name: 'Ёжиха Тоня', image: 'media/images/tonya.svg',
+                direction: 'Проектное мышление',
+                description: 'С Тоней дети знакомятся с планированием, созданием идей и работой над результатом.'
+            },
+            medvezhonok: {
+                name: 'Медвежонок', image: 'media/images/medvezhonok.svg',
+                direction: 'Духовно-нравственное и гражданское развитие',
+                description: 'Его направление — уважение к традициям, семье и окружающим.'
+            },
+            firefly: {
+                name: 'Светлячок', image: 'media/images/firefly.png',
+                direction: 'Проводник по миру проекта',
+                description: 'Светлячок помогает детям в доступной форме знакомиться с основами искусственного интеллекта.'
+            },
+            grandma: {
+                name: 'Бабушка Фасоль', image: 'media/images/series1-grandma-bean.png',
+                direction: 'Взрослый наставник и семейная поддержка',
+                description: 'Вместе с дедушкой Бабушка Фасоль раскрывает в историях заботу, поддержку, семейные ценности и доверительное общение между поколениями.'
+            },
+            grandpa: {
+                name: 'Дедушка Колобка', image: 'media/images/grandpa.png',
+                direction: 'Взрослый наставник и семейная поддержка',
+                description: 'Вместе с бабушкой Дедушка Колобка раскрывает в историях заботу, поддержку, передачу опыта, семейные ценности и доверительное общение между поколениями.'
+            }
+        };
+        root.querySelectorAll('[data-character]').forEach(function(card) {
+            card.addEventListener('click', function() {
+                var character = characters[card.getAttribute('data-character')];
+                if (!character) return;
+                var backdrop = document.createElement('div');
+                backdrop.className = 'character-dialog-backdrop';
+                backdrop.innerHTML = '<section class="character-dialog" role="dialog" aria-modal="true" aria-labelledby="characterDialogTitle" aria-describedby="characterDialogDescription" tabindex="-1"><button class="character-dialog-close" type="button" aria-label="Закрыть">×</button><img class="character-dialog-portrait" alt=""><div class="character-dialog-kicker">НАПРАВЛЕНИЕ В МУЛЬТ-ИГРАХ</div><h2 id="characterDialogTitle"></h2><h3 class="character-dialog-direction"></h3><p id="characterDialogDescription"></p></section>';
+                backdrop.querySelector('.character-dialog-portrait').src = character.image;
+                backdrop.querySelector('.character-dialog-portrait').alt = character.name;
+                backdrop.querySelector('#characterDialogTitle').textContent = character.name;
+                backdrop.querySelector('.character-dialog-direction').textContent = character.direction;
+                backdrop.querySelector('#characterDialogDescription').textContent = character.description;
+                document.body.appendChild(backdrop);
+                var closeButton = backdrop.querySelector('.character-dialog-close');
+                function closeDialog() {
+                    backdrop.remove();
+                    card.focus();
+                    document.removeEventListener('keydown', onKeydown);
+                }
+                function onKeydown(event) { if (event.key === 'Escape') closeDialog(); }
+                closeButton.addEventListener('click', closeDialog);
+                backdrop.addEventListener('click', function(event) { if (event.target === backdrop) closeDialog(); });
+                document.addEventListener('keydown', onKeydown);
+                closeButton.focus();
+            });
         });
     }
 
@@ -117,7 +206,7 @@ const PublicPages = (function() {
             '<aside class="auth-aside ' + (isRegister ? 'aside-purple' : 'aside-peach') + '">' +
                 '<a class="brand auth-brand" href="#" data-page="landing"><img class="brand-wordmark" src="media/images/logo-superkolobok-firefly.svg" alt="Суперколобок и Светлячок"></a>' +
                 '<div class="aside-copy"><h1>' + (isRegister ? 'Создаём ваш<br>сказочный мир' : 'Сказка начинается<br>здесь') + '</h1><p>' + (isRegister ? 'Зарегистрируйтесь, чтобы сохранять истории, достижения и прогресс ребёнка.' : 'Войдите, чтобы продолжить путешествие по сказочному миру вместе с Колобком.') + '</p></div>' +
-                '<div class="auth-media-row"><div class="aside-illustration"><video class="aside-loader" autoplay muted loop playsinline preload="metadata" poster="media/images/kolobok_avatar.png" aria-label="Колобок катится"><source src="media/videos/Loader.mov" type="video/quicktime"></video></div><p class="aside-tagline">Качусь и учусь</p></div>' +
+                '<div class="auth-media-row"><div class="aside-illustration"><video class="aside-loader" autoplay muted loop playsinline preload="metadata" poster="media/images/kolobok_avatar.png" aria-label="Колобок катится"><source src="media/videos/Loader.mov" type="video/quicktime"></video></div>' + (isRegister ? '' : '<p class="aside-tagline">Качусь и учусь</p>') + '</div>' +
             '</aside>' +
             '<section class="auth-main"><button class="auth-back" type="button" data-page="landing">← <span>На главную</span></button>' +
                 '<div class="auth-form-wrap"><div class="auth-mobile-brand"><img class="brand-wordmark" src="media/images/logo-superkolobok-firefly.svg" alt="Суперколобок и Светлячок"></div>' +
@@ -129,6 +218,7 @@ const PublicPages = (function() {
                         (isRegister ? '<label for="accountPasswordRepeat">Повторите пароль</label><input id="accountPasswordRepeat" name="passwordRepeat" type="password" autocomplete="new-password" placeholder="Введите пароль ещё раз" required minlength="8"><label class="terms-label"><input type="checkbox" name="terms" required><span>Согласен(на) с условиями использования и политикой конфиденциальности</span></label>' : '<button class="forgot-link" id="forgotPassword" type="button">Забыли пароль?</button>') +
                         '<p class="auth-message" id="authMessage" aria-live="polite"></p><button class="auth-submit ' + (isRegister ? 'submit-orange' : 'submit-purple') + '" type="submit">' + (isRegister ? 'Создать аккаунт' : 'Войти') + '</button>' +
                     '</form><p class="auth-switch">' + (isRegister ? 'Уже есть аккаунт? <button type="button" data-page="login">Войти</button>' : 'Ещё нет аккаунта? <button type="button" data-page="register">Создать аккаунт</button>') + '</p>' +
+                    (isRegister ? '<div class="register-rolling-note"><div class="register-kolobok-track"><img src="media/images/kolobok_avatar.png" alt=""></div><span>Качусь и учусь</span></div>' : '') +
                     (isRegister ? '' : '<p class="auth-local-note">Аккаунт доступен в этом браузере.</p>') +
                 '</div>' +
                 (isRegister ? '' : '<p class="auth-legal">Продолжая, вы принимаете условия использования и политику конфиденциальности.</p>') +
