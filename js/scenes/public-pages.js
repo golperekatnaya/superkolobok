@@ -61,16 +61,26 @@ const PublicPages = (function() {
 
                     <section class="characters-section public-section" id="characters">
                         <div class="section-heading"><p class="section-kicker">ГЕРОИ ИСТОРИЙ</p><h2>Знакомьтесь: друзья Суперколобка</h2><p>Каждый герой — часть историй, в которых ребёнок учится замечать важное, понимать других и взаимодействовать с окружающим миром.</p></div>
-                        <div class="character-grid">
+                        <div class="character-groups">
+                          <section class="character-group character-group-kids" aria-labelledby="child-characters-title">
+                            <div class="character-group-heading"><div><p class="section-kicker">ГЕРОИ ИСТОРИЙ</p><h3 id="child-characters-title">Дети</h3></div><p>Друзья, которые вместе с ребёнком исследуют мир и учатся новому.</p></div>
+                            <div class="character-grid">
                             <button class="character-card character-kolobok" type="button" data-character="kolobok"><span class="character-art"><img src="media/images/series1-kolobok-neutral.png" alt=""></span><span class="character-name">Колобок</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
                             <button class="character-card" type="button" data-character="zaychonok"><span class="character-art"><img src="media/images/series1-rabbit-neutral.png" alt=""></span><span class="character-name">Зайчонок</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
                             <button class="character-card" type="button" data-character="sonya"><span class="character-art"><img src="media/images/series1-sonya.png" alt=""></span><span class="character-name">Ёжиха Соня</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
                             <button class="character-card" type="button" data-character="tonya"><span class="character-art"><img src="media/images/series1-tonya.png" alt=""></span><span class="character-name">Ёжиха Тоня</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
                             <button class="character-card" type="button" data-character="medvezhonok"><span class="character-art"><img src="media/images/medvezhonok.png" alt=""></span><span class="character-name">Медвежонок</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
+                            </div>
+                          </section>
+                          <section class="character-group character-group-adults" aria-labelledby="adult-characters-title">
+                            <div class="character-group-heading"><div><p class="section-kicker">ПОДДЕРЖКА И НАСТАВНИКИ</p><h3 id="adult-characters-title">Взрослые и ведущие</h3></div><p>Помогают героям, делятся опытом и сопровождают в путешествии.</p></div>
+                            <div class="character-grid">
+                            <button class="character-card" type="button" data-character="firefly"><span class="character-art"><img src="media/images/firefly.png" alt=""></span><span class="character-name">Светлячок</span><span class="character-hint">Главный ведущий <span aria-hidden="true">↗</span></span></button>
                             <button class="character-card character-bear-teacher" type="button" data-character="medveditsa"><span class="character-art"><img src="media/images/medvezhonok.png" alt=""><span class="character-role-badge">Педагог</span></span><span class="character-name">Медведица</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
-                            <button class="character-card" type="button" data-character="firefly"><span class="character-art"><img src="media/images/firefly.png" alt=""></span><span class="character-name">Светлячок</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
                             <button class="character-card" type="button" data-character="grandma"><span class="character-art"><img src="media/images/series1-grandma-bean.png" alt=""></span><span class="character-name">Бабушка Фасоль</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
                             <button class="character-card" type="button" data-character="grandpa"><span class="character-art"><img src="media/images/series1-grandpa.png" alt=""></span><span class="character-name">Дедушка</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
+                            </div>
+                          </section>
                         </div>
                     </section>
 
@@ -124,7 +134,7 @@ const PublicPages = (function() {
             introVideo.removeAttribute('autoplay');
         }
         if (!('IntersectionObserver' in window) || reducedMotion) return;
-        var targets = root.querySelectorAll('.hero-copy, .hero-art, .about-visual, .about-copy, .section-heading, .story-card, .process-step, .character-card, .audience-intro, .audience-card, .recognition-section > *, .team-heading, .team-copy, .team-member, .final-cta > *');
+        var targets = root.querySelectorAll('.hero-copy, .hero-art, .about-visual, .about-copy, .section-heading, .story-card, .process-step, .character-group-heading, .character-card, .audience-intro, .audience-card, .recognition-section > *, .team-heading, .team-copy, .team-member, .final-cta > *');
         var observer = new IntersectionObserver(function(entries) {
             entries.forEach(function(entry) {
                 if (!entry.isIntersecting) return;
