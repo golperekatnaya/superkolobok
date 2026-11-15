@@ -2287,3 +2287,15 @@ body.public-mode #sceneContent { scroll-behavior:smooth; }
     .reviews-arrow,.review-card,.reviews-dot { transition:none; }
     .reviews-dialog { animation:none; }
 }
+
+/* Branded first frame: keep the legacy game shell hidden until the landing page is ready. */
+body.app-booting { min-height:100dvh; padding:0; background:#fffaf4; }
+body.app-booting .app-container { visibility:hidden; }
+.app-boot-screen { position:fixed; inset:0; z-index:10000; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:22px; overflow:hidden; background:#fffaf4; opacity:1; transition:opacity .24s ease; }
+.app-boot-screen.is-dismissed { opacity:0; pointer-events:none; }
+.app-boot-logo { display:block; width:min(290px,72vw); height:auto; }
+.app-boot-roll { position:relative; width:min(240px,62vw); height:58px; border-bottom:2px solid #eadfcf; }
+.app-boot-roll img { position:absolute; bottom:3px; left:0; width:48px; height:48px; object-fit:contain; animation:bootKolobokRoll 1.35s ease-in-out infinite alternate; }
+.app-boot-screen p { color:#6f6784; font-size:14px; font-weight:600; }
+@keyframes bootKolobokRoll { from { left:0; transform:rotate(0); } to { left:calc(100% - 48px); transform:rotate(360deg); } }
+@media(prefers-reduced-motion:reduce) { .app-boot-screen,.app-boot-roll img { transition:none; animation:none; } }

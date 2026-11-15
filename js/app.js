@@ -31,14 +31,24 @@ const App = (function() {
                 
                 console.log('[App] -> Публичная главная');
                 PublicPages.renderLanding();
+                dismissBootScreen();
             })
             .catch(function(error) {
                 console.error('[App] Ошибка:', error);
                 _isLoading = false;
+                dismissBootScreen();
                 showErrorScreen(error);
             });
     }
     
+    function dismissBootScreen() {
+        var bootScreen = document.getElementById('appBootScreen');
+        document.body.classList.remove('app-booting');
+        if (!bootScreen) return;
+        bootScreen.classList.add('is-dismissed');
+        window.setTimeout(function() { bootScreen.remove(); }, 260);
+    }
+
     function showErrorScreen(error) {
         var c = document.getElementById('sceneContent');
         if (!c) return;

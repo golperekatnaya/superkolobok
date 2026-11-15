@@ -17,9 +17,14 @@
     <link rel="icon" type="image/png" sizes="96x96" href="media/images/favicon-96x96.png?v=20260909-2">
     <link rel="shortcut icon" href="media/images/favicon.ico?v=20260909-2">
     
-    <link rel="stylesheet" href="css/styles.css?v=20261116-9">
+    <link rel="stylesheet" href="css/styles.css?v=20261116-10">
 </head>
-<body>
+<body class="app-booting">
+    <div class="app-boot-screen" id="appBootScreen" role="status" aria-label="Загружается Суперколобок">
+        <img class="app-boot-logo" src="media/images/logo-superkolobok-firefly.svg" alt="Суперколобок и Светлячок">
+        <div class="app-boot-roll"><img src="media/images/kolobok_avatar.png" alt=""></div>
+        <p>Готовим сказочное путешествие</p>
+    </div>
     <div class="app-container">
         
         <header class="game-header">
@@ -81,27 +86,7 @@
             </div>
         </header>
         
-        <main class="scene-content" id="sceneContent">
-            <div id="loadingScreen" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;background:linear-gradient(180deg, #FFFCF5 0%, #FEF5E6 100%);position:relative;overflow:hidden;">
-                <video id="loaderVideo" class="loader-spin" autoplay muted playsinline loop style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:5;">
-                    <source src="media/videos/Loader.mov" type="video/quicktime">
-                    <!-- fallback text -->
-                </video>
-                <div class="loading-kolobok-container" style="display:none;">
-                    <div class="loading-ring">
-                        <svg viewBox="0 0 100 100">
-                            <circle cx="50" cy="50" r="42" fill="none" stroke="#F0E6D8" stroke-width="5"/>
-                            <circle id="loadingCircle" cx="50" cy="50" r="42" fill="none" stroke="#F5B342" stroke-width="5" stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="264" transform="rotate(-90 50 50)"/>
-                        </svg>
-                    </div>
-                    <div class="loading-kolobok">
-                        <img src="media/images/kolobok-progress.png" alt="Колобок">
-                    </div>
-                </div>
-                <p class="loading-text" style="display:none;">Загружаем приключение...</p>
-                <p class="loading-subtitle" style="display:none;">Качусь и учусь</p>
-            </div>
-        </main>
+        <main class="scene-content" id="sceneContent"></main>
         
     </div>
     
@@ -112,7 +97,7 @@
     <script src="js/ui/components.js?v=20260909-2"></script>
     <script src="js/ui/popup.js?v=20260909-2"></script>
     <script src="js/scenes/name-screen.js?v=20260909-2"></script>
-    <script src="js/scenes/public-pages.js?v=20261116-9"></script>
+    <script src="js/scenes/public-pages.js?v=20261116-10"></script>
     <script src="js/scenes/series-select.js?v=20261115-3"></script>
     <script src="js/scenes/video-scene.js?v=20260909-2"></script>
     <script src="js/scenes/series-4-interactive.js?v=20260911-1"></script>
@@ -123,120 +108,9 @@
     <script src="js/scenes/test.js?v=20260909-2"></script>
     <script src="js/scenes/finale.js?v=20260909-2"></script>
     <script src="js/navigation.js?v=20260909-2"></script>
-    <script src="js/app.js?v=20261114-1"></script>
+    <script src="js/app.js?v=20261116-2"></script>
     <script src="js/ui/pwa.js?v=20260909-2"></script>
     
-    <script>
-        (function() {
-            var circle = document.getElementById('loadingCircle');
-            if (circle) {
-                var circumference = 2 * Math.PI * 42;
-                circle.style.strokeDasharray = circumference;
-                
-                var progress = 0;
-                var interval = setInterval(function() {
-                    progress += Math.random() * 25;
-                    if (progress >= 90) { progress = 90; clearInterval(interval); }
-                    var offset = circumference - (progress / 100) * circumference;
-                    circle.style.strokeDashoffset = offset;
-                }, 300);
-                
-                var checkInterval = setInterval(function() {
-                    if (typeof App !== 'undefined' && App.isInitialized()) {
-                        clearInterval(checkInterval);
-                        clearInterval(interval);
-                        circle.style.strokeDashoffset = '0';
 
-                        var loaderVideo = document.getElementById('loaderVideo');
-                        if (loaderVideo) {
-                            try {
-                                loaderVideo.pause();
-                                loaderVideo.currentTime = 0;
-                                loaderVideo.removeAttribute('src');
-                                loaderVideo.load();
-                            } catch (e) { /* ignore */ }
-                        }
-
-                        setTimeout(function() {
-                            var ls = document.getElementById('loadingScreen');
-                            var loaderOverlay = document.getElementById('loaderPlayOverlay');
-                            if (loaderOverlay) {
-                                loaderOverlay.style.pointerEvents = 'none';
-                                loaderOverlay.style.opacity = '0';
-                                setTimeout(function() { loaderOverlay.remove(); }, 200);
-                            }
-                            if (ls) {
-                                ls.style.opacity = '0';
-                                ls.style.transition = 'opacity 0.4s ease';
-                                setTimeout(function() { ls.remove(); }, 400);
-                            }
-                        }, 300);
-                    }
-                }, 100);
-            }
-            
-            document.addEventListener('DOMContentLoaded', function() {
-                var loaderVideo = document.getElementById('loaderVideo');
-                var kolobokContainer = document.querySelector('.loading-kolobok-container');
-                var loadingTexts = document.querySelectorAll('.loading-text, .loading-subtitle');
-                if (loaderVideo) {
-                    var playPromise = loaderVideo.play();
-                    if (playPromise !== undefined) {
-                        playPromise.then(function() {
-                            if (kolobokContainer) kolobokContainer.style.display = 'none';
-                            loadingTexts.forEach(function(t) { t.style.display = 'none'; });
-                            var ov = document.getElementById('loaderPlayOverlay'); if (ov) ov.remove();
-                            try { loaderVideo.classList.remove('loader-spin'); } catch(e) {}
-                        }).catch(function(e) {
-                            console.warn('[Loader] Video autoplay failed:', e && e.message);
-                            try {
-                                if (kolobokContainer) kolobokContainer.style.display = 'none';
-                                loadingTexts.forEach(function(t) { t.style.display = 'none'; });
-                                var overlay = document.createElement('div');
-                                overlay.id = 'loaderPlayOverlay';
-                                overlay.style.position = 'absolute';
-                                overlay.style.inset = '0';
-                                overlay.style.display = 'flex';
-                                overlay.style.alignItems = 'center';
-                                overlay.style.justifyContent = 'center';
-                                overlay.style.zIndex = 10;
-                                overlay.style.background = 'rgba(255,255,255,0)';
-                                overlay.style.pointerEvents = 'none';
-                                var btn = document.createElement('button');
-                                btn.textContent = 'Нажмите, чтобы запустить анимацию';
-                                btn.style.background = 'rgba(0,0,0,0.4)';
-                                btn.style.color = '#fff';
-                                btn.style.border = 'none';
-                                btn.style.padding = '10px 16px';
-                                btn.style.borderRadius = '8px';
-                                btn.style.fontSize = '16px';
-                                btn.style.cursor = 'pointer';
-                                btn.style.pointerEvents = 'auto';
-                                btn.addEventListener('click', function() {
-                                    loaderVideo.play().then(function() {
-                                        overlay.remove();
-                                    }).catch(function(err) {
-                                        console.warn('[Loader] manual play failed:', err && err.message);
-                                    });
-                                });
-                                overlay.appendChild(btn);
-                                var loadingScreen = document.getElementById('loadingScreen');
-                                if (loadingScreen) {
-                                    loadingScreen.appendChild(overlay);
-                                } else {
-                                    document.body.appendChild(overlay);
-                                }
-                                setTimeout(function() { try { loaderVideo.classList.remove('loader-spin'); } catch(e) {} }, 1800);
-                            } catch(er) { console.warn(er); }
-                        });
-                    }
-                }
-                if (loaderVideo) {
-                    loaderVideo.addEventListener('playing', function() { try { loaderVideo.classList.remove('loader-spin'); } catch(e) {} });
-                    setTimeout(function() { try { loaderVideo.classList.remove('loader-spin'); } catch(e) {} }, 2200);
-                }
-            });
-        })();
-    </script>
 </body>
 </html>
