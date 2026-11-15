@@ -27,9 +27,9 @@ const PublicPages = (function() {
                             <div class="hero-actions"><button class="primary-cta" type="button" data-page="register">Начать путешествие <span aria-hidden="true">→</span></button></div>
                         </div>
                         <figure class="hero-art">
-                            <img class="hero-art-main" src="media/images/friendpower_card.png" alt="Кадр игровой истории о дружбе Колобка и Зайчонка">
+                            <video class="hero-art-main hero-intro-video" autoplay muted loop playsinline controls preload="metadata" poster="media/images/friendpower_card.png" aria-label="Беззвучная заставка проекта «Суперколобок»"><source src="media/videos/superkolobok-splash.mp4" type="video/mp4"></video>
                             <div class="hero-art-detail"><img src="media/images/kolobok_avatar.png" alt="Колобок"><span>Истории, в которых можно действовать</span></div>
-                            <figcaption>Оригинальные герои и игровые ситуации проекта</figcaption>
+                            <figcaption>Заставка проекта · звук выключен</figcaption>
                         </figure>
                     </section>
 
@@ -68,6 +68,7 @@ const PublicPages = (function() {
                             <button class="character-card" type="button" data-character="sonya"><span class="character-art"><img src="media/images/sonya.svg" alt=""></span><span class="character-name">Ёжиха Соня</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
                             <button class="character-card" type="button" data-character="tonya"><span class="character-art"><img src="media/images/tonya.svg" alt=""></span><span class="character-name">Ёжиха Тоня</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
                             <button class="character-card" type="button" data-character="medvezhonok"><span class="character-art"><img src="media/images/medvezhonok.png" alt=""></span><span class="character-name">Медвежонок</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
+                            <button class="character-card character-bear-teacher" type="button" data-character="medveditsa"><span class="character-art"><img src="media/images/medvezhonok.png" alt=""><span class="character-role-badge">Педагог</span></span><span class="character-name">Медведица</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
                             <button class="character-card" type="button" data-character="firefly"><span class="character-art"><img src="media/images/firefly.png" alt=""></span><span class="character-name">Светлячок</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
                             <button class="character-card" type="button" data-character="grandma"><span class="character-art"><img src="media/images/series1-grandma-bean.png" alt=""></span><span class="character-name">Бабушка Фасоль</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
                             <button class="character-card" type="button" data-character="grandpa"><span class="character-art"><img src="media/images/series1-grandpa.png" alt=""></span><span class="character-name">Дедушка</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
@@ -98,7 +99,7 @@ const PublicPages = (function() {
                     </section>
 
                     <section class="final-cta">
-                        <div class="final-characters"><img src="media/images/kolobok_avatar.png" alt="Колобок"><img src="media/images/zaychonok.svg" alt="Заяц"><img src="media/images/firefly.png" alt="Светлячок"></div>
+                        <div class="final-sandbox-art"><img src="media/images/series1-kolobok-sandbox.png" alt="Колобок играет в песочнице"></div>
                         <div><p class="section-kicker">ВАШЕ ПУТЕШЕСТВИЕ НАЧИНАЕТСЯ ЗДЕСЬ</p><h2>Готовы познакомиться с миром Суперколобка?</h2><p>Отправляйтесь вместе с Колобком и его друзьями в игровые истории, где каждый ребёнок может попробовать себя в новой роли, выполнить задания и найти собственные решения.</p><button class="primary-cta" type="button" data-page="register">Перейти к игровому пространству <span aria-hidden="true">→</span></button></div>
                     </section>
                 </main>
@@ -116,7 +117,13 @@ const PublicPages = (function() {
     }
 
     function bindLandingMotion() {
-        if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var introVideo = root.querySelector('.hero-intro-video');
+        if (reducedMotion && introVideo) {
+            introVideo.pause();
+            introVideo.removeAttribute('autoplay');
+        }
+        if (!('IntersectionObserver' in window) || reducedMotion) return;
         var targets = root.querySelectorAll('.hero-copy, .hero-art, .public-section > *, .story-card, .process-step, .character-card, .audience-card, .team-member, .final-cta > *');
         var observer = new IntersectionObserver(function(entries) {
             entries.forEach(function(entry) {
@@ -162,6 +169,11 @@ const PublicPages = (function() {
                 name: 'Медвежонок', image: 'media/images/medvezhonok.png',
                 direction: 'Духовно-нравственное и гражданское развитие',
                 description: 'Его направление — уважение к традициям, семье и окружающим.'
+            },
+            medveditsa: {
+                name: 'Медведица', image: 'media/images/medvezhonok.png',
+                direction: 'Педагогическое сопровождение и развитие ребёнка',
+                description: 'Медведица олицетворяет педагога: помогает ребёнку исследовать новое, задаёт поддерживающие вопросы и связывает игровые открытия с повседневным опытом.'
             },
             firefly: {
                 name: 'Светлячок', image: 'media/images/firefly.png',
@@ -220,7 +232,7 @@ const PublicPages = (function() {
             '</aside>' +
             '<section class="auth-main"><button class="auth-back" type="button" data-page="landing">← <span>На главную</span></button>' +
                 '<div class="auth-form-wrap"><div class="auth-mobile-brand"><img class="brand-wordmark" src="media/images/logo-superkolobok-firefly.svg" alt="Суперколобок и Светлячок"></div>' +
-                    '<h2>' + (isRegister ? 'Регистрация' : 'Вход в аккаунт') + '</h2><p class="auth-subtitle">' + (isRegister ? 'Создайте аккаунт взрослого, который будет управлять профилем ребёнка.' : 'Продолжите с того места, где остановились.') + '</p>' +
+                    '<h2>' + (isRegister ? 'Регистрация' : 'Вход в аккаунт') + '</h2>' + (isRegister ? '<div class="register-rolling-note"><div class="register-kolobok-track"><img src="media/images/kolobok_avatar.png" alt=""></div><span>Качусь и учусь</span></div>' : '') + '<p class="auth-subtitle">' + (isRegister ? 'Создайте аккаунт взрослого, который будет управлять профилем ребёнка.' : 'Продолжите с того места, где остановились.') + '</p>' +
                     '<form id="accountForm" novalidate>' +
                         (isRegister ? '<label for="accountName">Ваше имя</label><input id="accountName" name="name" autocomplete="name" placeholder="Как к вам обращаться" required maxlength="60">' : '') +
                         '<label for="accountEmail">Электронная почта</label><input id="accountEmail" name="email" type="email" autocomplete="email" placeholder="Введите e-mail" required>' +
@@ -228,7 +240,6 @@ const PublicPages = (function() {
                         (isRegister ? '<label for="accountPasswordRepeat">Повторите пароль</label><input id="accountPasswordRepeat" name="passwordRepeat" type="password" autocomplete="new-password" placeholder="Введите пароль ещё раз" required minlength="8"><label class="terms-label"><input type="checkbox" name="terms" required><span>Согласен(на) с условиями использования и политикой конфиденциальности</span></label>' : '<button class="forgot-link" id="forgotPassword" type="button">Забыли пароль?</button>') +
                         '<p class="auth-message" id="authMessage" aria-live="polite"></p><button class="auth-submit ' + (isRegister ? 'submit-orange' : 'submit-purple') + '" type="submit">' + (isRegister ? 'Создать аккаунт' : 'Войти') + '</button>' +
                     '</form><p class="auth-switch">' + (isRegister ? 'Уже есть аккаунт? <button type="button" data-page="login">Войти</button>' : 'Ещё нет аккаунта? <button type="button" data-page="register">Создать аккаунт</button>') + '</p>' +
-                    (isRegister ? '<div class="register-rolling-note"><div class="register-kolobok-track"><img src="media/images/kolobok_avatar.png" alt=""></div><span>Качусь и учусь</span></div>' : '') +
                     (isRegister ? '' : '<p class="auth-local-note">Аккаунт доступен в этом браузере.</p>') +
                 '</div>' +
                 (isRegister ? '' : '<p class="auth-legal">Продолжая, вы принимаете условия использования и политику конфиденциальности.</p>') +

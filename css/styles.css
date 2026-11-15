@@ -1937,6 +1937,7 @@ body.public-mode .public-site main { display:block; }
 .audience-note { width:max-content; margin:22px 0 0; padding:8px 14px; border-radius:9px; background:#f0edf8; color:var(--purple); font-size:14px; font-weight:700; }
 .hero-art { position:relative; min-width:0; margin:0; padding:18px 18px 46px; border-radius:28px; background:var(--cream); }
 .hero-art-main { display:block; width:100%; aspect-ratio:1.58; border-radius:18px; object-fit:cover; }
+.hero-intro-video { background:#432a9b; }
 .hero-art-detail { position:absolute; right:32px; bottom:35px; display:flex; align-items:center; gap:12px; max-width:285px; padding:11px 16px 11px 11px; border:1px solid rgba(67,42,155,.1); border-radius:15px; background:var(--paper); color:var(--purple); font-size:13px; line-height:1.25; font-weight:700; }
 .hero-art-detail img { width:52px; height:52px; object-fit:contain; }
 .hero-art figcaption { position:absolute; bottom:15px; left:28px; color:#594c68; font-size:12px; }
@@ -2006,6 +2007,7 @@ body.public-mode .public-site main { display:block; }
 .team-member { min-height:155px; padding:22px 20px; border:1px solid rgba(67,42,155,.1); border-radius:20px; background:#fff; }
 .team-member h3 { margin-bottom:9px; color:var(--purple); font-size:20px; }.team-member p { color:#625b73; font-size:14px; line-height:1.5; }
 .final-cta { display:grid; grid-template-columns:.8fr 1.2fr; align-items:center; gap:55px; margin:30px 0 70px; padding:55px clamp(28px,5vw,64px); border-radius:20px; background:var(--purple); color:white; }
+.final-sandbox-art { min-height:230px; display:grid; place-items:center; overflow:hidden; padding:18px; border-radius:22px; background:#fff5e8; }.final-sandbox-art img { display:block; width:100%; max-height:260px; object-fit:contain; }
 .final-cta .section-kicker { color:#d8d1f2; }.final-cta h2 { margin:12px 0 14px; color:white; font-size:clamp(34px,3.4vw,44px); line-height:1.1; letter-spacing:-1px; }.final-cta p:not(.section-kicker) { max-width:680px; margin-bottom:22px; color:#f5f2ff; font-size:16px; line-height:1.5; }
 .final-characters { min-height:245px; display:flex; align-items:flex-end; justify-content:center; gap:10px; }.final-characters img:nth-child(1) { width:140px; }.final-characters img:nth-child(2) { width:108px; max-height:220px; object-fit:contain; }.final-characters img:nth-child(3) { width:98px; align-self:center; }
 .public-footer { min-height:112px; display:grid; grid-template-columns:auto 1fr; align-items:center; column-gap:32px; row-gap:12px; border-top:1px solid rgba(67,42,155,.12); color:#746a8d; font-size:13px; }
@@ -2061,7 +2063,7 @@ body.public-mode :focus-visible { outline:3px solid var(--orange); outline-offse
     .character-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }.character-card>div { height:165px; }.character-card img { max-height:148px; }.character-card h3 { font-size:18px; }.character-kolobok img { max-width:130px; max-height:130px; }.character-firefly img { max-width:75%; max-height:110px; }
     .audience-cards { grid-template-columns:1fr; gap:13px; }.audience-card { min-height:230px; padding:22px; }.audience-card h3 { margin:14px 0 8px; font-size:22px; }.audience-card p { font-size:15px; }
     .recognition-section { grid-template-columns:1fr; gap:17px; margin:0; padding:28px 23px; }.recognition-date { text-align:left; font-size:20px; }.recognition-date b { font-size:32px; }.recognition-section h2 { font-size:29px; }.recognition-section p:not(.section-kicker) { font-size:16px; }
-    .final-cta { grid-template-columns:1fr; gap:10px; margin:0 0 45px; padding:26px 22px 30px; border-radius:17px; }.final-characters { min-height:140px; }.final-characters img:nth-child(1) { width:104px; }.final-characters img:nth-child(2) { width:76px; max-height:140px; }.final-characters img:nth-child(3) { width:67px; }.final-cta h2 { font-size:31px; }.final-cta p:not(.section-kicker) { font-size:15px; }
+    .final-cta { grid-template-columns:1fr; gap:17px; margin:0 0 45px; padding:26px 22px 30px; border-radius:17px; }.final-sandbox-art { min-height:130px; padding:10px; border-radius:16px; }.final-sandbox-art img { max-height:170px; }.final-cta h2 { font-size:31px; }.final-cta p:not(.section-kicker) { font-size:15px; }
     .team-members { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }.team-member { min-height:0; padding:17px 15px; border-radius:16px; }.team-member h3 { font-size:18px; }.team-member p { font-size:13px; }
     .public-footer { grid-template-columns:1fr; gap:14px; padding-top:22px; }.public-footer nav { justify-content:flex-start; gap:12px 18px; }.public-footer>span { grid-column:auto; padding-bottom:18px; font-size:12px; }
     .auth-media-row { width:100%; max-width:390px; gap:7px; }.aside-illustration { height:190px; flex-basis:68%; width:68%; }.aside-tagline { font-size:clamp(20px,6vw,25px); }
@@ -2122,6 +2124,8 @@ body.public-mode .landing-hero { grid-template-columns:1.05fr .95fr; align-items
 .character-art img { display:block; max-width:76%; max-height:174px; object-fit:contain; }
 .character-kolobok .character-art img { max-width:150px; max-height:150px; }
 .character-card[data-character="firefly"] .character-art img { max-width:72%; max-height:132px; }
+.character-bear-teacher .character-art { position:relative; background:#fff1e4; }
+.character-role-badge { position:absolute; top:12px; right:12px; padding:6px 10px; border-radius:999px; background:var(--purple); color:white; font-size:11px; font-weight:800; }
 .character-name { display:block; padding:14px 15px 2px; color:var(--purple); font-size:18px; font-weight:800; line-height:1.2; }
 .character-hint { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:6px 15px 14px; color:#766f86; font-size:12px; }
 .character-hint>span { color:var(--orange); font-size:18px; }
@@ -2141,6 +2145,7 @@ body.public-mode .landing-hero { grid-template-columns:1.05fr .95fr; align-items
 body.public-mode #sceneContent { scroll-behavior:smooth; }
 .auth-register .auth-media-row .aside-illustration { width:100%; flex-basis:100%; }
 .register-rolling-note { display:flex; align-items:center; justify-content:center; gap:13px; margin:20px auto 0; color:var(--purple); }
+.auth-register .register-rolling-note { justify-content:flex-start; margin:12px 0 17px; }
 .register-kolobok-track { position:relative; width:100px; height:48px; }
 .register-kolobok-track:after { position:absolute; right:0; bottom:6px; left:0; height:2px; border-radius:2px; background:#e9dfce; content:""; }
 .register-kolobok-track img { position:absolute; bottom:8px; left:3px; z-index:1; width:36px; height:36px; object-fit:contain; animation:registerKolobokRoll 2.3s ease-in-out infinite alternate; }

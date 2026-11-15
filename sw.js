@@ -1,7 +1,7 @@
 // ========== Service Worker "Суперколобок" ==========
 
-const CACHE_NAME = 'superkolobok-v20261116-2';
-const DYNAMIC_CACHE = 'superkolobok-dynamic-v20261116-2';
+const CACHE_NAME = 'superkolobok-v20261116-3';
+const DYNAMIC_CACHE = 'superkolobok-dynamic-v20261116-3';
 
 // Пути ОТНОСИТЕЛЬНЫЕ — работают в подпапке /superkolobok/ на GitHub Pages
 const STATIC_ASSETS = [
