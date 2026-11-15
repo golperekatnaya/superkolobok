@@ -27,7 +27,7 @@ const PublicPages = (function() {
                             <div class="hero-actions"><button class="primary-cta" type="button" data-page="register">Начать путешествие <span aria-hidden="true">→</span></button></div>
                         </div>
                         <figure class="hero-art">
-                            <video class="hero-art-main hero-intro-video" autoplay muted loop playsinline preload="auto" poster="media/images/friendpower_card.png" aria-label="Беззвучная заставка проекта «Суперколобок»"><source src="media/videos/superkolobok-splash.mp4" type="video/mp4"></video>
+                            <video class="hero-art-main hero-intro-video" autoplay muted loop playsinline preload="auto" poster="media/images/hero-splash-poster.png" aria-label="Беззвучная заставка проекта «Суперколобок»"><source src="media/videos/superkolobok-splash.mp4" type="video/mp4"></video>
                             <figcaption>Звук отключён</figcaption>
                         </figure>
                     </section>
