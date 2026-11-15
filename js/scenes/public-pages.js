@@ -63,7 +63,7 @@ const PublicPages = (function() {
                         <div class="section-heading"><p class="section-kicker">ГЕРОИ ИСТОРИЙ</p><h2>Знакомьтесь: друзья Суперколобка</h2><p>Каждый герой — часть историй, в которых ребёнок учится замечать важное, понимать других и взаимодействовать с окружающим миром.</p></div>
                         <div class="character-groups">
                           <section class="character-group character-group-kids" aria-labelledby="child-characters-title">
-                            <div class="character-group-heading"><div><p class="section-kicker">ГЕРОИ ИСТОРИЙ</p><h3 id="child-characters-title">Дети</h3></div><p>Друзья, которые вместе с ребёнком исследуют мир и учатся новому.</p></div>
+                            <div class="character-group-heading"><div><p class="character-group-eyebrow">ДЕТСКИЕ ПЕРСОНАЖИ</p><h3 id="child-characters-title">Дети</h3></div><p>Друзья, которые вместе с ребёнком исследуют мир и учатся новому.</p></div>
                             <div class="character-grid">
                             <button class="character-card character-kolobok" type="button" data-character="kolobok"><span class="character-art"><img src="media/images/series1-kolobok-neutral.png" alt=""></span><span class="character-name">Колобок</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
                             <button class="character-card" type="button" data-character="zaychonok"><span class="character-art"><img src="media/images/series1-rabbit-neutral.png" alt=""></span><span class="character-name">Зайчонок</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
@@ -73,7 +73,7 @@ const PublicPages = (function() {
                             </div>
                           </section>
                           <section class="character-group character-group-adults" aria-labelledby="adult-characters-title">
-                            <div class="character-group-heading"><div><p class="section-kicker">ПОДДЕРЖКА И НАСТАВНИКИ</p><h3 id="adult-characters-title">Взрослые и ведущие</h3></div><p>Помогают героям, делятся опытом и сопровождают в путешествии.</p></div>
+                            <div class="character-group-heading"><div><p class="character-group-eyebrow">ПОДДЕРЖКА И НАСТАВНИКИ</p><h3 id="adult-characters-title">Взрослые и ведущие</h3></div><p>Помогают героям, делятся опытом и сопровождают в путешествии.</p></div>
                             <div class="character-grid">
                             <button class="character-card" type="button" data-character="firefly"><span class="character-art"><img src="media/images/firefly.png" alt=""></span><span class="character-name">Светлячок</span><span class="character-hint">Главный ведущий <span aria-hidden="true">↗</span></span></button>
                             <button class="character-card character-bear-teacher" type="button" data-character="medveditsa"><span class="character-art"><img src="media/images/medvezhonok.png" alt=""><span class="character-role-badge">Педагог</span></span><span class="character-name">Медведица</span><span class="character-hint">Открыть направление <span aria-hidden="true">↗</span></span></button>
@@ -93,17 +93,17 @@ const PublicPages = (function() {
                     </section>
 
                     <section class="recognition-section public-section" id="recognition">
-                        <div class="recognition-date">КИвО<br><b>2025</b></div><div><p class="section-kicker">ПРОФЕССИОНАЛЬНОЕ СООБЩЕСТВО</p><h2>Признание проекта</h2><p>Проект «Суперколобок и его друзья» вошёл в ТОП-100 КИвО-2025. Команда проекта также получила отдельное специальное признание от Фонда «Наше будущее».</p></div>
+                        <div class="recognition-date">КИвО<br><b>2025</b></div><div class="recognition-copy"><p class="section-kicker">ПРОФЕССИОНАЛЬНОЕ СООБЩЕСТВО</p><h2>Признание проекта</h2><p>Проект «Суперколобок и его друзья» вошёл в ТОП-100 КИвО-2025. Команда проекта также получила отдельное специальное признание от Фонда «Наше будущее».</p></div><a class="recognition-certificate" href="media/images/kivo-2025-certificate.jpg" target="_blank" rel="noopener noreferrer" aria-label="Открыть сертификат КИвО-2025 в полном размере"><img src="media/images/kivo-2025-certificate.jpg" alt="Сертификат участника конкурса инноваций в образовании КИвО-2025 для проекта «Колобок. Секреты дружелюбного общения»"><span>Смотреть сертификат <span aria-hidden="true">↗</span></span></a>
                     </section>
 
                     <section class="team-section public-section" id="team">
                         <div class="team-heading"><p class="section-kicker">КОМАНДА ПРОЕКТА</p><h2>Проект создаёт команда «Моего университета»</h2><a class="university-logo-link" href="https://moi-universitet.ru/" target="_blank" rel="noopener noreferrer" aria-label="Сайт «Моего университета»"><img src="media/images/logo-my-university.png" alt="Логотип «Моего университета»"><span>АНО ДПО «Мой университет» <span aria-hidden="true">↗</span></span></a></div>
                         <div class="team-copy"><p>«Суперколобок и его друзья» объединяет образовательную экспертизу, методическую разработку, цифровые технологии и мультимедийный контент.</p><p>Над проектом работают авторы сценария, методисты, иллюстраторы и специалисты по игровым механикам.</p></div>
                         <div class="team-members" aria-label="Участники команды">
-                            <article class="team-member"><h3>Ирина</h3><p>Идея и сценарий, методическая основа, координация процессов и сроков, работа с фокус-группами.</p></article>
-                            <article class="team-member"><h3>Алина</h3><p>Идея и сценарий, иллюстрации и анимация, озвучка героев, дизайн дополнительных материалов.</p></article>
-                            <article class="team-member"><h3>Вероника</h3><p>Содержание методических материалов, саунд-дизайн, озвучка, игровые механики и приложение.</p></article>
-                            <article class="team-member"><h3>Тимофей</h3><p>Методическая основа сценария, анализ рынка, потребностей и особенностей восприятия аудитории.</p></article>
+                            <article class="team-member"><div class="team-member-head"><span class="team-member-avatar" aria-hidden="true">И</span><h3>Ирина</h3></div><p>Идея и сценарий, методическая основа, координация процессов и сроков, работа с фокус-группами.</p></article>
+                            <article class="team-member"><div class="team-member-head"><span class="team-member-avatar" aria-hidden="true">А</span><h3>Алина</h3></div><p>Идея и сценарий, иллюстрации и анимация, озвучка героев, дизайн дополнительных материалов.</p></article>
+                            <article class="team-member"><div class="team-member-head"><img class="team-member-photo" src="media/images/team-veronika.jpg" alt="Вероника, участница команды проекта"><h3>Вероника</h3></div><p>Содержание методических материалов, саунд-дизайн, озвучка, игровые механики и приложение.</p></article>
+                            <article class="team-member"><div class="team-member-head"><span class="team-member-avatar" aria-hidden="true">Т</span><h3>Тимофей</h3></div><p>Методическая основа сценария, анализ рынка, потребностей и особенностей восприятия аудитории.</p></article>
                         </div>
                     </section>
 
