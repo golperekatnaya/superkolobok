@@ -2138,8 +2138,10 @@ body.public-mode .landing-hero { grid-template-columns:1.05fr .95fr; align-items
 .character-dialog p { max-width:440px; margin:0 auto; color:#655d75; font-size:16px; line-height:1.55; text-align:center; }
 @keyframes dialogFadeIn { from { opacity:0; } to { opacity:1; } }
 @keyframes dialogPop { from { opacity:0; transform:translateY(12px) scale(.97); } to { opacity:1; transform:translateY(0) scale(1); } }
-.scroll-reveal { opacity:0; transform:translateY(22px); transition:opacity .65s ease var(--reveal-delay,0ms),transform .65s cubic-bezier(.2,.7,.2,1) var(--reveal-delay,0ms); }
-.scroll-reveal.is-revealed { opacity:1; transform:translateY(0); }
+.scroll-reveal { opacity:0; filter:blur(3px); transform:translateY(30px) scale(.985); transition:opacity .72s cubic-bezier(.2,.7,.2,1) var(--reveal-delay,0ms),filter .72s ease var(--reveal-delay,0ms),transform .72s cubic-bezier(.2,.7,.2,1) var(--reveal-delay,0ms); will-change:opacity,transform; }
+.scroll-reveal.is-revealed { opacity:1; filter:blur(0); transform:translateY(0) scale(1); }
+.character-card.scroll-reveal.is-revealed:hover { transform:translateY(-5px) scale(1); }
+.hero-art.scroll-reveal.is-revealed:hover { transform:rotate(0) translateY(-4px) scale(1); }
 body.public-mode #sceneContent { scroll-behavior:smooth; }
 .auth-register .auth-media-row .aside-illustration { width:100%; flex-basis:100%; }
 .register-rolling-note { display:flex; align-items:center; justify-content:center; gap:13px; margin:20px auto 0; color:var(--purple); }

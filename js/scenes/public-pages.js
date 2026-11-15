@@ -104,6 +104,7 @@ const PublicPages = (function() {
                 </main>
                 <footer class="public-footer"><a href="#top" class="footer-brand">Суперколобок и его друзья <span aria-hidden="true">↑</span></a><nav aria-label="Разделы сайта"><a href="#about">О проекте</a><a href="#stories">Игровые истории</a><a href="#parents">Родителям</a><a href="#teachers">Педагогам</a></nav><span>Для семей · образовательных организаций · педагогического сообщества</span></footer>
             </div>`;
+        root.scrollTop = 0;
         bindCommon();
         bindCharacterCards();
         bindLandingMotion();
@@ -123,7 +124,7 @@ const PublicPages = (function() {
             introVideo.removeAttribute('autoplay');
         }
         if (!('IntersectionObserver' in window) || reducedMotion) return;
-        var targets = root.querySelectorAll('.hero-copy, .hero-art, .public-section > *, .story-card, .process-step, .character-card, .audience-card, .team-member, .final-cta > *');
+        var targets = root.querySelectorAll('.hero-copy, .hero-art, .about-visual, .about-copy, .section-heading, .story-card, .process-step, .character-card, .audience-intro, .audience-card, .recognition-section > *, .team-heading, .team-copy, .team-member, .final-cta > *');
         var observer = new IntersectionObserver(function(entries) {
             entries.forEach(function(entry) {
                 if (!entry.isIntersecting) return;
@@ -137,7 +138,7 @@ const PublicPages = (function() {
             var section = target.closest('.public-section, .landing-hero, .final-cta') || target;
             var index = sectionCounts.get(section) || 0;
             sectionCounts.set(section, index + 1);
-            target.style.setProperty('--reveal-delay', Math.min(index, 4) * 75 + 'ms');
+            target.style.setProperty('--reveal-delay', Math.min(index, 4) * 90 + 'ms');
             observer.observe(target);
         });
     }

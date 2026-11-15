@@ -1,58 +1,67 @@
 // ========== SERIES-4-INTERACTIVE.JS ==========
-// Интерактивная сцена внутри ролика series-4.mp4:
-//  - 0:47, 0:49, 0:52 — по очереди появляются три кнопки test-btn
-//  - 0:58 — видео на паузе, все три кнопки кликабельны
-//  - по клику: переход на одну из трёх веток
-//  - конец ветки 1 (0:59–1:14) → пауза, repeat-btn
-//  - конец ветки 2 (1:16–1:27) → пауза, repeat-btn
-//  - конец ветки 3 (1:28–2:41) → пауза, arrow
-//  - repeat → возвращает на 0:40 (повтор вопроса)
-//  - arrow → переход к series-5
+// Интерактивная сцена внутри ролика series-4.mp4.
+//
+// Логика:
+//  - 0:00–0:40 — ролик играет, ничего нет
+//  - 0:40    — в ролике начинается вопрос (анимация внутри видео)
+//  - 0:47    — появляется 1-я кнопка test-btn
+//  - 0:49    — появляется 2-я кнопка test-btn
+//  - 0:52    — появляется 3-я кнопка test-btn
+//  - 0:58    — пауза, все три кнопки кликабельны
+//  - клик по 1-й → видео 59→74, стоп, показать repeat-btn
+//  - клик по 2-й → видео 76→86, стоп, показать repeat-btn
+//  - клик по 3-й → видео 88→160, показать arrow (видео играет до конца)
+//  - repeat-btn → вернуться на 0:40, кнопки появятся заново
+//  - arrow     → переход к series-5
 
 const Series4Interactive = (function() {
     'use strict';
 
     // ========== НАСТРОЙКИ ==========
-    // Меняйте только эти значения, когда нужно подкрутить позиции/тайминги.
     var CONFIG = {
-        // Тайминги (в секундах)
-        replayFrom: 40,            // откуда начинается повтор вопроса (для repeat)
-        showBtnAt: [47, 49, 52],   // когда появляются кнопки 1, 2, 3
-        pauseAt: 58,               // где ролик останавливается и ждёт ответа
+        // Когда начинается тест (используется только для сброса при repeat)
+        testStart: 40,
 
-        // Ветки: [начало, конец, показать repeat, показать arrow]
+        // Когда появляются кнопки ответа
+        showBtnAt: [47, 49, 52],
+
+        // Где останавливается и ждёт ответа
+        pauseAt: 58,
+
+        // Ветки: [start, end, repeat, arrow]
         branches: [
             { start: 59,  end: 74,  repeat: true,  arrow: false },
-            { start: 76,  end: 87,  repeat: true,  arrow: false },
-            { start: 88,  end: 161, repeat: false, arrow: true  }
+            { start: 76,  end: 86,  repeat: true,  arrow: false },
+            { start: 88,  end: 160, repeat: false, arrow: true  }
         ],
 
-        // Позиции трёх кнопок test-btn (проценты от размера видео)
+        // Позиции кнопок test-btn (в процентах от размеров видео).
+        // Сдвинули влево на 10% (≈ 2,5 см при ширине 900px).
         buttonPositions: [
-            { top: '62%', left: '57%' },
-            { top: '72%', left: '57%' },
-            { top: '82%', left: '57%' }
+            { top: '62%', left: '47%' },
+            { top: '72%', left: '47%' },
+            { top: '82%', left: '47%' }
         ],
         buttonSize: '40px',
 
-        // Позиция и размер repeat-btn (левый нижний угол)
+        // repeat-btn — левый нижний угол
         repeatPos:  { bottom: '20px', left: '20px' },
         repeatSize: '50px',
 
-        // Позиция и размер arrow (правый нижний угол)
+        // arrow — правый нижний угол
         arrowPos:  { bottom: '20px', right: '20px' },
         arrowSize: '50px'
     };
 
     // ========== СОСТОЯНИЕ ==========
     var _video = null;
-    var _wrapper = null;
-    var _buttons = [];        // три кнопки test-btn
+    var _overlay = null;
+    var _buttons = [];
     var _repeatBtn = null;
     var _arrowBtn = null;
-    var _buttonsReady = false; // кликабельны ли кнопки (только после pauseAt)
-    var _currentBranch = -1;   // индекс активной ветки, -1 если не выбрана
-    var _isPlayingVideo = false;
+    var _buttonsReady = false;
+    var _mode = 'waiting';   // 'waiting' | 'in-branch-1' | 'in-branch-2' | 'in-branch-3' | 'done'
+    var _created = false;
 
     // ========== РЕНДЕР ==========
     function render() {
@@ -67,22 +76,20 @@ const Series4Interactive = (function() {
             return;
         }
 
-        // Сброс состояния
+        // Сброс состояния при каждом запуске
         _buttons = [];
         _repeatBtn = null;
         _arrowBtn = null;
         _buttonsReady = false;
-        _currentBranch = -1;
-        _isPlayingVideo = false;
+        _mode = 'waiting';
+        _created = false;
 
-        // Обёртка
-        _wrapper = document.createElement('div');
-        _wrapper.className = 'video-scene';
-        _wrapper.style.position = 'relative';
-        _wrapper.style.width = '100%';
-        _wrapper.style.background = '#000';
+        var wrapper = document.createElement('div');
+        wrapper.className = 'video-scene';
+        wrapper.style.position = 'relative';
+        wrapper.style.width = '100%';
+        wrapper.style.background = '#000';
 
-        // Видео
         _video = document.createElement('video');
         _video.id = 'series4Video';
         _video.preload = 'auto';
@@ -92,19 +99,41 @@ const Series4Interactive = (function() {
         _video.style.display = 'block';
         try { _video.src = src; } catch (e) {}
 
-        // Слой для кнопок
-        var overlay = document.createElement('div');
-        overlay.id = 'series4Overlay';
-        overlay.style.position = 'absolute';
-        overlay.style.top = '0';
-        overlay.style.left = '0';
-        overlay.style.right = '0';
-        overlay.style.bottom = '0';
-        overlay.style.display = 'block';
-        overlay.style.zIndex = '10';
-        overlay.style.pointerEvents = 'none';
+        _overlay = document.createElement('div');
+        _overlay.id = 'series4Overlay';
+        _overlay.style.position = 'absolute';
+        _overlay.style.top = '0';
+        _overlay.style.left = '0';
+        _overlay.style.right = '0';
+        _overlay.style.bottom = '0';
+        _overlay.style.display = 'block';
+        _overlay.style.zIndex = '10';
+        _overlay.style.pointerEvents = 'none';
 
-        // Создаём три кнопки test-btn (пока скрытые)
+        wrapper.appendChild(_video);
+        wrapper.appendChild(_overlay);
+        c.appendChild(wrapper);
+
+        // Создаём кнопки ответа сразу, но скрытыми
+        createTestButtons();
+
+        // Создаём repeat и arrow — тоже скрытыми
+        createRepeatButton();
+        createArrowButton();
+
+        _video.addEventListener('timeupdate', onTimeUpdate);
+        _video.addEventListener('error', function() {
+            if (!_video.isConnected) return;
+            console.error('[Series4Interactive] Ошибка загрузки видео');
+        });
+
+        _video.currentTime = 0;
+        _video.play().catch(function() {
+            try { _video.controls = true; } catch (e) {}
+        });
+    }
+
+    function createTestButtons() {
         for (var i = 0; i < 3; i++) {
             (function(idx) {
                 var btn = document.createElement('button');
@@ -135,16 +164,17 @@ const Series4Interactive = (function() {
                 btn.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    if (!_buttonsReady) return;
-                    selectBranch(idx);
+                    if (!_buttonsReady || _mode !== 'waiting') return;
+                    onSelectBranch(idx);
                 });
 
-                overlay.appendChild(btn);
+                _overlay.appendChild(btn);
                 _buttons.push(btn);
             })(i);
         }
+    }
 
-        // Кнопка repeat (создаём заранее, пока скрыта)
+    function createRepeatButton() {
         _repeatBtn = document.createElement('button');
         _repeatBtn.style.position = 'absolute';
         _repeatBtn.style.bottom = CONFIG.repeatPos.bottom;
@@ -158,22 +188,26 @@ const Series4Interactive = (function() {
         _repeatBtn.style.border = 'none';
         _repeatBtn.style.cursor = 'pointer';
         _repeatBtn.style.padding = '0';
-        var repeatImg = document.createElement('img');
-        repeatImg.src = UI.getImagePath('repeatBtn');
-        repeatImg.alt = '';
-        repeatImg.style.width = '100%';
-        repeatImg.style.height = '100%';
-        repeatImg.style.display = 'block';
-        repeatImg.style.pointerEvents = 'none';
-        _repeatBtn.appendChild(repeatImg);
+
+        var img = document.createElement('img');
+        img.src = UI.getImagePath('repeatBtn');
+        img.alt = '';
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.display = 'block';
+        img.style.pointerEvents = 'none';
+        _repeatBtn.appendChild(img);
+
         _repeatBtn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
             onRepeatClick();
         });
-        overlay.appendChild(_repeatBtn);
 
-        // Кнопка arrow (создаём заранее, пока скрыта)
+        _overlay.appendChild(_repeatBtn);
+    }
+
+    function createArrowButton() {
         _arrowBtn = document.createElement('button');
         _arrowBtn.style.position = 'absolute';
         _arrowBtn.style.bottom = CONFIG.arrowPos.bottom;
@@ -187,137 +221,143 @@ const Series4Interactive = (function() {
         _arrowBtn.style.border = 'none';
         _arrowBtn.style.cursor = 'pointer';
         _arrowBtn.style.padding = '0';
-        var arrowImg = document.createElement('img');
-        arrowImg.src = UI.getImagePath('arrow');
-        arrowImg.alt = '';
-        arrowImg.style.width = '100%';
-        arrowImg.style.height = '100%';
-        arrowImg.style.display = 'block';
-        arrowImg.style.pointerEvents = 'none';
-        _arrowBtn.appendChild(arrowImg);
+
+        var img = document.createElement('img');
+        img.src = UI.getImagePath('arrow');
+        img.alt = '';
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.display = 'block';
+        img.style.pointerEvents = 'none';
+        _arrowBtn.appendChild(img);
+
         _arrowBtn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
             onArrowClick();
         });
-        overlay.appendChild(_arrowBtn);
 
-        _wrapper.appendChild(_video);
-        _wrapper.appendChild(overlay);
-        c.appendChild(_wrapper);
-
-        // Слушаем время
-        _video.addEventListener('timeupdate', onTimeUpdate);
-
-        // Ошибка видео
-        _video.addEventListener('error', function() {
-            if (!_video.isConnected) return;
-            console.error('[Series4Interactive] Ошибка загрузки видео');
-        });
-
-        // Старт
-        _video.currentTime = 0;
-        _video.play().catch(function() {
-            try { _video.controls = true; } catch (e) {}
-        });
+        _overlay.appendChild(_arrowBtn);
     }
 
     // ========== ОБРАБОТКА ВРЕМЕНИ ==========
     function onTimeUpdate() {
         if (!_video) return;
-
         var t = _video.currentTime;
-        var dur = _video.duration || 0;
 
-        // Если видео в процессе одной из веток
-        if (_currentBranch >= 0) {
-            var br = CONFIG.branches[_currentBranch];
+        // === В ветке 1 или 2: ждём достижения конца и останавливаемся ===
+        if (_mode === 'in-branch-1' || _mode === 'in-branch-2') {
+            var brIdx = (_mode === 'in-branch-1') ? 0 : 1;
+            var br = CONFIG.branches[brIdx];
             if (t >= br.end - 0.15) {
                 _video.pause();
-                showBranchEnd(_currentBranch);
-                _currentBranch = -2; // «ветка завершена, ждём repeat/arrow»
+                _mode = 'done';
+                showOnlyRepeat();
             }
             return;
         }
 
-        // Обычный проход ролика (не в ветке)
-        // Показ кнопок по очереди
-        if (t >= CONFIG.showBtnAt[0] && _buttons[0].style.display === 'none') {
-            _buttons[0].style.display = 'block';
-        }
-        if (t >= CONFIG.showBtnAt[1] && _buttons[1].style.display === 'none') {
-            _buttons[1].style.display = 'block';
-        }
-        if (t >= CONFIG.showBtnAt[2] && _buttons[2].style.display === 'none') {
-            _buttons[2].style.display = 'block';
+        // === В ветке 3: ждём 160 секунд, показываем arrow, но видео продолжает идти ===
+        if (_mode === 'in-branch-3') {
+            if (t >= CONFIG.branches[2].end - 0.15 && _arrowBtn.style.display === 'none') {
+                showOnlyArrow();
+                _mode = 'done';
+            }
+            return;
         }
 
-        // Пауза на pauseAt
-        if (t >= CONFIG.pauseAt && !_buttonsReady) {
-            _video.pause();
-            _buttonsReady = true;
-            _buttons.forEach(function(b) {
-                b.style.pointerEvents = 'auto';
-            });
-        }
+        // === Обычная часть ролика (не в ветке) ===
+        if (_mode === 'waiting') {
+            // Показ кнопок по очереди
+            if (t >= CONFIG.showBtnAt[0] && _buttons[0].style.display === 'none') {
+                _buttons[0].style.display = 'block';
+            }
+            if (t >= CONFIG.showBtnAt[1] && _buttons[1].style.display === 'none') {
+                _buttons[1].style.display = 'block';
+            }
+            if (t >= CONFIG.showBtnAt[2] && _buttons[2].style.display === 'none') {
+                _buttons[2].style.display = 'block';
+            }
 
-        // Скрываем repeat/arrow, если их случайно показали и мы снова идём по «основной» линии
-        if (_repeatBtn) { _repeatBtn.style.display = 'none'; _repeatBtn.style.pointerEvents = 'none'; }
-        if (_arrowBtn)  { _arrowBtn.style.display  = 'none'; _arrowBtn.style.pointerEvents  = 'none'; }
+            // Пауза на 58 — включаем кликабельность
+            if (t >= CONFIG.pauseAt && !_buttonsReady) {
+                _video.pause();
+                _buttonsReady = true;
+                _buttons.forEach(function(b) {
+                    b.style.pointerEvents = 'auto';
+                });
+            }
+        }
     }
 
     // ========== ДЕЙСТВИЯ ==========
 
-    function selectBranch(index) {
+    function onSelectBranch(index) {
         if (!_buttonsReady) return;
-        if (index < 0 || index >= CONFIG.branches.length) return;
 
-        // Скрываем кнопки
+        // Скрываем все три кнопки ответа
         _buttons.forEach(function(b) {
             b.style.display = 'none';
             b.style.pointerEvents = 'none';
         });
         _buttonsReady = false;
 
-        _currentBranch = index;
         var br = CONFIG.branches[index];
-
         _video.currentTime = br.start;
+
+        if (index === 0) {
+            _mode = 'in-branch-1';
+        } else if (index === 1) {
+            _mode = 'in-branch-2';
+        } else {
+            _mode = 'in-branch-3';
+        }
+
         _video.play().catch(function() {});
     }
 
-    function showBranchEnd(branchIndex) {
-        var br = CONFIG.branches[branchIndex];
-        if (br.repeat && _repeatBtn) {
+    function showOnlyRepeat() {
+        if (_repeatBtn) {
             _repeatBtn.style.display = 'block';
             _repeatBtn.style.pointerEvents = 'auto';
         }
-        if (br.arrow && _arrowBtn) {
+        if (_arrowBtn) {
+            _arrowBtn.style.display = 'none';
+            _arrowBtn.style.pointerEvents = 'none';
+        }
+    }
+
+    function showOnlyArrow() {
+        if (_arrowBtn) {
             _arrowBtn.style.display = 'block';
             _arrowBtn.style.pointerEvents = 'auto';
+        }
+        if (_repeatBtn) {
+            _repeatBtn.style.display = 'none';
+            _repeatBtn.style.pointerEvents = 'none';
         }
     }
 
     function onRepeatClick() {
-        // Скрываем repeat/arrow
+        // Скрываем repeat и arrow
         if (_repeatBtn) { _repeatBtn.style.display = 'none'; _repeatBtn.style.pointerEvents = 'none'; }
         if (_arrowBtn)  { _arrowBtn.style.display  = 'none'; _arrowBtn.style.pointerEvents  = 'none'; }
 
-        // Сбрасываем состояние кнопок — они покажутся снова по таймингу
+        // Сбрасываем кнопки ответа в исходное состояние — они снова появятся по таймингу
         _buttons.forEach(function(b) {
             b.style.display = 'none';
             b.style.pointerEvents = 'none';
         });
         _buttonsReady = false;
-        _currentBranch = -1;
+        _mode = 'waiting';
 
-        _video.currentTime = CONFIG.replayFrom;
+        // Возвращаемся на начало теста
+        _video.currentTime = CONFIG.testStart;
         _video.play().catch(function() {});
     }
 
     function onArrowClick() {
-        // Переход к series-5
-        if (typeof Navigation !== 'undefined') {
+        if (typeof Navigation !== 'undefined' && typeof SeriesSelect !== 'undefined') {
             Navigation.goTo(SeriesSelect._playSeries5, 1);
         }
     }
