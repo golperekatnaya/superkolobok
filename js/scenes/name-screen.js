@@ -34,7 +34,8 @@ const NameScreen = (function() {
         a.play().catch(function() {});
     }
     
-    function render() {
+    function render(options) {
+        options = options || {};
         var c = document.getElementById('sceneContent');
         if (!c) return;
         
@@ -43,7 +44,7 @@ const NameScreen = (function() {
         cacheLetterPaths();
         
         var letters = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'.split('');
-        var currentName = '';
+        var currentName = (options.initialName || '').slice(0, 32);
         var isConfirmed = false;
         
         c.innerHTML = 
@@ -55,6 +56,9 @@ const NameScreen = (function() {
                 '<div class="name-bottom" id="nameBottom">' +
                     '<div class="name-display placeholder" id="nameDisplay">Твоё имя</div>' +
                     '<div class="cubes-grid" id="cubesGrid"></div>' +
+                    '<label class="name-manual-label" for="nameManualInput">Или напиши имя с клавиатуры</label>' +
+                    '<input class="name-manual-input" id="nameManualInput" type="text" maxlength="32" autocomplete="given-name" aria-label="Имя ребёнка">' +
+                    (typeof options.onCancel === 'function' ? '<button class="universe-text-button name-cancel" id="btnCancelName" type="button">← Вернуться к карте</button>' : '') +
                     '<div class="name-actions">' +
                         '<button class="btn-action-icon danger" id="btnClear" title="Стереть">' +
                             '<svg viewBox="0 0 24 24" width="20" height="20" fill="none"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="#C88060" stroke-width="2" stroke-linecap="round"/><path d="M10 11v6M14 11v6" stroke="#C88060" stroke-width="1.5" stroke-linecap="round"/></svg>' +
@@ -75,48 +79,94 @@ const NameScreen = (function() {
         var grid = document.getElementById('cubesGrid');
         var btnClear = document.getElementById('btnClear');
         var btnConfirm = document.getElementById('btnConfirm');
+        var manualInput = document.getElementById('nameManualInput');
+        var btnCancelName = document.getElementById('btnCancelName');
         var greetingText = document.getElementById('nameGreetingText');
         
         // Изначально bottom скрыт
+        manualInput.value = currentName;
         bottom.style.opacity = '0';
         bottom.style.transform = 'translateY(30px)';
         bottom.style.transition = 'all 0.6s ease';
         
         letters.forEach(function(letter) {
-            var cube = document.createElement('div');
+            var cube = document.createElement('button');
+            cube.type = 'button';
             cube.className = 'cube';
             cube.textContent = letter;
             cube.addEventListener('click', function() {
                 if (isConfirmed) return;
                 playLetterSound(letter);
-                if (currentName.length < 12) {
+                if (currentName.length < 32) {
                     currentName += letter;
+                    manualInput.value = currentName;
                     updateDisplay();
                 }
             });
             grid.appendChild(cube);
         });
+        updateDisplay();
         
         function updateDisplay() {
             if (!currentName) {
+                display.innerHTML = '';
                 display.textContent = 'Твоё имя';
                 display.classList.add('placeholder');
                 btnConfirm.disabled = true;
             } else {
-                display.textContent = currentName;
                 display.classList.remove('placeholder');
                 btnConfirm.disabled = false;
+                display.innerHTML = '';
+                currentName.split('').forEach(function(letter, index) {
+                    var piece = document.createElement('span');
+                    piece.className = 'name-letter-piece';
+                    var value = document.createElement('b'); value.textContent = letter === ' ' ? '·' : letter; piece.appendChild(value);
+                    if (!isConfirmed) {
+                        if (index > 0) {
+                            var left = document.createElement('button'); left.type = 'button'; left.className = 'name-letter-move'; left.textContent = '←'; left.setAttribute('aria-label', 'Переместить букву ' + letter + ' влево');
+                            left.addEventListener('click', function() { moveLetter(index, index - 1); }); piece.appendChild(left);
+                        }
+                        if (index < currentName.length - 1) {
+                            var right = document.createElement('button'); right.type = 'button'; right.className = 'name-letter-move'; right.textContent = '→'; right.setAttribute('aria-label', 'Переместить букву ' + letter + ' вправо');
+                            right.addEventListener('click', function() { moveLetter(index, index + 1); }); piece.appendChild(right);
+                        }
+                        var remove = document.createElement('button'); remove.type = 'button'; remove.className = 'name-letter-remove'; remove.textContent = '×'; remove.setAttribute('aria-label', 'Удалить букву ' + letter);
+                        remove.addEventListener('click', function() { removeLetter(index); }); piece.appendChild(remove);
+                    }
+                    display.appendChild(piece);
+                });
             }
         }
+
+        function moveLetter(from, to) {
+            var chars = currentName.split(''); var moving = chars.splice(from, 1)[0]; chars.splice(to, 0, moving); currentName = chars.join('');
+            manualInput.value = currentName; updateDisplay();
+        }
+
+        function removeLetter(index) {
+            var chars = currentName.split(''); chars.splice(index, 1); currentName = chars.join('');
+            manualInput.value = currentName; updateDisplay();
+        }
+
+        manualInput.addEventListener('input', function() {
+            if (isConfirmed) return;
+            currentName = manualInput.value.slice(0, 32);
+            if (manualInput.value !== currentName) manualInput.value = currentName;
+            updateDisplay();
+        });
+        if (btnCancelName) btnCancelName.addEventListener('click', options.onCancel);
         
         btnClear.addEventListener('click', function() {
             if (isConfirmed) return;
             currentName = '';
+            manualInput.value = '';
             updateDisplay();
         });
         
         btnConfirm.addEventListener('click', function() {
-            if (!currentName || isConfirmed) return;
+            if (!currentName.trim() || isConfirmed) return;
+            currentName = currentName.trim();
+            manualInput.value = currentName;
             isConfirmed = true;
             GameState.setChildName(currentName);
             btnConfirm.disabled = true;
@@ -126,7 +176,10 @@ const NameScreen = (function() {
                 cu.style.opacity = '0.5';
                 cu.style.pointerEvents = 'none';
             });
-            setTimeout(function() { Navigation.goTo(SeriesSelect.render, 1); }, 300);
+            setTimeout(function() {
+                if (typeof options.onComplete === 'function') options.onComplete(currentName);
+                else Navigation.goTo(SeriesSelect.render, 1);
+            }, 300);
         });
         
         // === ПРИВЕТСТВЕННЫЙ ТЕКСТ И ЗВУК ПАРАЛЛЕЛЬНО ===

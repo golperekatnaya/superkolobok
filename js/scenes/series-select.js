@@ -536,8 +536,15 @@ const SeriesSelect = (function() {
         });
     }
     
+    function startStory(seriesId) {
+        if (seriesId === 'friendship') return startFriendshipSequence();
+        if (seriesId === 'care') return startCare();
+        if (seriesId === 'teamwork') return startTeamwork();
+    }
+
     return { 
         render: render,
+        startStory: startStory,
         _playSeries5: playSeries5,
         _playSequenceStep: playSequenceStep,
         _restartSequence: function() {

@@ -110,12 +110,12 @@ const PublicPages = (function() {
 
                     <section class="team-section public-section" id="team">
                         <div class="team-heading"><p class="section-kicker">КОМАНДА ПРОЕКТА</p><h2>Проект создаёт команда «Моего университета»</h2><a class="university-logo-link" href="https://moi-universitet.ru/" target="_blank" rel="noopener noreferrer" aria-label="Сайт «Моего университета»"><img src="media/images/logo-my-university.png" alt="Логотип «Моего университета»"><span>АНО ДПО «Мой университет» <span aria-hidden="true">↗</span></span></a></div>
-                        <div class="team-copy"><p>Идею проекта вместе разработали Вероника, Алина, Ирина и Тимофей. «Суперколобок и его друзья» объединяет образовательную экспертизу, методическую разработку, цифровые технологии и мультимедийный контент.</p><p>Каждый участник команды отвечает за свою часть проекта — от сценариев и иллюстраций до разработки приложения и методических решений.</p></div>
+                        <div class="team-copy"><p>Идею проекта и сценарии все вместе разрабатывали Вероника, Алина, Ирина и Тимофей. Каждый участник привнёс в работу свою экспертизу: методическую, творческую, исследовательскую и технологическую.</p></div>
                         <div class="team-members" aria-label="Участники команды">
-                            <article class="team-member"><div class="team-member-head"><img class="team-member-photo" src="media/images/team-veronika.jpg" alt="Филипченко Вероника Сергеевна, руководитель проекта"><h3>Филипченко Вероника Сергеевна</h3></div><p>Руководитель проекта, сценарист сюжетов и разработчик приложения. Разрабатывает дополнительные материалы и озвучивает Светлячка.</p></article>
-                            <article class="team-member"><div class="team-member-head"><img class="team-member-photo" src="media/images/team-alina.png" alt="Лазарева Алина Тимофеевна, участница команды проекта"><h3>Лазарева Алина Тимофеевна</h3></div><p>В основном отвечает за визуальное оформление дополнительных материалов, также участвует в создании иллюстраций и анимации и озвучивает персонажей.</p></article>
-                            <article class="team-member"><div class="team-member-head"><span class="team-member-avatar" aria-hidden="true">И</span><h3>Арефьева Ирина Львовна</h3></div><p>Разрабатывает методическую основу сценариев, координирует процессы и сроки, работает с фокус-группами.</p></article>
-                            <article class="team-member"><div class="team-member-head"><img class="team-member-photo team-photo-timofey" src="media/images/team-timofey.jpg" alt="Лазарев Тимофей Васильевич, участник команды проекта"><h3>Лазарев Тимофей Васильевич</h3></div><p>Участвует в разработке методической основы, анализе рынка и потребностей, учитывает особенности восприятия аудитории.</p></article>
+                            <article class="team-member"><div class="team-member-head"><img class="team-member-photo" src="media/images/team-veronika.jpg" alt="Филипченко Вероника Сергеевна, руководитель проекта"><h3>Филипченко Вероника Сергеевна</h3></div><p>Руководит проектом, развивает цифровую платформу и игровые механики, готовит содержание методических и дополнительных материалов, отвечает за саунд-дизайн и озвучивает Светлячка.</p></article>
+                            <article class="team-member"><div class="team-member-head"><img class="team-member-photo" src="media/images/team-alina.png" alt="Лазарева Алина Тимофеевна, участница команды проекта"><h3>Лазарева Алина Тимофеевна</h3></div><p>Создаёт иллюстрации и анимацию, визуально оформляет дополнительные материалы и озвучивает героев.</p></article>
+                            <article class="team-member"><div class="team-member-head"><span class="team-member-avatar" aria-hidden="true">И</span><h3>Арефьева Ирина Львовна</h3></div><p>Формирует методическую основу сценариев, координирует процессы и сроки, организует работу с фокус-группами.</p></article>
+                            <article class="team-member"><div class="team-member-head"><img class="team-member-photo team-photo-timofey" src="media/images/team-timofey.jpg" alt="Лазарев Тимофей Васильевич, участник команды проекта"><h3>Лазарев Тимофей Васильевич</h3></div><p>Исследует рынок и потребности аудитории, анализирует особенности восприятия проекта детьми и взрослыми, участвует в разработке методической основы сценариев.</p></article>
                         </div>
                         <div class="team-voice-section"><p class="section-kicker">АВТОРЫ ОЗВУЧКИ И ПЕРВЫЙ ТЕСТИРОВЩИК</p><div class="team-voice-members" aria-label="Авторы озвучки и тестировщик">
                             <article class="team-member"><div class="team-member-head"><span class="team-member-avatar" aria-hidden="true">В</span><h3>Миронов Владимир Русланович</h3></div><p>Озвучивает Дедушку и помогал организовать тестирование проекта детьми и родителями.</p></article>
@@ -334,7 +334,7 @@ const PublicPages = (function() {
                 '<div class="auth-form-wrap"><div class="auth-mobile-brand"><img class="brand-wordmark" src="media/images/logo-superkolobok-firefly.svg" alt="Суперколобок и Светлячок"></div>' +
                     '<h2>' + (isRegister ? 'Регистрация' : 'Вход в аккаунт') + '</h2>' + '<div class="auth-motion-row"><div class="auth-motion-video"><video autoplay muted loop playsinline preload="metadata" poster="media/images/kolobok_avatar.png" aria-label="Колобок катится"><source src="media/videos/Loader.mov" type="video/quicktime"><source src="media/videos/Loader.webm" type="video/webm"></video></div></div>' + (isRegister ? '<p class="auth-subtitle">Создайте аккаунт взрослого, который будет управлять профилем ребёнка.</p>' : '') +
                     '<form id="accountForm" novalidate>' +
-                        (isRegister ? '<label for="accountName">Ваше имя</label><input id="accountName" name="name" autocomplete="name" placeholder="Как к вам обращаться" required maxlength="60">' : '') +
+                        (isRegister ? '<label for="accountName">Ваше имя</label><input id="accountName" name="name" autocomplete="name" placeholder="Как к вам обращаться" required maxlength="60"><label for="accountRole">Я регистрируюсь как</label><select id="accountRole" name="role" required><option value="parent">Родитель</option><option value="teacher">Педагог</option></select>' : '') +
                         '<label for="accountEmail">Электронная почта</label><input id="accountEmail" name="email" type="email" autocomplete="email" placeholder="Введите e-mail" required>' +
                         '<label for="accountPassword">Пароль</label><input id="accountPassword" name="password" type="password" autocomplete="' + (isRegister ? 'new-password' : 'current-password') + '" placeholder="' + (isRegister ? 'Придумайте пароль (не менее 8 символов)' : 'Введите пароль') + '" required minlength="8">' +
                         (isRegister ? '<label for="accountPasswordRepeat">Повторите пароль</label><input id="accountPasswordRepeat" name="passwordRepeat" type="password" autocomplete="new-password" placeholder="Введите пароль ещё раз" required minlength="8"><label class="terms-label"><input type="checkbox" name="terms" required><span>Согласен(на) с условиями использования и политикой конфиденциальности</span></label>' : '<button class="forgot-link" id="forgotPassword" type="button">Забыли пароль?</button>') +
@@ -382,7 +382,7 @@ const PublicPages = (function() {
                 if (!window.crypto || !window.crypto.subtle) return showMessage('Создание аккаунта доступно при защищённом соединении.', true);
                 var salt = randomSalt();
                 derivePassword(password, salt).then(function(hash) {
-                    localStorage.setItem('superkolobok-account', JSON.stringify({ name: form.elements.name.value.trim(), email: email, salt: salt, passwordHash: hash }));
+                    localStorage.setItem('superkolobok-account', JSON.stringify({ name: form.elements.name.value.trim(), role: form.elements.role.value, email: email, salt: salt, passwordHash: hash }));
                     localStorage.setItem('superkolobok-session', email);
                     enterGame();
                 }).catch(function() { showMessage('Не удалось создать аккаунт. Попробуйте ещё раз.', true); });
@@ -420,8 +420,11 @@ const PublicPages = (function() {
     }
 
     function enterGame() {
-        document.body.classList.remove('public-mode');
         if (typeof AudioManager !== 'undefined') AudioManager.stopAll();
+        var account;
+        try { account = JSON.parse(localStorage.getItem('superkolobok-account') || 'null'); } catch (e) { account = null; }
+        if (typeof Universe !== 'undefined' && account && Universe.startSession(account)) return;
+        document.body.classList.remove('public-mode');
         Navigation.goTo(NameScreen.render, 0);
     }
 

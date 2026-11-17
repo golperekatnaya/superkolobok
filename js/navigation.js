@@ -96,6 +96,19 @@ const Navigation = (function() {
             return;
         }
 
+        if (typeof Universe !== 'undefined' && Universe.isActive() && rendererFn === SeriesSelect.render) {
+            _isTransitioning = true;
+            GameState.setCurrentSeries(null);
+            clearCurrentScene();
+            resetSuppressFlags();
+            _currentRenderer = null;
+            Universe.renderMap();
+            updateButtons();
+            _isTransitioning = false;
+            processQueue();
+            return;
+        }
+
         _isTransitioning = true;
 
         if (_currentRenderer !== null && typeof sceneIndex === 'number') {
@@ -222,7 +235,8 @@ const Navigation = (function() {
         _isTransitioning = true;
         clearCurrentScene();
         resetSuppressFlags();
-        SeriesSelect.render();
+        if (typeof Universe !== 'undefined' && Universe.isActive()) Universe.renderMap();
+        else SeriesSelect.render();
         updateButtons();
         _isTransitioning = false;
     }

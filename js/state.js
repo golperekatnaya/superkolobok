@@ -3,6 +3,7 @@
 
 const GameState = (function() {
     'use strict';
+    var _persistenceKey = 'superkolobok-state';
     
     var _state = {
         childName: '',
@@ -42,7 +43,7 @@ const GameState = (function() {
         if (typeof name !== 'string') return false;
         var trimmed = name.trim();
         if (trimmed.length === 0) return false;
-        if (trimmed.length > 12) trimmed = trimmed.substring(0, 12);
+        if (trimmed.length > 32) trimmed = trimmed.substring(0, 32);
         _state.childName = trimmed;
         saveState();
         return true;
@@ -119,6 +120,7 @@ const GameState = (function() {
         if (_state.completedSeries.hasOwnProperty(seriesId)) {
             _state.completedSeries[seriesId] = true;
             saveState();
+            if (typeof Universe !== 'undefined' && Universe.isActive()) Universe.syncProgress();
             return true;
         }
         return false;
@@ -240,13 +242,13 @@ const GameState = (function() {
                 materialsChest: _state.materialsChest || [],
                 lastSaved: Date.now()
             };
-            localStorage.setItem('superkolobok-state', JSON.stringify(toSave));
+            localStorage.setItem(_persistenceKey, JSON.stringify(toSave));
         } catch(e) {}
     }
     
     function loadState() {
         try {
-            var saved = localStorage.getItem('superkolobok-state');
+            var saved = localStorage.getItem(_persistenceKey);
             if (saved) {
                 var data = JSON.parse(saved);
                 if (data.childName) _state.childName = data.childName;
@@ -276,11 +278,36 @@ const GameState = (function() {
     
     function clearSavedState() {
         try { 
-            localStorage.removeItem('superkolobok-state');
+            localStorage.removeItem(_persistenceKey);
             localStorage.removeItem('gameMode');
             return true;
         }
         catch(e) { return false; }
+    }
+
+    function setPersistenceScope(scope) {
+        var nextKey = scope ? 'superkolobok-state-profile-' + String(scope).replace(/[^a-zA-Z0-9_-]/g, '') : 'superkolobok-state';
+        if (nextKey === _persistenceKey) return true;
+        var migrateLegacy = _persistenceKey === 'superkolobok-state' && !!localStorage.getItem('superkolobok-state');
+        saveState();
+        _persistenceKey = nextKey;
+        _state.childName = '';
+        _state.currentSceneId = 0;
+        _state.stars = 0;
+        _state.matchedPairs = {};
+        _state.currentSeries = null;
+        _state.history = [];
+        _state.completedSeries = { friendship:false, care:false, teamwork:false };
+        _state.settings = { soundEnabled:true, musicEnabled:true };
+        _state.stats = { totalGamesPlayed:0, totalCorrectMatches:0, totalWrongMatches:0, totalTimeSpent:0 };
+        _state.materialsChest = [];
+        if (migrateLegacy && !localStorage.getItem(nextKey)) {
+            localStorage.setItem(nextKey, localStorage.getItem('superkolobok-state'));
+        }
+        _state.sessionStartTime = Date.now();
+        loadState();
+        saveState();
+        return true;
     }
     
     return {
@@ -323,6 +350,7 @@ const GameState = (function() {
         clearGameMode: clearGameMode,
         saveState: saveState,
         loadState: loadState,
-        clearSavedState: clearSavedState
+        clearSavedState: clearSavedState,
+        setPersistenceScope: setPersistenceScope
     };
 })();

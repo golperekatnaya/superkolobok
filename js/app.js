@@ -29,8 +29,9 @@ const App = (function() {
                 _isInitialized = true;
                 _isLoading = false;
                 
-                console.log('[App] -> Публичная главная');
-                PublicPages.renderLanding();
+                console.log('[App] -> Публичная главная или игровое пространство');
+                var sessionEmail = localStorage.getItem('superkolobok-session');
+                if (!sessionEmail || !Universe.resumeSession(sessionEmail)) PublicPages.renderLanding();
                 dismissBootScreen();
             })
             .catch(function(error) {
