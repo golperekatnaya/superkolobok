@@ -121,6 +121,7 @@ const GameState = (function() {
             _state.completedSeries[seriesId] = true;
             saveState();
             if (typeof Universe !== 'undefined' && Universe.isActive()) Universe.syncProgress();
+            if (typeof Navigation !== 'undefined' && Navigation.updateButtons) Navigation.updateButtons();
             return true;
         }
         return false;

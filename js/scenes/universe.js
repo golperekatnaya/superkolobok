@@ -6,15 +6,16 @@ const Universe = (function() {
     var activeChild = null;
     var active = false;
     var tutorialSteps = [
-        { target: 'map', title: 'Вот наша карта', text: 'Здесь находятся все места, которые мы будем исследовать.' },
-        { target: 'locations', title: 'Выбирай локацию', text: 'Каждая локация ведёт к новой игровой истории. Начать можно с открытой.' },
-        { target: 'progress', title: 'Путешествие продолжается', text: 'Пройденные истории отмечаются на карте, и ты всегда можешь вернуться к ним.' },
-        { target: 'helper', title: 'Я рядом', text: 'Если забудешь, куда идти, нажми на меня — подскажу, как устроена карта.' }
+        { target: 'map', title: 'Карта волшебного леса', text: 'Здесь отмечены локации и игровые истории. Выбирай место на карте, чтобы отправиться в новое приключение.' },
+        { target: 'adult', title: 'Профиль взрослого', text: 'Здесь находится аккаунт родителя или педагога. Взрослый может посмотреть прогресс и управлять профилями детей.' },
+        { target: 'child', title: 'Профиль ребёнка', text: 'Здесь можно переключить ребёнка, добавить профиль или изменить имя. У каждого ребёнка свои истории и находки.' },
+        { target: 'finds', title: 'Мои находки', text: 'В этом разделе собираются награды за приключения и дополнительные материалы для творчества.' },
+        { target: 'inventory', title: 'Ключи приключений', text: 'Во время игры открывай инвентарь в верхней панели. Там появятся ключики дружбы, заботы и команды — по одному за каждую завершённую серию.', inventory: true }
     ];
     var locations = [
-        { id: 'gate', name: 'Калитка в лес', kind: 'intro', x: 13, y: 61, emblem: '✦', subtitle: 'Точка начала путешествия' },
-        { id: 'friendship', name: 'Поляна дружбы', kind: 'story', series: 'friendship', x: 39, y: 34, emblem: '♡', subtitle: 'Сила дружбы' },
-        { id: 'care', name: 'Тёплый домик', kind: 'story', series: 'care', x: 66, y: 56, emblem: '☼', subtitle: 'Сила заботы' },
+        { id: 'gate', name: 'Тропинка дружбы', kind: 'intro', x: 13, y: 61, emblem: '✦', subtitle: 'Знакомство со Светлячком' },
+        { id: 'friendship', name: 'Домик Колобка', kind: 'story', series: 'friendship', x: 39, y: 34, emblem: '♡', subtitle: 'Сила дружбы' },
+        { id: 'care', name: 'Детский сад', kind: 'story', series: 'care', x: 66, y: 56, emblem: '☼', subtitle: 'Сила заботы' },
         { id: 'teamwork', name: 'Лесная поляна', kind: 'story', series: 'teamwork', x: 86, y: 26, emblem: '✿', subtitle: 'Сила команды' }
     ];
 
@@ -118,7 +119,7 @@ const Universe = (function() {
 
     function profileHeader() {
         var adultRole = account && account.role === 'teacher' ? 'Педагог' : 'Родитель';
-        return '<header class="universe-topbar"><a class="universe-brand" href="#" data-map-home aria-label="На карту"><img src="media/images/logo-superkolobok-firefly.svg" alt="Суперколобок"></a><nav class="universe-nav" aria-label="Разделы игрового пространства"><button class="is-current" data-map-home type="button">Карта</button><button type="button" data-achievements>Мои находки</button></nav><div class="universe-user-controls"><button class="universe-adult-chip" id="adultProfileButton" type="button"><span class="universe-user-icon">' + (adultRole === 'Педагог' ? 'П' : 'В') + '</span><span><small>Взрослый</small><b>' + adultRole + '</b></span></button><button class="universe-child-chip" id="childProfileButton" type="button"><img src="' + escapeAttr(activeChild.avatar || 'media/images/kolobok_avatar.png') + '" alt=""><span><small>Ребёнок</small><b>' + escapeHtml(activeChild.name || 'Мой профиль') + '</b></span><span class="universe-chevron">⌄</span></button><button class="universe-helper-button" id="fireflyHelperButton" type="button" data-tutorial="helper" aria-label="Спросить Светлячка"><img src="media/images/firefly.png" alt=""><span>Помощь</span></button></div></header>';
+        return '<header class="universe-topbar"><a class="universe-brand" href="#" data-map-home aria-label="На карту"><img src="media/images/logo-superkolobok-firefly.svg" alt="Суперколобок"></a><nav class="universe-nav" aria-label="Разделы игрового пространства"><button class="is-current" data-map-home type="button">Карта</button><button type="button" data-achievements data-tutorial="finds">Мои находки</button></nav><div class="universe-user-controls"><button class="universe-adult-chip" id="adultProfileButton" data-tutorial="adult" type="button"><span class="universe-user-icon">' + (adultRole === 'Педагог' ? 'П' : 'В') + '</span><span><small>Взрослый</small><b>' + adultRole + '</b></span></button><button class="universe-child-chip" id="childProfileButton" data-tutorial="child" type="button"><img src="' + escapeAttr(activeChild.avatar || 'media/images/kolobok_avatar.png') + '" alt=""><span><small>Ребёнок</small><b>' + escapeHtml(activeChild.name || 'Мой профиль') + '</b></span><span class="universe-chevron">⌄</span></button><button class="universe-helper-button" id="fireflyHelperButton" type="button" data-tutorial="helper" aria-label="Спросить Светлячка"><img src="media/images/firefly.png" alt=""><span>Помощь</span></button></div></header>';
     }
 
     function renderMap() {
@@ -136,7 +137,7 @@ const Universe = (function() {
         root.innerHTML = '<div class="universe-shell">' + profileHeader() +
             '<main class="universe-main"><div class="universe-map-heading"><div><p class="universe-eyebrow">ТВОЁ СКАЗОЧНОЕ ПУТЕШЕСТВИЕ</p><h1>' + (activeChild.name ? escapeHtml(activeChild.name) + ', куда отправимся сегодня?' : 'Куда отправимся сегодня?') + '</h1><p>Выбирай открытую локацию и исследуй истории вместе с друзьями.</p></div><div class="universe-progress" data-tutorial="progress"><span class="universe-progress-mark">✦</span><span><b>' + doneCount + ' из ' + total + '</b><small>историй пройдено</small></span><div class="universe-progress-track"><i style="width:' + Math.round(doneCount / total * 100) + '%"></i></div></div></div>' +
             '<div class="universe-map-scroll" data-tutorial="map"><section class="universe-map-art" aria-label="Карта игрового мира Суперколобка"><svg class="universe-trail" viewBox="0 0 1000 580" preserveAspectRatio="none" aria-hidden="true"><path d="M115 375 C155 390 185 355 223 327 S315 252 378 230 S454 293 502 330 S600 400 655 365 S715 291 770 255 S840 176 880 145" fill="none" stroke="#fff9e9" stroke-width="23" stroke-linecap="round"/><path d="M115 375 C155 390 185 355 223 327 S315 252 378 230 S454 293 502 330 S600 400 655 365 S715 291 770 255 S840 176 880 145" fill="none" stroke="#e8aa50" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 17"/></svg><div class="universe-sun" aria-hidden="true"></div><div class="universe-hill hill-one" aria-hidden="true"></div><div class="universe-hill hill-two" aria-hidden="true"></div><div class="universe-forest forest-left" aria-hidden="true"><i></i><i></i><i></i></div><div class="universe-forest forest-right" aria-hidden="true"><i></i><i></i><i></i></div><div class="universe-pond" aria-hidden="true">〰</div><div class="universe-gate-art" aria-hidden="true"><i></i><i></i><span>✦</span></div><div class="universe-map-cloud cloud-one" aria-hidden="true">☁</div><div class="universe-map-cloud cloud-two" aria-hidden="true">☁</div><div class="universe-locations" data-tutorial="locations">' + data + '</div>' +
-            '<div class="universe-firefly-on-map" aria-hidden="true"><img src="media/images/firefly.png" alt=""></div><div class="universe-map-note">Начни с Калитки в лесу — там тебя уже ждёт Светлячок!</div></section></div>' +
+            '<div class="universe-firefly-on-map" aria-hidden="true"><img src="media/images/firefly.png" alt=""></div><div class="universe-map-note">Начни с Тропинки дружбы — там тебя уже ждёт Светлячок!</div></section></div>' +
             '<div class="universe-map-foot"><span>Путь открывается шаг за шагом</span><button class="universe-small-link" type="button" id="replayTour">Пройти знакомство с картой ещё раз</button></div></main></div>';
         root.querySelectorAll('[data-map-home]').forEach(function(button) { button.addEventListener('click', function(event) { event.preventDefault(); renderMap(); }); });
         root.querySelectorAll('[data-location]').forEach(function(button) { button.addEventListener('click', function() { openLocation(button.dataset.location); }); });
@@ -150,7 +151,7 @@ const Universe = (function() {
     function openLocation(id) {
         var location = locations.find(function(entry) { return entry.id === id; });
         if (!location) return;
-        if (location.id !== 'gate' && !activeChild.name) return openOverlay('Знакомство впереди', '<p>Сначала зайди в Калитку в лес — Светлячок поможет собрать имя из букв.</p>', [{ label: 'К Калитке в лес', action: function() { closeOverlay(); openLocation('gate'); } }]);
+        if (location.id !== 'gate' && !activeChild.name) return openOverlay('Знакомство впереди', '<p>Сначала отправляйся на Тропинку дружбы — Светлячок познакомится с тобой и поможет собрать имя из букв.</p>', [{ label: 'На Тропинку дружбы', action: function() { closeOverlay(); openLocation('gate'); } }]);
         if (location.kind === 'intro') return renderGateScene();
         var seriesNames = { friendship:'Сила дружбы', care:'Сила заботы', teamwork:'Сила команды' };
         var completed = GameState.isSeriesCompleted(location.series);
@@ -163,7 +164,7 @@ const Universe = (function() {
     function renderGateScene() {
         var root = document.getElementById('sceneContent');
         if (!root) return;
-        root.innerHTML = '<section class="universe-gate-scene"><button class="universe-back-map" id="gateBack">← На карту</button><div class="universe-gate-illustration"><div class="universe-gate-trees"><i></i><i></i><i></i></div><div class="universe-gate"><span>✦</span></div><img src="media/images/firefly.png" alt="Светлячок" class="universe-gate-firefly"></div><div class="universe-gate-dialog"><p class="universe-eyebrow">КАЛИТКА В ЛЕС</p><h1>' + (activeChild.name ? 'С возвращением, ' + escapeHtml(activeChild.name) + '!' : 'Привет! Я Светлячок.') + '</h1><p>' + (activeChild.name ? 'Рад снова тебя видеть. За калиткой начинаются наши игровые истории.' : 'Буду твоим проводником по этому миру. Давай познакомимся — как тебя зовут?') + '</p><div class="universe-gate-actions">' + (activeChild.name ? '<button class="universe-primary-button" id="gateToMap" type="button">Вернуться на карту</button><button class="universe-secondary-button" id="gateEditName" type="button">Изменить имя</button>' : '<button class="universe-primary-button" id="gateMeetFirefly" type="button">Собрать имя из букв</button>') + '</div></div></section>';
+        root.innerHTML = '<section class="universe-gate-scene"><button class="universe-back-map" id="gateBack">← На карту</button><div class="universe-gate-illustration"><div class="universe-gate-trees"><i></i><i></i><i></i></div><div class="universe-gate"><span>✦</span></div><img src="media/images/firefly.png" alt="Светлячок" class="universe-gate-firefly"></div><div class="universe-gate-dialog"><p class="universe-eyebrow">ТРОПИНКА ДРУЖБЫ</p><h1>' + (activeChild.name ? 'С возвращением, ' + escapeHtml(activeChild.name) + '!' : 'Привет! Я Светлячок.') + '</h1><p>' + (activeChild.name ? 'Рад снова тебя видеть. Отсюда начинаются наши игровые истории.' : 'Буду твоим проводником по этому миру. Давай познакомимся — как тебя зовут?') + '</p><div class="universe-gate-actions">' + (activeChild.name ? '<button class="universe-primary-button" id="gateToMap" type="button">Вернуться на карту</button><button class="universe-secondary-button" id="gateEditName" type="button">Изменить имя</button>' : '<button class="universe-primary-button" id="gateMeetFirefly" type="button">Собрать имя из букв</button>') + '</div></div></section>';
         root.querySelector('#gateBack').addEventListener('click', renderMap);
         var toMap = root.querySelector('#gateToMap'); if (toMap) toMap.addEventListener('click', renderMap);
         var editName = root.querySelector('#gateEditName'); if (editName) editName.addEventListener('click', startNameCubes);
@@ -209,7 +210,7 @@ const Universe = (function() {
             if (anchor) anchor.classList.add('universe-tutorial-highlight');
             var tutorial = document.createElement('div');
             tutorial.className = 'universe-tour-backdrop';
-            tutorial.innerHTML = '<section class="universe-tour-card" role="dialog" aria-modal="true" aria-labelledby="universeTourTitle"><img src="media/images/firefly.png" alt="" class="universe-tour-firefly"><div><p class="universe-eyebrow">ЗНАКОМСТВО · ' + (stepIndex + 1) + ' / ' + tutorialSteps.length + '</p><h2 id="universeTourTitle">' + step.title + '</h2><p>' + step.text + '</p></div><div class="universe-tour-actions"><button type="button" class="universe-text-button" data-tour-skip>Пропустить знакомство</button><button type="button" class="universe-primary-button" data-tour-next>' + (stepIndex === tutorialSteps.length - 1 ? 'На карту' : 'Дальше') + '</button></div></section>';
+            tutorial.innerHTML = '<section class="universe-tour-card" role="dialog" aria-modal="true" aria-labelledby="universeTourTitle"><img src="media/images/firefly.png" alt="Светлячок" class="universe-tour-firefly"><div class="universe-tour-speech"><p class="universe-eyebrow">ЗНАКОМСТВО · ' + (stepIndex + 1) + ' / ' + tutorialSteps.length + '</p><h2 id="universeTourTitle">' + step.title + '</h2><p>' + step.text + '</p>' + (step.inventory ? '<div class="universe-tour-keys"><span><img src="media/images/key-friendship.png" alt="">Дружба</span><span><img src="media/images/key-care.svg" alt="">Забота</span><span><img src="media/images/key-team.png" alt="">Команда</span></div>' : '') + '</div><div class="universe-tour-actions"><button type="button" class="universe-text-button" data-tour-skip>Пропустить знакомство</button><button type="button" class="universe-primary-button" data-tour-next>' + (stepIndex === tutorialSteps.length - 1 ? 'На карту' : 'Дальше') + '</button></div></section>';
             root.appendChild(tutorial);
             tutorial.querySelector('[data-tour-skip]').addEventListener('click', finishTutorial);
             tutorial.querySelector('[data-tour-next]').addEventListener('click', function() {
@@ -232,7 +233,7 @@ const Universe = (function() {
             button.addEventListener('click', function() {
                 var answer = document.getElementById('helperAnswer');
                 if (button.dataset.helper === 'тур') { closeOverlay(); showTutorial(false); return; }
-                answer.textContent = button.dataset.helper === 'куда' ? (activeChild.name ? activeChild.name + ', начни с любой открытой точки на карте.' : 'Сначала загляни в Калитку в лес, чтобы познакомиться и собрать имя.') : 'На карте доступны Калитка в лес и три игровые истории: дружба, забота и сила команды.';
+                answer.textContent = button.dataset.helper === 'куда' ? (activeChild.name ? activeChild.name + ', начни с любой открытой точки на карте.' : 'Сначала отправляйся на Тропинку дружбы, чтобы познакомиться и собрать имя.') : 'На карте доступны Тропинка дружбы и три игровые истории: дружба, забота и сила команды.';
             });
         });
     }
@@ -265,11 +266,25 @@ const Universe = (function() {
     }
 
     function openProgressPanel() {
-        var items = locations.filter(function(location) { return location.series; }).map(function(location) {
-            var done = GameState.isSeriesCompleted(location.series);
-            return '<li><span>' + location.name + '</span><b>' + (done ? 'Пройдено ✓' : 'Ещё впереди') + '</b></li>';
+        var completed = locations.filter(function(location) { return location.series && GameState.isSeriesCompleted(location.series); });
+        var stars = GameState.getStars();
+        var rewards = completed.length ? '<div class="universe-find-reward-list">' + completed.map(function(location) {
+            return '<div class="universe-find-reward"><span class="universe-find-reward-star">★</span><span><b>' + escapeHtml(location.name) + '</b><small>' + escapeHtml(location.subtitle) + ' · пройдено</small></span></div>';
+        }).join('') + '</div>' : '<p class="universe-empty-find">Пока здесь тихо. Первые награды появятся после игровых историй.</p>';
+        var materials = GameState.getMaterials();
+        var catalog = {
+            'series1-materials.pdf': { title:'Творческие материалы к серии «Сила дружбы»', description:'Задания и идеи для продолжения истории вместе со взрослым.' },
+            'series2-materials.pdf': { title:'Творческие материалы к серии «Сила заботы»', description:'Дополнительные задания и материалы для совместного творчества.' },
+            'series3-materials.pdf': { title:'Творческие материалы к серии «Сила команды»', description:'Материалы к истории о сотрудничестве и общих решениях.' }
+        };
+        var materialCards = materials.map(function(file) {
+            var item = catalog[file];
+            if (!item) return '';
+            return '<article class="universe-material-card"><span class="universe-material-icon" aria-hidden="true">✂</span><div><b>' + item.title + '</b><p>' + item.description + '</p></div><a href="media/bonus/' + encodeURIComponent(file) + '" target="_blank" rel="noopener noreferrer">Посмотреть</a></article>';
         }).join('');
-        openOverlay('Мои находки', '<p>Вот что уже сохранено в путешествии ' + escapeHtml(activeChild.name || 'ребёнка') + ':</p><ul class="universe-progress-list">' + items + '</ul><p class="universe-muted-note">Звёзды и отметки появляются только после прохождения игровых историй.</p>', [{ label: 'На карту', action: closeOverlay }]);
+        var materialSection = materialCards ? '<div class="universe-find-materials">' + materialCards + '</div>' : '<p class="universe-empty-find">Материалы для творчества будут появляться здесь по мере прохождения историй.</p>';
+        var body = '<p>Здесь собраны награды и дополнительные материалы путешествия ' + escapeHtml(activeChild.name || 'ребёнка') + '.</p><section class="universe-finds-section"><div class="universe-finds-title"><h3>Награды</h3><span>' + completed.length + ' из 3 историй</span></div><div class="universe-star-award"><span class="universe-star-row">' + '★'.repeat(stars) + '☆'.repeat(Math.max(0, 3 - stars)) + '</span><b>' + stars + ' звёзд за приключения</b></div>' + rewards + '</section><section class="universe-finds-section"><div class="universe-finds-title"><h3>Материалы для творчества</h3><span>для совместных занятий</span></div>' + materialSection + '</section><p class="universe-muted-note">Ключи за серии хранятся отдельно — в игровом инвентаре.</p>';
+        openOverlay('Мои находки', body, [{ label: 'На карту', action: closeOverlay }]);
     }
 
     function showRenameDialog() {

@@ -30,8 +30,11 @@ const Navigation = (function() {
         _profileBtn = document.getElementById('profileBtn');
         _soundBtn = document.getElementById('soundToggleBtn');
         _resetBtn = document.getElementById('resetBtn');
+        var keysInventoryButton = document.getElementById('headerKeysBadge');
 
         if (!_sceneContent) return false;
+
+        if (keysInventoryButton) keysInventoryButton.addEventListener('click', showKeysInventory);
 
         if (_backBtn) {
             _backBtn.addEventListener('click', function(e) { e.preventDefault(); goBack(); });
@@ -268,7 +271,7 @@ const Navigation = (function() {
             '<div class="medal-icon" data-key="friendship"><img src="media/images/key-friendship.png" alt=""></div>' +
             '<div class="medal-name">Сила дружбы</div></div>';
         medalsHtml += '<div class="medal-item' + (careDone ? ' earned' : '') + '">' +
-            '<div class="medal-icon" data-key="care"><img src="media/images/key-care.png" alt=""></div>' +
+            '<div class="medal-icon" data-key="care"><img src="media/images/key-care.svg" alt=""></div>' +
             '<div class="medal-name">Сила заботы</div></div>';
         medalsHtml += '<div class="medal-item' + (teamworkDone ? ' earned' : '') + '">' +
             '<div class="medal-icon" data-key="teamwork"><img src="media/images/key-team.png" alt=""></div>' +
@@ -518,13 +521,33 @@ const Navigation = (function() {
             var careDone = GameState.isSeriesCompleted('care');
             var teamworkDone = GameState.isSeriesCompleted('teamwork');
             var totalKeys = (friendshipDone ? 1 : 0) + (careDone ? 1 : 0) + (teamworkDone ? 1 : 0);
-            if (onMain && GameState.hasChildName() && totalKeys > 0 && !inProfile) {
+            if (GameState.hasChildName() && !inProfile) {
                 keysBadge.style.display = 'flex';
                 keysCount.textContent = totalKeys;
+                var keyWord = totalKeys === 1 ? 'ключ' : (totalKeys >= 2 && totalKeys <= 4 ? 'ключа' : 'ключей');
+                keysBadge.setAttribute('aria-label', 'Инвентарь: ' + totalKeys + ' ' + keyWord + ' из 3');
             } else {
                 keysBadge.style.display = 'none';
             }
         }
+    }
+
+    function showKeysInventory() {
+        var keys = [
+            { id:'friendship', title:'Ключ дружбы', src:'media/images/key-friendship.png', done:GameState.isSeriesCompleted('friendship') },
+            { id:'care', title:'Ключ заботы', src:'media/images/key-care.svg', done:GameState.isSeriesCompleted('care') },
+            { id:'teamwork', title:'Ключ команды', src:'media/images/key-team.png', done:GameState.isSeriesCompleted('teamwork') }
+        ];
+        var overlay = document.createElement('div');
+        overlay.className = 'game-popup-overlay universe-inventory-overlay';
+        overlay.innerHTML = '<section class="universe-inventory-dialog" role="dialog" aria-modal="true" aria-labelledby="keyInventoryTitle"><button type="button" class="universe-inventory-close" aria-label="Закрыть">×</button><p class="universe-eyebrow">ТВОИ СОБРАННЫЕ КЛЮЧИКИ</p><h2 id="keyInventoryTitle">Инвентарь приключений</h2><p class="universe-inventory-copy">За каждую пройденную серию ты получаешь свой ключ.</p><div class="universe-key-grid">' + keys.map(function(key) {
+            return '<article class="universe-key-tile ' + (key.done ? 'is-earned' : 'is-locked') + '"><span class="universe-key-picture"><img src="' + key.src + '" alt="" onerror="this.src=\'media/images/key-icon.png\'"></span><b>' + key.title + '</b><small>' + (key.done ? 'В коллекции ✓' : 'Откроется после серии') + '</small></article>';
+        }).join('') + '</div><button type="button" class="universe-primary-button universe-inventory-done">Продолжить игру</button></section>';
+        document.body.appendChild(overlay);
+        function closeInventory() { overlay.remove(); }
+        overlay.querySelector('.universe-inventory-close').addEventListener('click', closeInventory);
+        overlay.querySelector('.universe-inventory-done').addEventListener('click', closeInventory);
+        overlay.addEventListener('click', function(event) { if (event.target === overlay) closeInventory(); });
     }
 
     function closeAllPopups() {
