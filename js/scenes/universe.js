@@ -7,16 +7,18 @@ const Universe = (function() {
     var active = false;
     var tutorialSteps = [
         { target: 'map', title: 'Карта волшебного леса', text: 'Здесь отмечены локации и игровые истории. Выбирай место на карте, чтобы отправиться в новое приключение.' },
-        { target: 'adult', title: 'Профиль взрослого', text: 'Здесь находится аккаунт родителя или педагога. Взрослый может посмотреть прогресс и управлять профилями детей.' },
+        { target: 'adult', title: 'Профиль-аккаунт взрослого', text: 'Здесь находится аккаунт родителя или педагога: можно посмотреть прогресс и управлять профилями детей.' },
         { target: 'child', title: 'Профиль ребёнка', text: 'Здесь можно переключить ребёнка, добавить профиль или изменить имя. У каждого ребёнка свои истории и находки.' },
-        { target: 'finds', title: 'Мои находки', text: 'В этом разделе собираются награды за приключения и дополнительные материалы для творчества.' },
-        { target: 'inventory', title: 'Ключи приключений', text: 'Во время игры открывай инвентарь в верхней панели. Там появятся ключики дружбы, заботы и команды — по одному за каждую завершённую серию.', inventory: true }
+        { target: 'finds', title: 'Волшебный сундучок', text: 'Здесь хранятся награды за приключения и дополнительные материалы для творчества — их можно открыть и скачать.' },
+        { title: 'Инвентарь ключей в игре', text: 'Во время игры нажми на значок ключика в верхней панели. За каждую пройденную серию ты получишь отдельный ключ: дружбы, заботы или команды.', inventory: true }
     ];
     var locations = [
-        { id: 'gate', name: 'Тропинка дружбы', kind: 'intro', x: 13, y: 61, emblem: '✦', subtitle: 'Знакомство со Светлячком' },
-        { id: 'friendship', name: 'Домик Колобка', kind: 'story', series: 'friendship', x: 39, y: 34, emblem: '♡', subtitle: 'Сила дружбы' },
-        { id: 'care', name: 'Детский сад', kind: 'story', series: 'care', x: 66, y: 56, emblem: '☼', subtitle: 'Сила заботы' },
-        { id: 'teamwork', name: 'Лесная поляна', kind: 'story', series: 'teamwork', x: 86, y: 26, emblem: '✿', subtitle: 'Сила команды' }
+        { id: 'gate', name: 'Вход в Волшебный лес', kind: 'intro', x: 12, y: 69, emblem: '✦', subtitle: 'Знакомство со Светлячком' },
+        { id: 'trail', name: 'Тропинка дружбы', kind: 'waypoint', x: 30, y: 52, emblem: '♡', subtitle: 'Первая остановка' },
+        { id: 'friendship', name: 'Домик Колобка', kind: 'story', series: 'friendship', x: 47, y: 30, emblem: '⌂', subtitle: 'Сила дружбы' },
+        { id: 'care', name: 'Лесной детский сад', kind: 'story', series: 'care', x: 67, y: 57, emblem: '☼', subtitle: 'Сила заботы' },
+        { id: 'teamwork', name: 'Лесная поляна', kind: 'story', series: 'teamwork', x: 87, y: 25, emblem: '✿', subtitle: 'Сила команды' },
+        { id: 'compass-camp', name: 'Детский лагерь «Компас»', kind: 'coming-soon', direction: 'Подготовка к школе', x: 77, y: 82, emblem: '🧭', subtitle: 'Скоро · подготовка к школе' }
     ];
 
     function safeParse(value, fallback) {
@@ -119,7 +121,7 @@ const Universe = (function() {
 
     function profileHeader() {
         var adultRole = account && account.role === 'teacher' ? 'Педагог' : 'Родитель';
-        return '<header class="universe-topbar"><a class="universe-brand" href="#" data-map-home aria-label="На карту"><img src="media/images/logo-superkolobok-firefly.svg" alt="Суперколобок"></a><nav class="universe-nav" aria-label="Разделы игрового пространства"><button class="is-current" data-map-home type="button">Карта</button><button type="button" data-achievements data-tutorial="finds">Мои находки</button></nav><div class="universe-user-controls"><button class="universe-adult-chip" id="adultProfileButton" data-tutorial="adult" type="button"><span class="universe-user-icon">' + (adultRole === 'Педагог' ? 'П' : 'В') + '</span><span><small>Взрослый</small><b>' + adultRole + '</b></span></button><button class="universe-child-chip" id="childProfileButton" data-tutorial="child" type="button"><img src="' + escapeAttr(activeChild.avatar || 'media/images/kolobok_avatar.png') + '" alt=""><span><small>Ребёнок</small><b>' + escapeHtml(activeChild.name || 'Мой профиль') + '</b></span><span class="universe-chevron">⌄</span></button><button class="universe-helper-button" id="fireflyHelperButton" type="button" data-tutorial="helper" aria-label="Спросить Светлячка"><img src="media/images/firefly.png" alt=""><span>Помощь</span></button></div></header>';
+        return '<header class="universe-topbar"><a class="universe-brand" href="#" data-map-home aria-label="На карту"><img src="media/images/logo-superkolobok-firefly.svg" alt="Суперколобок"></a><nav class="universe-nav" aria-label="Разделы игрового пространства"><button class="is-current" data-map-home type="button">Карта</button><button type="button" data-achievements data-tutorial="finds"><img class="universe-chest-icon" src="media/images/magic-chest.svg" alt="">Волшебный сундучок</button></nav><div class="universe-user-controls"><button class="universe-adult-chip" id="adultProfileButton" data-tutorial="adult" type="button" aria-label="Профиль взрослого и аккаунт" title="Профиль взрослого и аккаунт"><span class="universe-user-icon">' + (adultRole === 'Педагог' ? 'П' : 'В') + '</span><span><small>Взрослый</small><b>' + adultRole + '</b></span></button><button class="universe-child-chip" id="childProfileButton" data-tutorial="child" type="button"><img src="' + escapeAttr(activeChild.avatar || 'media/images/kolobok_avatar.png') + '" alt=""><span><small>Ребёнок</small><b>' + escapeHtml(activeChild.name || 'Мой профиль') + '</b></span><span class="universe-chevron">⌄</span></button><button class="universe-helper-button" id="fireflyHelperButton" type="button" data-tutorial="helper" aria-label="Спросить Светлячка"><img src="media/images/firefly.png" alt=""><span>Помощь</span></button></div></header>';
     }
 
     function renderMap() {
@@ -129,15 +131,17 @@ const Universe = (function() {
         var name = activeChild.name ? escapeHtml(activeChild.name) : 'путешественник';
         var data = locations.map(function(location) {
             var done = location.series && typeof GameState !== 'undefined' && GameState.isSeriesCompleted(location.series);
-            var statusText = done ? 'Пройдено ✓' : (location.kind === 'intro' && activeChild.name ? 'Знакомство ✓' : 'Открыто');
-            return '<button type="button" class="universe-map-node ' + (done ? 'is-complete' : 'is-available') + '" data-location="' + location.id + '" data-tutorial="location" style="--node-x:' + location.x + '%;--node-y:' + location.y + '%"><span class="universe-node-emblem">' + location.emblem + '</span><span class="universe-node-label"><b>' + location.name + '</b><small>' + statusText + '</small></span></button>';
+            var statusText = location.kind === 'coming-soon' ? 'Скоро' : (done ? 'Пройдено ✓' : (location.kind === 'intro' && activeChild.name ? 'Вход открыт ✓' : (location.kind === 'waypoint' ? 'Следующая остановка' : 'Открыто')));
+            var nodeClass = location.kind === 'coming-soon' ? 'is-coming-soon' : (done ? 'is-complete' : 'is-available');
+            return '<button type="button" class="universe-map-node ' + nodeClass + '" data-location="' + location.id + '" data-tutorial="location" style="--node-x:' + location.x + '%;--node-y:' + location.y + '%"><span class="universe-node-emblem">' + location.emblem + '</span><span class="universe-node-label"><b>' + location.name + '</b><small>' + statusText + '</small></span></button>';
         }).join('');
-        var doneCount = locations.filter(function(location) { return location.series && GameState.isSeriesCompleted(location.series); }).length;
-        var total = locations.length - 1;
+        var storyLocations = locations.filter(function(location) { return !!location.series; });
+        var doneCount = storyLocations.filter(function(location) { return GameState.isSeriesCompleted(location.series); }).length;
+        var total = storyLocations.length;
         root.innerHTML = '<div class="universe-shell">' + profileHeader() +
             '<main class="universe-main"><div class="universe-map-heading"><div><p class="universe-eyebrow">ТВОЁ СКАЗОЧНОЕ ПУТЕШЕСТВИЕ</p><h1>' + (activeChild.name ? escapeHtml(activeChild.name) + ', куда отправимся сегодня?' : 'Куда отправимся сегодня?') + '</h1><p>Выбирай открытую локацию и исследуй истории вместе с друзьями.</p></div><div class="universe-progress" data-tutorial="progress"><span class="universe-progress-mark">✦</span><span><b>' + doneCount + ' из ' + total + '</b><small>историй пройдено</small></span><div class="universe-progress-track"><i style="width:' + Math.round(doneCount / total * 100) + '%"></i></div></div></div>' +
-            '<div class="universe-map-scroll" data-tutorial="map"><section class="universe-map-art" aria-label="Карта игрового мира Суперколобка"><svg class="universe-trail" viewBox="0 0 1000 580" preserveAspectRatio="none" aria-hidden="true"><path d="M115 375 C155 390 185 355 223 327 S315 252 378 230 S454 293 502 330 S600 400 655 365 S715 291 770 255 S840 176 880 145" fill="none" stroke="#fff9e9" stroke-width="23" stroke-linecap="round"/><path d="M115 375 C155 390 185 355 223 327 S315 252 378 230 S454 293 502 330 S600 400 655 365 S715 291 770 255 S840 176 880 145" fill="none" stroke="#e8aa50" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 17"/></svg><div class="universe-sun" aria-hidden="true"></div><div class="universe-hill hill-one" aria-hidden="true"></div><div class="universe-hill hill-two" aria-hidden="true"></div><div class="universe-forest forest-left" aria-hidden="true"><i></i><i></i><i></i></div><div class="universe-forest forest-right" aria-hidden="true"><i></i><i></i><i></i></div><div class="universe-pond" aria-hidden="true">〰</div><div class="universe-gate-art" aria-hidden="true"><i></i><i></i><span>✦</span></div><div class="universe-map-cloud cloud-one" aria-hidden="true">☁</div><div class="universe-map-cloud cloud-two" aria-hidden="true">☁</div><div class="universe-locations" data-tutorial="locations">' + data + '</div>' +
-            '<div class="universe-firefly-on-map" aria-hidden="true"><img src="media/images/firefly.png" alt=""></div><div class="universe-map-note">Начни с Тропинки дружбы — там тебя уже ждёт Светлячок!</div></section></div>' +
+            '<div class="universe-map-scroll" data-tutorial="map"><section class="universe-map-art" aria-label="Карта игрового мира Суперколобка"><svg class="universe-trail" viewBox="0 0 1000 580" preserveAspectRatio="none" aria-hidden="true"><path d="M115 402 C175 405 230 352 300 302 S405 180 470 174 S570 330 670 330 S805 145 870 145" fill="none" stroke="#fff9e9" stroke-width="23" stroke-linecap="round"/><path d="M115 402 C175 405 230 352 300 302 S405 180 470 174 S570 330 670 330 S805 145 870 145" fill="none" stroke="#e8aa50" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 17"/><path d="M520 390 C600 432 680 468 770 475" fill="none" stroke="#fff9e9" stroke-width="18" stroke-linecap="round"/><path d="M520 390 C600 432 680 468 770 475" fill="none" stroke="#9e8ad5" stroke-width="4" stroke-linecap="round" stroke-dasharray="7 12"/></svg><div class="universe-sun" aria-hidden="true"></div><div class="universe-hill hill-one" aria-hidden="true"></div><div class="universe-hill hill-two" aria-hidden="true"></div><div class="universe-forest forest-left" aria-hidden="true"><i></i><i></i><i></i></div><div class="universe-forest forest-right" aria-hidden="true"><i></i><i></i><i></i></div><div class="universe-pond" aria-hidden="true">〰</div><div class="universe-gate-art" aria-hidden="true"><i></i><i></i><span>✦</span></div><div class="universe-map-cloud cloud-one" aria-hidden="true">☁</div><div class="universe-map-cloud cloud-two" aria-hidden="true">☁</div><div class="universe-locations" data-tutorial="locations">' + data + '</div>' +
+            '<div class="universe-firefly-on-map" aria-hidden="true"><img src="media/images/firefly.png" alt=""></div><div class="universe-map-note">Светлячок ждёт у входа в лес. Начни с калитки!</div></section></div>' +
             '<div class="universe-map-foot"><span>Путь открывается шаг за шагом</span><button class="universe-small-link" type="button" id="replayTour">Пройти знакомство с картой ещё раз</button></div></main></div>';
         root.querySelectorAll('[data-map-home]').forEach(function(button) { button.addEventListener('click', function(event) { event.preventDefault(); renderMap(); }); });
         root.querySelectorAll('[data-location]').forEach(function(button) { button.addEventListener('click', function() { openLocation(button.dataset.location); }); });
@@ -151,8 +155,13 @@ const Universe = (function() {
     function openLocation(id) {
         var location = locations.find(function(entry) { return entry.id === id; });
         if (!location) return;
-        if (location.id !== 'gate' && !activeChild.name) return openOverlay('Знакомство впереди', '<p>Сначала отправляйся на Тропинку дружбы — Светлячок познакомится с тобой и поможет собрать имя из букв.</p>', [{ label: 'На Тропинку дружбы', action: function() { closeOverlay(); openLocation('gate'); } }]);
+        if (location.kind === 'coming-soon') return openOverlay(location.direction, '<div class="universe-camp-preview"><span class="universe-compass-icon" aria-hidden="true">🧭</span><div><b>' + escapeHtml(location.name) + '</b><p>Это отдельный путь подготовки к школе. Игры и задания для него появятся позже.</p></div></div>', [{ label: 'Буду ждать', action: closeOverlay }]);
+        if (location.id !== 'gate' && !activeChild.name) return openOverlay('Знакомство впереди', '<p>Сначала войди в Волшебный лес — Светлячок поможет тебе познакомиться и собрать имя из букв.</p>', [{ label: 'К входу в лес', action: function() { closeOverlay(); openLocation('gate'); } }]);
         if (location.kind === 'intro') return renderGateScene();
+        if (location.kind === 'waypoint') return openOverlay(location.name, '<p>Светлячок проведёт тебя по Тропинке дружбы к первому приключению — в Домик Колобка.</p>', [
+            { label: 'К Домику Колобка', action: function() { closeOverlay(); openLocation('friendship'); } },
+            { label: 'Остаться на карте', secondary: true, action: closeOverlay }
+        ]);
         var seriesNames = { friendship:'Сила дружбы', care:'Сила заботы', teamwork:'Сила команды' };
         var completed = GameState.isSeriesCompleted(location.series);
         openOverlay(location.name, '<p class="universe-modal-kicker">' + seriesNames[location.series] + '</p><p>' + (completed ? 'Эту историю уже проходили. Можно вернуться к ней и снова исследовать сюжет.' : 'Открытая история ждёт тебя. Светлячок будет рядом, а взрослый сможет посмотреть, как проходит путешествие.') + '</p>', [
@@ -164,7 +173,7 @@ const Universe = (function() {
     function renderGateScene() {
         var root = document.getElementById('sceneContent');
         if (!root) return;
-        root.innerHTML = '<section class="universe-gate-scene"><button class="universe-back-map" id="gateBack">← На карту</button><div class="universe-gate-illustration"><div class="universe-gate-trees"><i></i><i></i><i></i></div><div class="universe-gate"><span>✦</span></div><img src="media/images/firefly.png" alt="Светлячок" class="universe-gate-firefly"></div><div class="universe-gate-dialog"><p class="universe-eyebrow">ТРОПИНКА ДРУЖБЫ</p><h1>' + (activeChild.name ? 'С возвращением, ' + escapeHtml(activeChild.name) + '!' : 'Привет! Я Светлячок.') + '</h1><p>' + (activeChild.name ? 'Рад снова тебя видеть. Отсюда начинаются наши игровые истории.' : 'Буду твоим проводником по этому миру. Давай познакомимся — как тебя зовут?') + '</p><div class="universe-gate-actions">' + (activeChild.name ? '<button class="universe-primary-button" id="gateToMap" type="button">Вернуться на карту</button><button class="universe-secondary-button" id="gateEditName" type="button">Изменить имя</button>' : '<button class="universe-primary-button" id="gateMeetFirefly" type="button">Собрать имя из букв</button>') + '</div></div></section>';
+        root.innerHTML = '<section class="universe-gate-scene"><button class="universe-back-map" id="gateBack">← На карту</button><div class="universe-gate-illustration"><div class="universe-gate-trees"><i></i><i></i><i></i></div><div class="universe-gate"><span>✦</span></div><img src="media/images/firefly.png" alt="Светлячок" class="universe-gate-firefly"></div><div class="universe-gate-dialog"><p class="universe-eyebrow">ВХОД В ВОЛШЕБНЫЙ ЛЕС</p><h1>' + (activeChild.name ? 'С возвращением, ' + escapeHtml(activeChild.name) + '!' : 'Привет! Я Светлячок.') + '</h1><p>' + (activeChild.name ? 'Рад снова тебя видеть! Сначала загляни на Тропинку дружбы — оттуда начнётся наше первое приключение.' : 'Я буду твоим проводником по этому миру. Давай познакомимся — как тебя зовут?') + '</p><div class="universe-gate-actions">' + (activeChild.name ? '<button class="universe-primary-button" id="gateToMap" type="button">Вернуться на карту</button><button class="universe-secondary-button" id="gateEditName" type="button">Изменить имя</button>' : '<button class="universe-primary-button" id="gateMeetFirefly" type="button">Собрать имя из букв</button>') + '</div></div></section>';
         root.querySelector('#gateBack').addEventListener('click', renderMap);
         var toMap = root.querySelector('#gateToMap'); if (toMap) toMap.addEventListener('click', renderMap);
         var editName = root.querySelector('#gateEditName'); if (editName) editName.addEventListener('click', startNameCubes);
@@ -184,7 +193,7 @@ const Universe = (function() {
         var title = document.querySelector('.universe-gate-dialog h1');
         var copy = document.querySelector('.universe-gate-dialog>p:not(.universe-eyebrow)');
         if (title) title.textContent = 'Очень приятно, ' + name + '!';
-        if (copy) copy.textContent = 'Теперь мы можем отправляться в путешествие. Выбери открытую историю на карте.';
+        if (copy) copy.textContent = 'Теперь отправляйся на Тропинку дружбы — там начинается наше первое приключение.';
     }
 
     function launchStory(seriesId) {
@@ -203,22 +212,32 @@ const Universe = (function() {
         activeChild.tutorialStatus = 'in_progress';
         saveChild();
         function paint() {
+            var oldCard = document.querySelector('.universe-tour-card');
+            if (oldCard) oldCard.remove();
             renderMap();
             var step = tutorialSteps[stepIndex];
             var root = document.getElementById('sceneContent');
-            var anchor = root.querySelector('[data-tutorial="' + step.target + '"]');
-            if (anchor) anchor.classList.add('universe-tutorial-highlight');
+            var anchor = step.target ? root.querySelector('[data-tutorial="' + step.target + '"]') : null;
+            if (anchor && step.target) anchor.classList.add('universe-tutorial-highlight');
             var tutorial = document.createElement('div');
             tutorial.className = 'universe-tour-backdrop';
-            tutorial.innerHTML = '<section class="universe-tour-card" role="dialog" aria-modal="true" aria-labelledby="universeTourTitle"><img src="media/images/firefly.png" alt="Светлячок" class="universe-tour-firefly"><div class="universe-tour-speech"><p class="universe-eyebrow">ЗНАКОМСТВО · ' + (stepIndex + 1) + ' / ' + tutorialSteps.length + '</p><h2 id="universeTourTitle">' + step.title + '</h2><p>' + step.text + '</p>' + (step.inventory ? '<div class="universe-tour-keys"><span><img src="media/images/key-friendship.png" alt="">Дружба</span><span><img src="media/images/key-care.svg" alt="">Забота</span><span><img src="media/images/key-team.png" alt="">Команда</span></div>' : '') + '</div><div class="universe-tour-actions"><button type="button" class="universe-text-button" data-tour-skip>Пропустить знакомство</button><button type="button" class="universe-primary-button" data-tour-next>' + (stepIndex === tutorialSteps.length - 1 ? 'На карту' : 'Дальше') + '</button></div></section>';
             root.appendChild(tutorial);
-            tutorial.querySelector('[data-tour-skip]').addEventListener('click', finishTutorial);
-            tutorial.querySelector('[data-tour-next]').addEventListener('click', function() {
+            var tourCard = document.createElement('section');
+            tourCard.className = 'universe-tour-card';
+            tourCard.setAttribute('role', 'dialog');
+            tourCard.setAttribute('aria-modal', 'true');
+            tourCard.setAttribute('aria-labelledby', 'universeTourTitle');
+            tourCard.innerHTML = '<img src="media/images/firefly.png" alt="Светлячок" class="universe-tour-firefly"><div class="universe-tour-speech"><p class="universe-eyebrow">ЗНАКОМСТВО · ' + (stepIndex + 1) + ' / ' + tutorialSteps.length + '</p><h2 id="universeTourTitle">' + step.title + '</h2><p>' + step.text + '</p>' + (step.inventory ? '<div class="universe-tour-keys" aria-label="Ключи за серии"><span><img src="media/images/key-friendship.png" alt=""><b>Дружба</b></span><span><img src="media/images/key-care.svg" alt=""><b>Забота</b></span><span><img src="media/images/key-team.png" alt=""><b>Команда</b></span></div>' : '') + '</div><div class="universe-tour-actions"><button type="button" class="universe-text-button" data-tour-skip>Пропустить знакомство</button><button type="button" class="universe-primary-button" data-tour-next>' + (stepIndex === tutorialSteps.length - 1 ? 'На карту' : 'Дальше') + '</button></div>';
+            document.body.appendChild(tourCard);
+            tourCard.querySelector('[data-tour-skip]').addEventListener('click', finishTutorial);
+            tourCard.querySelector('[data-tour-next]').addEventListener('click', function() {
                 if (stepIndex < tutorialSteps.length - 1) { stepIndex += 1; paint(); }
                 else finishTutorial();
             });
         }
         function finishTutorial() {
+            var tourCard = document.querySelector('.universe-tour-card');
+            if (tourCard) tourCard.remove();
             activeChild.tutorialStatus = 'complete';
             activeChild.tutorialCompletedAt = Date.now();
             saveChild();
@@ -233,7 +252,7 @@ const Universe = (function() {
             button.addEventListener('click', function() {
                 var answer = document.getElementById('helperAnswer');
                 if (button.dataset.helper === 'тур') { closeOverlay(); showTutorial(false); return; }
-                answer.textContent = button.dataset.helper === 'куда' ? (activeChild.name ? activeChild.name + ', начни с любой открытой точки на карте.' : 'Сначала отправляйся на Тропинку дружбы, чтобы познакомиться и собрать имя.') : 'На карте доступны Тропинка дружбы и три игровые истории: дружба, забота и сила команды.';
+                answer.textContent = button.dataset.helper === 'куда' ? (activeChild.name ? activeChild.name + ', начни у входа в Волшебный лес, затем загляни на Тропинку дружбы.' : 'Сначала войди в Волшебный лес, чтобы познакомиться со Светлячком и собрать имя.') : 'На карте есть Тропинка дружбы и три игровые истории. Отдельный путь подготовки к школе скоро появится в лагере «Компас».';
             });
         });
     }
@@ -283,8 +302,8 @@ const Universe = (function() {
             return '<article class="universe-material-card"><span class="universe-material-icon" aria-hidden="true">✂</span><div><b>' + item.title + '</b><p>' + item.description + '</p></div><a href="media/bonus/' + encodeURIComponent(file) + '" target="_blank" rel="noopener noreferrer">Посмотреть</a></article>';
         }).join('');
         var materialSection = materialCards ? '<div class="universe-find-materials">' + materialCards + '</div>' : '<p class="universe-empty-find">Материалы для творчества будут появляться здесь по мере прохождения историй.</p>';
-        var body = '<p>Здесь собраны награды и дополнительные материалы путешествия ' + escapeHtml(activeChild.name || 'ребёнка') + '.</p><section class="universe-finds-section"><div class="universe-finds-title"><h3>Награды</h3><span>' + completed.length + ' из 3 историй</span></div><div class="universe-star-award"><span class="universe-star-row">' + '★'.repeat(stars) + '☆'.repeat(Math.max(0, 3 - stars)) + '</span><b>' + stars + ' звёзд за приключения</b></div>' + rewards + '</section><section class="universe-finds-section"><div class="universe-finds-title"><h3>Материалы для творчества</h3><span>для совместных занятий</span></div>' + materialSection + '</section><p class="universe-muted-note">Ключи за серии хранятся отдельно — в игровом инвентаре.</p>';
-        openOverlay('Мои находки', body, [{ label: 'На карту', action: closeOverlay }]);
+        var body = '<div class="universe-chest-intro"><img src="media/images/magic-chest.svg" alt=""><p>Здесь хранятся награды и дополнительные материалы для творчества ' + escapeHtml(activeChild.name || 'ребёнка') + '.</p></div><section class="universe-finds-section"><div class="universe-finds-title"><h3>Награды</h3><span>' + completed.length + ' из 3 историй</span></div><div class="universe-star-award"><span class="universe-star-row">' + '★'.repeat(stars) + '☆'.repeat(Math.max(0, 3 - stars)) + '</span><b>' + stars + ' звёзд за приключения</b></div>' + rewards + '</section><section class="universe-finds-section"><div class="universe-finds-title"><h3>Материалы для творчества</h3><span>для совместных занятий</span></div>' + materialSection + '</section><p class="universe-muted-note">Ключи за серии хранятся отдельно — в игровом инвентаре.</p>';
+        openOverlay('Волшебный сундучок', body, [{ label: 'На карту', action: closeOverlay }]);
     }
 
     function showRenameDialog() {

@@ -349,6 +349,8 @@ const GameState = (function() {
         setGameMode: setGameMode,
         getGameMode: getGameMode,
         clearGameMode: clearGameMode,
+        addMaterial: addMaterial,
+        getMaterials: getMaterials,
         saveState: saveState,
         loadState: loadState,
         clearSavedState: clearSavedState,

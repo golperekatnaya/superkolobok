@@ -79,7 +79,6 @@ const SeriesSelect = (function() {
                     '<button class="series-splash-continue" id="seriesSplashContinue" type="button">Пропустить заставку</button>' +
                     '<button class="series-splash-play" id="seriesSplashPlay" type="button" hidden>Смотреть заставку</button>' +
                 '</div>' +
-                '<p class="series-splash-caption">Сейчас начнётся новое приключение!</p>' +
             '</section>';
 
         var video = document.getElementById('seriesSplashVideo');
